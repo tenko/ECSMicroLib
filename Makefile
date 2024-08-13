@@ -8,7 +8,7 @@ QEMU := qemu-system-gnuarmeclipse
 QEMUFLAGS=--verbose --board STM32F4-Discovery --mcu STM32F407ZG --semihosting-config enable=on,target=native -d unimp,guest_errors
 ECS := /c/EigenCompilerSuite/runtime
 
-RTS = ../micro.lib ../stdarmt32.lib ../armt32SemihostRun.obf $(ECS)/armt32run.obf $(ECS)/obarmt32run.lib
+RTS = ../micro.lib ../stdarmt32.lib ../stm32f4run.obf $(ECS)/armt32run.obf $(ECS)/obarmt32run.lib
 
 OLS += ARMv7M ARMv7MSTM32SysTick0 STM32F4 STM32F4Pins STM32F4System
 
