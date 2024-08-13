@@ -2,6 +2,7 @@ MODULE Config IN Micro;
 
 	(*
 		Alexander Shiryaev, 2015.02
+        Modified by Tenko for use with ECS
 	*)
 
 	IMPORT SYSTEM;

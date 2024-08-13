@@ -2,7 +2,8 @@ MODULE MemFormatters IN Micro;
 
 	(*
 		A. V. Shiryaev, 2015.03
-
+        Modified by Tenko for use with ECS
+        
 		LE: Little-Endian
 		BE: Big-Endian
 	*)

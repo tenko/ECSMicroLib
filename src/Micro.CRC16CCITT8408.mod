@@ -1,6 +1,8 @@
 MODULE CRC16CCITT8408 IN Micro;
 
-	(* Alexander Shiryaev, 2013.09, 2014.11 *)
+	(* Alexander Shiryaev, 2013.09, 2014.11
+       Modified by Tenko for use with ECS
+    *)
 
 	IMPORT SYSTEM;
 

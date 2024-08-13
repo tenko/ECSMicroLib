@@ -2,7 +2,8 @@ MODULE STM32F4Flash IN Micro;
 
 	(*
 		Alexander Shiryaev, 2015.01, 2016.06, 2017.10, 2023.06
-
+        Modified by Tenko for use with ECS
+        
 		RM0090, Reference manual,
 			STM32F405xx/07xx, STM32F415xx/17xx,
 			[ STM32F42xxx, STM32F43xxx ]

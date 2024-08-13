@@ -2,7 +2,8 @@ MODULE STM32F4Config IN Micro;
 
 	(*
 		Alexander Shiryaev, 2015.01, 2018.06, 2021.08
-
+        Modified by Tenko for use with ECS
+        
 		STM32F4
 	*)
 

@@ -2,6 +2,7 @@ MODULE CRC8 IN Micro;
 
 	(*
 		A. V. Shiryaev, 2013.01, 2014.11
+        Modified by Tenko for use with ECS
 	*)
 
 	IMPORT SYSTEM;

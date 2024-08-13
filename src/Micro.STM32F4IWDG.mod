@@ -2,7 +2,8 @@ MODULE STM32F4IWDG IN Micro;
 
 	(*
 		Alexander Shiryaev, 2018.05
-
+        Modified by Tenko for use with ECS
+        
 		RM0090, Reference manual,
 			STM32F4{0,1}{5,7}xx, STM32F4{2,3}{7,9}xx
 	*)

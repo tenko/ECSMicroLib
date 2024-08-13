@@ -1,6 +1,8 @@
 MODULE ARMv7MTraps IN Micro;
 
-	(* Alexander Shiryaev, 2014.09, 2017.03, 2019.10, 2023.06 *)
+	(* Alexander Shiryaev, 2014.09, 2017.03, 2019.10, 2023.06
+       Modified by Tenko for use with ECS
+    *)
 
 	(* ARMv7-M *)
 
