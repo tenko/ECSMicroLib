@@ -24,6 +24,7 @@ MODULE STM32F4Pins IN Micro;
 	*)
 
 	IMPORT SYSTEM;
+    IN Micro IMPORT ARMv7M, MCU := STM32F4;
 
     TYPE ADDRESS = SYSTEM.ADDRESS;
 
@@ -53,44 +54,11 @@ MODULE STM32F4Pins IN Micro;
 			AF8* = 8; AF9* = 9; AF10* = 10; AF11* = 11;
 			AF12* = 12; AF13* = 13; AF14* = 14; AF15* = 15;
 
-		(* AHB1 *)
-			GPIOA* = ADDRESS(40020000H);
-				GPIOAMODER*     = ADDRESS(GPIOA + 0);
-				GPIOAOTYPER*    = ADDRESS(GPIOA + 4);
-				GPIOAOSPEEDR*   = ADDRESS(GPIOA + 8);
-				GPIOAPUPDR*     = ADDRESS(GPIOA + 0CH);
-				GPIOAIDR*       = ADDRESS(GPIOA + 10H);
-				GPIOAODR*       = ADDRESS(GPIOA + 14H);
-				GPIOABSRR*      = ADDRESS(GPIOA + 18H);
-				GPIOALCKR*      = ADDRESS(GPIOA + 1CH);
-				GPIOAAFRL*      = ADDRESS(GPIOA + 20H);
-				GPIOAAFRH*      = ADDRESS(GPIOA + 24H);
-			GPIOB* = ADDRESS(40020400H);
-			GPIOC* = ADDRESS(40020800H);
-			GPIOD* = ADDRESS(40020C00H);
-			GPIOE* = ADDRESS(40021000H);
-			GPIOF* = ADDRESS(40021400H);
-			GPIOG* = ADDRESS(40021800H);
-			GPIOH* = ADDRESS(40021C00H);
-			GPIOI* = ADDRESS(40022000H);
-			GPIOJ* = ADDRESS(40022400H);
-			GPIOK* = ADDRESS(40022800H);
-
-		portSpacing = GPIOB - GPIOA;
-
-		RCC = ADDRESS(40023800H);
-		RCCAHB1ENR  = ADDRESS(RCC + 30H);
-		RCCAHB1LPENR= ADDRESS(RCC + 50H);
+		portSpacing = MCU.GPIOB - MCU.GPIOA;
 
 	PROCEDURE Configure* (port, pin, mode: INTEGER; oType: BOOLEAN; oSpeed, pullType, af: INTEGER);
 		VAR x: SET;
 			r, y: ADDRESS;
-            PROCEDURE PUT32(adr : ADDRESS; value : SIGNED32);
-            BEGIN SYSTEM.PUT(adr, value) END PUT32;
-            PROCEDURE GETS32(adr : ADDRESS; value : SET32);
-            BEGIN SYSTEM.GET(adr, value) END GETS32;
-            PROCEDURE PUTS32(adr : ADDRESS; value : SET32);
-            BEGIN SYSTEM.PUT(adr, value) END PUTS32;
 	BEGIN
 		ASSERT(port >= A);
 		ASSERT(port <= K);
@@ -104,34 +72,34 @@ MODULE STM32F4Pins IN Micro;
 		y := pin * 2;
 
 		(* enable clock for pin port *)
-			GETS32(RCCAHB1ENR, x);
-			PUTS32(RCCAHB1ENR, x + {port});
+			SYSTEM.GET(MCU.RCCAHB1ENR, x);
+			SYSTEM.PUT(MCU.RCCAHB1ENR, x + {port});
 
-			GETS32(RCCAHB1LPENR, x);
-			PUTS32(RCCAHB1LPENR, x + {port});
+			SYSTEM.GET(MCU.RCCAHB1LPENR, x);
+			SYSTEM.PUT(MCU.RCCAHB1LPENR, x + {port});
 
-		r := GPIOAMODER + port * portSpacing;
-		GETS32(r, x);
-		PUT32(r, SYSTEM.VAL(INTEGER, x - {y,y+1}) + SYSTEM.LSH(mode, y));
+		r := MCU.GPIOAMODER + port * portSpacing;
+		SYSTEM.GET(r, x);
+		SYSTEM.PUT(r, SYSTEM.VAL(SIGNED32, x - {y,y+1}) + SYSTEM.LSH(mode, y));
 
-		r := GPIOAOTYPER + port * portSpacing;
-		GETS32(r, x);
-		IF oType THEN PUTS32(r, x + {pin})
-		ELSE PUTS32(r, x - {pin})
+		r := MCU.GPIOAOTYPER + port * portSpacing;
+		SYSTEM.GET(r, x);
+		IF oType THEN SYSTEM.PUT(r, x + {pin})
+		ELSE SYSTEM.PUT(r, x - {pin})
 		END;
 
-		r := GPIOAOSPEEDR + port * portSpacing;
-		GETS32(r, x);
-		PUT32(r, SYSTEM.VAL(INTEGER, x - {y,y+1}) + SYSTEM.LSH(oSpeed, y));
+		r := MCU.GPIOAOSPEEDR + port * portSpacing;
+		SYSTEM.GET(r, x);
+		SYSTEM.PUT(r, SYSTEM.VAL(SIGNED32, x - {y,y+1}) + SYSTEM.LSH(oSpeed, y));
 
-		r := GPIOAPUPDR + port * portSpacing;
-		GETS32(r, x);
-		PUT32(r, SYSTEM.VAL(INTEGER, x - {y,y+1}) + SYSTEM.LSH(pullType, y));
+		r := MCU.GPIOAPUPDR + port * portSpacing;
+		SYSTEM.GET(r, x);
+		SYSTEM.PUT(r, SYSTEM.VAL(SIGNED32, x - {y,y+1}) + SYSTEM.LSH(pullType, y));
 
 		IF mode = alt THEN y := (pin * 4) MOD 32;
-			r := GPIOAAFRL + pin DIV 8 * 4 + port * portSpacing;
-			GETS32(r, x);
-			PUT32(r, SYSTEM.VAL(INTEGER, x - {y..y+3}) + SYSTEM.LSH(af, y))
+			r := MCU.GPIOAAFRL + pin DIV 8 * 4 + port * portSpacing;
+			SYSTEM.GET(r, x);
+			SYSTEM.PUT(r, SYSTEM.VAL(SIGNED32, x - {y..y+3}) + SYSTEM.LSH(af, y))
 		END
 	END Configure;
 

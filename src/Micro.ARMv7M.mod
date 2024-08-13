@@ -312,25 +312,44 @@ MODULE ARMv7M IN Micro;
 				IDISAR4*    = ADDRESS(0E000ED70H); (* Instruction Set Attribute Register 4 *)
 				IDISAR5*    = ADDRESS(0E000ED74H);
 
-PROCEDURE PUT32*(adr : ADDRESS; value : SIGNED32);
-BEGIN SYSTEM.PUT(adr, value) END PUT32;
+    PROCEDURE WFI*();
+    BEGIN SYSTEM.ASM("wfi")
+    END WFI;
 
-PROCEDURE PUTU32*(adr : ADDRESS; value : UNSIGNED32);
-BEGIN SYSTEM.PUT(adr, value) END PUTU32;
+    PROCEDURE DMB*();
+    BEGIN SYSTEM.ASM("dmb")
+    END DMB;
 
-PROCEDURE PUTS32*(adr : ADDRESS; value : SET32);
-BEGIN SYSTEM.PUT(adr, value) END PUTS32;
+    PROCEDURE DSB*();
+    BEGIN SYSTEM.ASM("dsb")
+    END DSB;
 
-PROCEDURE WFI*();
-BEGIN SYSTEM.ASM("wfi")
-END WFI;
+    PROCEDURE ISB*();
+    BEGIN SYSTEM.ASM("isb")
+    END ISB;
 
-PROCEDURE DMB*();
-BEGIN SYSTEM.ASM("dmb")
-END DMB;
+    PROCEDURE CPSIEi*();
+    BEGIN SYSTEM.ASM("cpsie i")
+    END CPSIEi;
 
-PROCEDURE ISB*();
-BEGIN SYSTEM.ASM("isb")
-END ISB;
+    PROCEDURE CPSIDi*();
+    BEGIN SYSTEM.ASM("cpsid i")
+    END CPSIDi;
+
+    PROCEDURE CPSIEf*();
+    BEGIN SYSTEM.ASM("cpsie f")
+    END CPSIEf;
+
+    PROCEDURE CPSIDf*();
+    BEGIN SYSTEM.ASM("cpsid f")
+    END CPSIDf;
+
+    PROCEDURE CPSIEif*();
+    BEGIN SYSTEM.ASM("cpsie if")
+    END CPSIEif;
+
+    PROCEDURE CPSIDif*();
+    BEGIN SYSTEM.ASM("cpsid if")
+    END CPSIDif;
 
 END ARMv7M.
