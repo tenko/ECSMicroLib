@@ -51,28 +51,58 @@ MODULE ARMv7MTraps IN Micro;
 		nResets*: INTEGER;
 		trapFlag*: BOOLEAN;
 		trap*: Trap;
+        debug* : BOOLEAN;
         trapHandler*: TrapHandler;
         rstCheck: INTEGER;
-    
+        
+    PROCEDURE ^ Putchar ["putchar"] (character: INTEGER): INTEGER;
+
+    PROCEDURE String(value-: ARRAY OF CHAR);
+    VAR i: LENGTH; char: CHAR;
+    BEGIN
+        FOR i := 0 TO LEN (value) - 1 DO
+            char := value[i];
+            IF char = 0X THEN RETURN END;
+            IGNORE(Putchar(ORD(char))); 
+        END;
+    END String;
+
+    PROCEDURE Hex(value : UNSIGNED32);
+    VAR
+        i, dig : INTEGER;
+    BEGIN
+        IGNORE(Putchar(ORD('0')));
+        FOR i := 0 TO 7 DO
+            dig := INTEGER(SET(0FH) * SET(SYSTEM.LSH(value, -28 + 4*i)));
+            IF dig > 9 THEN INC(dig, ORD('A') - 10)
+            ELSE INC(dig, ORD('0')) END;
+            IGNORE(Putchar(dig)); 
+        END;
+        IGNORE(Putchar(ORD('H')));
+    END Hex;
+
+    PROCEDURE Ln;
+    BEGIN IGNORE(Putchar(0AH)); 
+    END Ln;
+
 	PROCEDURE DefaultTrapHandler* (code: INTEGER; context- : Context);
 	BEGIN
 		IF ~trapFlag THEN
 			trap.code := code;
 			trap.context := context;
 			trapFlag := TRUE;
-            (*
-            TRACE(trap.context.R0);
-            TRACE(trap.context.R1);
-            TRACE(trap.context.R2);
-            TRACE(trap.context.R3);
-            TRACE(trap.context.R12);
-            TRACE(trap.context.LR);
-            TRACE(trap.context.PC);
-            TRACE(trap.context.XPSR);
-            *)
+            IF debug THEN
+                String('TRAP '); Hex(code); Ln;
+                String('  R0   = '); Hex(context.R0); Ln;
+                String('  R1   = '); Hex(context.R1); Ln;
+                String('  R2   = '); Hex(context.R2); Ln;
+                String('  R3   = '); Hex(context.R3); Ln;
+                String('  LR   = '); Hex(context.LR); Ln;
+                String('  PC   = '); Hex(context.PC); Ln;
+                String('  XPSR = '); Hex(context.XPSR); Ln;
+            END;
 		END;
 		rstCheck := rstCheckKey;
-        (* TRACE(code); HALT(0); *)
 		(* system reset *)
 			ARMv7M.DSB;
 			SYSTEM.PUT(ARMv7M.AIRCR, SIGNED32(05FA0004H)); (* SYSRESETREQ *)
@@ -88,6 +118,7 @@ MODULE ARMv7MTraps IN Micro;
 		SYSTEM.ASM("
             mov     r0, r11
             mov     r1, sp
+            add     r1, r1, 16
             str	    r1, [r0, ptr]
         ");
         SYSTEM.PUT(SYSTEM.ADR(context), ptr);
@@ -162,6 +193,7 @@ MODULE ARMv7MTraps IN Micro;
 
 	PROCEDURE Init*;
 	BEGIN
+        debug := FALSE;
 		trapHandler := DefaultTrapHandler;
 		IF rstCheck # rstCheckKey THEN
 			nResets := 0;

@@ -8,7 +8,7 @@ QEMU := qemu-system-gnuarmeclipse
 QEMUFLAGS=--verbose --board STM32F4-Discovery --mcu STM32F407ZG --semihosting-config enable=on,target=native -d unimp,guest_errors
 ECS := /c/EigenCompilerSuite/runtime
 
-RTS = ../micro.lib ../stdarmt32.lib ../stm32f4run.obf $(ECS)/armt32run.obf $(ECS)/obarmt32run.lib
+RTS = ../micro.lib ../stdarmt32.lib stm32f4run.obf $(ECS)/armt32run.obf $(ECS)/obarmt32run.lib
 
 OLS += ARMv7M ARMv7MTraps ARMv7MSTM32SysTick0 ARMv7MSTM32F4WWDG
 OLS += STM32F4 STM32F4Pins STM32F4System STM32F4IWDG STM32F4Flash
@@ -29,13 +29,19 @@ build/%.obf: src/%.mod
 	@cd build && cp -f $(addprefix ../, $<) .
 	@cd build && $(OB) $(notdir $<)
 
+build/stm32f4run.obf : src/stm32f4run.asm
+	@echo compiling $<
+	@mkdir -p build
+	@cd build && cp -f $(addprefix ../, $<) .
+	@cd build && $(AS) $(notdir $<)
+
 micro.lib : $(OBF)
 	@echo linking $@
 	@-rm $@
 	@touch $@
 	@linklib $@ $^
 
-build/test.rom: misc/test.mod micro.lib
+build/test.rom: misc/test.mod micro.lib build/stm32f4run.obf
 	@echo linking $@
 	@mkdir -p build
 	@cd build && cp -f ../misc/test.mod .
