@@ -1,7 +1,7 @@
 .SUFFIXES:
 MAKEFLAGS += --no-builtin-rules --no-builtin-variables
 
-OB := obarmt32
+OB := ecsd
 AS := armt32asm
 LK := linkmem
 QEMU := qemu-system-gnuarmeclipse
@@ -10,8 +10,8 @@ ECS := /c/EigenCompilerSuite/runtime
 
 RTS = ../micro.lib ../stdarmt32.lib stm32f4run.obf $(ECS)/armt32run.obf $(ECS)/obarmt32run.lib
 
-OLS += ARMv7M ARMv7MTraps ARMv7MSTM32SysTick0 ARMv7MSTM32F4WWDG
-OLS += STM32F4 STM32F4Pins STM32F4System STM32F4IWDG STM32F4Flash
+OLS += ARMv7M ARMv7MTraps ARMv7MSTM32SysTick0 STM32F4
+OLS += STM32F4Pins STM32F4System STM32F4IWDG STM32F4Flash ARMv7MSTM32F4WWDG
 OLS += I2CBus CRC16CCITT8408 CRC16CCITT1021 CRC8 MemFormatters Config STM32F4Config
 
 MOD = $(addprefix src/, $(addprefix Micro., $(addsuffix .mod, $(OLS))))
@@ -27,7 +27,7 @@ build/%.obf: src/%.mod
 	@echo compiling $<
 	@mkdir -p build
 	@cd build && cp -f $(addprefix ../, $<) .
-	@cd build && $(OB) $(notdir $<)
+	@cd build && $(OB) -t armt32 -c $(notdir $<)
 
 build/stm32f4run.obf : src/stm32f4run.asm
 	@echo compiling $<
@@ -45,7 +45,7 @@ build/test.rom: misc/test.mod micro.lib build/stm32f4run.obf
 	@echo linking $@
 	@mkdir -p build
 	@cd build && cp -f ../misc/test.mod .
-	@cd build && $(OB) test.mod
+	@cd build && $(OB) -t armt32 -c test.mod
 	@cd build && $(LK) test.obf $(RTS)
 
 run: build/test.rom

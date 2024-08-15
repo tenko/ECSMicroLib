@@ -97,6 +97,7 @@ MODULE ARMv7MTraps IN Micro;
                 String('  R1   = '); Hex(context.R1); Ln;
                 String('  R2   = '); Hex(context.R2); Ln;
                 String('  R3   = '); Hex(context.R3); Ln;
+                String('  R12  = '); Hex(context.R12); Ln;
                 String('  LR   = '); Hex(context.LR); Ln;
                 String('  PC   = '); Hex(context.PC); Ln;
                 String('  XPSR = '); Hex(context.XPSR); Ln;
