@@ -1,23 +1,24 @@
 MODULE Test;
 IMPORT SYSTEM;
 
-IN Micro IMPORT Sys := STM32F4System;
-IN Micro IMPORT Traps := ARMv7MTraps;
-
-VAR ^ heapStart ["_trailer"]: SYSTEM.ADDRESS;
-
 VAR
     x : SYSTEM.ADDRESS;
-    y : POINTER TO ARRAY OF CHAR;
+    y : POINTER TO ARRAY 5 OF CHAR;
+    z : POINTER TO ARRAY 7 OF CHAR;
+
+VAR ^ heapStart ["_heap_start"]: SYSTEM.ADDRESS;
+
+PROCEDURE Align(adr : SYSTEM.ADDRESS): SYSTEM.ADDRESS;
 BEGIN
-    Traps.Init; Traps.debug := TRUE;
-    NEW(y, 5);
-    x := SYSTEM.VAL(SYSTEM.ADDRESS, y);
-    TRACE(y);
-    TRACE(SYSTEM.ADR(heapStart));
-    y[0] := 'a';
-    y[1] := 'b';
-    y[2] := 00X;
-    TRACE(y^);
-    DISPOSE(y);
+    RETURN SYSTEM.ADDRESS(SET32(adr + 3) * (-SET32(3))); (* round up address to next qword *)
+    RETURN SYSTEM.ADDRESS(SET32(adr + 3) - {2,1}); (* round up address to next qword *)
+END Align;
+
+BEGIN
+    TRACE(SYSTEM.VAL(SYSTEM.ADDRESS, y));
+    NEW(y);
+    TRACE(SYSTEM.VAL(SYSTEM.ADDRESS, y));
+    TRACE(SYSTEM.VAL(SYSTEM.ADDRESS, z));
+    NEW(z);
+    TRACE(SYSTEM.VAL(SYSTEM.ADDRESS, z));
 END Test.
