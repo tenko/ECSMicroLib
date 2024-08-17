@@ -3,6 +3,7 @@ MAKEFLAGS += --no-builtin-rules --no-builtin-variables
 
 OB := ecsd
 AS := armt32asm
+DAS := armt32dism
 LK := linkmem
 QEMU := qemu-system-gnuarmeclipse
 QEMUFLAGS=--verbose --board STM32F4-Discovery --mcu STM32F407ZG --semihosting-config enable=on,target=native -d unimp,guest_errors
@@ -29,7 +30,7 @@ build/%.obf: src/%.mod
 	@cd build && cp -f $(addprefix ../, $<) .
 	@cd build && $(OB) -t armt32 -c $(notdir $<)
 
-build/stm32f4run.obf : src/stm32f4run.asm
+build/%.obf: src/%.asm
 	@echo compiling $<
 	@mkdir -p build
 	@cd build && cp -f $(addprefix ../, $<) .
@@ -47,6 +48,9 @@ build/test.rom: misc/test.mod micro.lib build/stm32f4run.obf
 	@cd build && cp -f ../misc/test.mod .
 	@cd build && $(OB) -t armt32 -c test.mod
 	@cd build && $(LK) test.obf $(RTS)
+
+dis: build/dis.obf build/test.rom
+	@cd build && $(DAS) $(notdir $<)
 
 run: build/test.rom
 	$(QEMU) $(QEMUFLAGS) --image $<
