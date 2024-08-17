@@ -227,16 +227,14 @@ loop:   b.n    loop         ; loop forever if return from bkpt
 	ldr	    r1, [pc, offset (start)]
     ldr     r2, [pc, offset (ext)]
     b       cond
+start:  .qbyte	0x20000000
+ext:    .qbyte  extent (@_trailer)
 loop:    
     str     r0, [r1]
     add     r1, r1, 4
 cond:
     cmp     r1, r2
     bcc     loop
-	b	    skip
-start:  .qbyte	0x20000000
-ext:    .qbyte  extent (@_trailer)
-skip:
 
 ; last section
 .trailer _trailer
