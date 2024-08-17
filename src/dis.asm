@@ -1,0 +1,1 @@
+.embed "test.rom"
