@@ -39,6 +39,7 @@ MODULE ARMv7M IN Micro;
 				SHPR3*  = ADDRESS(0E000ED20H); (* System Handler Priority Register 3 *)
 				SHCSR*  = ADDRESS(0E000ED24H); (* System Handler Control and State Register *)
 				CFSR*   = ADDRESS(0E000ED28H); (* Configurable Fault Status Register *)
+				UFSR* 	= ADDRESS(0E000ED2AH); (* UsageFault Status Register *)
 				HFSR*   = ADDRESS(0E000ED2CH); (* HardFault Status Register *)
 				DFSR*   = ADDRESS(0E000ED30H); (* Debug Fault Status Register *)
 				MMFAR*  = ADDRESS(0E000ED34H); (* MemManage Fault Address Register *)

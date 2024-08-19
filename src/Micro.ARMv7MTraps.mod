@@ -11,18 +11,16 @@ MODULE ARMv7MTraps IN Micro;
 
 		NOTE:
 			trap codes:
-				1: index check
-				2: type cast
-				3: array size
-				4: nil check
-				5: nil check (procedure call)
-				6: bad divisor (must be > 0)
-				7: assert
+				0: Failed assertion
+				1: Unmatched case label
+				2: Invalid array element index	Array designators
+				3: Failed type guard
+				4: Unsatisfied type test
 
-				10: hard fault
-				11: memory manage
-				12: bus fault
-				13: usage fault
+				0A: hard fault
+				0B: memory manage
+				0C: bus fault
+				0D: usage fault
 	*)
 
     IMPORT SYSTEM, ARMv7M IN Micro;
@@ -44,6 +42,7 @@ MODULE ARMv7MTraps IN Micro;
         TrapHandler* = PROCEDURE (code: INTEGER; context- : Context);
         Trap* = RECORD
 			code-: INTEGER;
+            ext-: UNSIGNED32;
             context-: Context;
 		END;
 
@@ -86,13 +85,39 @@ MODULE ARMv7MTraps IN Micro;
     END Ln;
 
 	PROCEDURE DefaultTrapHandler* (code: INTEGER; context- : Context);
+    VAR
+        u16 : UNSIGNED16;
+        u32 : UNSIGNED32;
 	BEGIN
 		IF ~trapFlag THEN
+            trap.ext := 0;
+            IF code = 0DH THEN
+                SYSTEM.GET(ARMv7M.UFSR, u16);
+                IF SET(u16) * {0} # {} THEN
+                    SYSTEM.GET(context.PC, u16); (* Fetch UDF *)
+                    code := INTEGER(SET(u16) * SET(0FH));
+                ELSE
+                    trap.ext := u16;
+                END;
+            ELSIF code = 0AH THEN
+                SYSTEM.GET(ARMv7M.HFSR, trap.ext);
+            ELSIF code = 0BH THEN
+                SYSTEM.GET(ARMv7M.MMFAR, trap.ext);
+            ELSIF code = 0CH THEN
+                SYSTEM.GET(ARMv7M.BFAR, trap.ext);
+            END;
 			trap.code := code;
 			trap.context := context;
 			trapFlag := TRUE;
             IF debug THEN
                 String('TRAP '); Hex(code); Ln;
+                IF code >= 0AH THEN
+                    IF code = 0DH THEN String('  UFSR   = ')
+                    ELSIF code = 0AH THEN String('  HFSR   = ')
+                    ELSIF code = 0BH THEN String('  MMFAR   = ')
+                    ELSIF code = 0CH THEN String('  BFAR   = ') END;
+                    Hex(trap.ext); Ln;
+                END;
                 String('  R0   = '); Hex(context.R0); Ln;
                 String('  R1   = '); Hex(context.R1); Ln;
                 String('  R2   = '); Hex(context.R2); Ln;
@@ -134,6 +159,7 @@ MODULE ARMv7MTraps IN Micro;
 		SYSTEM.ASM("
             mov     r0, r11
             mov     r1, sp
+            add     r1, r1, 16
             str	    r1, [r0, ptr]
         ");
         SYSTEM.PUT(SYSTEM.ADR(context), ptr);
@@ -148,6 +174,7 @@ MODULE ARMv7MTraps IN Micro;
 		SYSTEM.ASM("
             mov     r0, r11
             mov     r1, sp
+            add     r1, r1, 16
             str	    r1, [r0, ptr]
         ");
         SYSTEM.PUT(SYSTEM.ADR(context), ptr);
@@ -162,6 +189,7 @@ MODULE ARMv7MTraps IN Micro;
 		SYSTEM.ASM("
             mov     r0, r11
             mov     r1, sp
+            add     r1, r1, 16
             str	    r1, [r0, ptr]
         ");
         SYSTEM.PUT(SYSTEM.ADR(context), ptr);
@@ -176,6 +204,7 @@ MODULE ARMv7MTraps IN Micro;
 		SYSTEM.ASM("
             mov     r0, r11
             mov     r1, sp
+            add     r1, r1, 16
             str	    r1, [r0, ptr]
         ");
         SYSTEM.PUT(SYSTEM.ADR(context), ptr);
@@ -193,7 +222,12 @@ MODULE ARMv7MTraps IN Micro;
 	END ClearTrapFlag;
 
 	PROCEDURE Init*;
+    CONST USGFAULTENA = 18;
+    VAR s : SET32;
 	BEGIN
+        SYSTEM.GET(ARMv7M.SHCSR, s);
+        s := s + {USGFAULTENA}; (* Catch UsageFault *)
+        SYSTEM.PUT(ARMv7M.SHCSR, s);
         debug := FALSE;
 		trapHandler := DefaultTrapHandler;
 		IF rstCheck # rstCheckKey THEN
