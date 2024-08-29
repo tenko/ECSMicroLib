@@ -26,8 +26,6 @@ MODULE STM32F4Pins IN Micro;
 	IMPORT SYSTEM;
     IN Micro IMPORT ARMv7M, MCU := STM32F4;
 
-    TYPE ADDRESS = SYSTEM.ADDRESS;
-
 	CONST
 		(* ports *)
 			A* = 0; B* = 1; C* = 2; D* = 3; E* = 4; F* = 5; G* = 6; H* = 7;
@@ -56,7 +54,14 @@ MODULE STM32F4Pins IN Micro;
 
 		portSpacing = MCU.GPIOB - MCU.GPIOA;
 
-	PROCEDURE Configure* (port, pin, mode: INTEGER; oType: BOOLEAN; oSpeed, pullType, af: INTEGER);
+    TYPE
+        ADDRESS = SYSTEM.ADDRESS;
+        Pin* = RECORD
+            BASE : ADDRESS;
+            port-, pin- : INTEGER;
+        END;
+
+	PROCEDURE (VAR p : Pin) Init* (port, pin, mode: INTEGER; oType: BOOLEAN; oSpeed, pullType, af: INTEGER);
 		VAR x: SET;
 			r, y: ADDRESS;
 	BEGIN
@@ -68,6 +73,9 @@ MODULE STM32F4Pins IN Micro;
 		ASSERT(pullType >= noPull);
 		ASSERT(pullType <= pullDown);
 		ASSERT(af DIV 16 = 0);
+
+        p.port := port; p.pin := pin;
+        p.BASE := MCU.GPIOA + port * portSpacing;
 
 		y := pin * 2;
 
@@ -101,6 +109,25 @@ MODULE STM32F4Pins IN Micro;
 			SYSTEM.GET(r, x);
 			SYSTEM.PUT(r, SYSTEM.VAL(SIGNED32, x - {y..y+3}) + SYSTEM.LSH(af, y))
 		END
-	END Configure;
+	END Init;
 
+    PROCEDURE (VAR p : Pin) On*;
+    BEGIN SYSTEM.PUT(p.BASE + 18H, {p.pin}); (* BSRR *)
+    END On;
+
+    PROCEDURE (VAR p : Pin) Off*;
+    BEGIN SYSTEM.PUT(p.BASE + 18H, {p.pin + 16}); (* BSRR *)
+    END Off;
+
+    PROCEDURE (VAR p : Pin) Value*(): BOOLEAN;
+    VAR s : SET32;
+    BEGIN
+        SYSTEM.GET(p.BASE + 10H, s); (* IDR *)
+        RETURN (s * {p.pin}) # {}
+    END Value;
+
+    PROCEDURE (VAR p : Pin) Toggle*;
+    BEGIN IF p.Value() THEN p.Off() ELSE p.On() END
+    END Toggle;
+    
 END STM32F4Pins.
