@@ -40,23 +40,23 @@ VAR ^ Crc16Data ["CRC16ONEWIRE"]: ARRAY 256 OF UNSIGNED16;
 
 (** Enable 1-wire bus *)
 PROCEDURE (VAR p- : Port) Enable*;
-BEGIN HALT(1); END Enable;
+BEGIN END Enable;
 
 (** Disable 1-wire bus *)
 PROCEDURE (VAR p- : Port) Disable*;
-BEGIN HALT(2); END Disable;
+BEGIN END Disable;
 
 (** Send reset slot and return true if devices is present on bus *)
 PROCEDURE (VAR p- : Port) Reset*(): BOOLEAN;
-BEGIN HALT(3); RETURN FALSE END Reset;
+BEGIN RETURN FALSE END Reset;
 
 (** Write bit to 1-wire bus *)
 PROCEDURE (VAR p- : Port) WriteBit*(bit : BOOLEAN);
-BEGIN HALT(4) END WriteBit;
+BEGIN END WriteBit;
 
 (** Read bit from 1-wire bus *)
 PROCEDURE (VAR p- : Port) ReadBit*(): BOOLEAN;
-BEGIN HALT(5); RETURN FALSE END ReadBit;
+BEGIN RETURN FALSE END ReadBit;
 
 (**
 Send and optinal receive data on 1-wire bus
