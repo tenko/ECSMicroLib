@@ -12,11 +12,12 @@ ECS := /c/EigenCompilerSuite/runtime
 RTS = ../micro.lib $(ECS)/stdarmt32.lib stm32f4run.obf $(ECS)/armt32run.obf $(ECS)/obarmt32run.lib
 
 OLS += ARMv7M ARMv7MTraps ARMv7MSTM32SysTick0 STM32F4
-OLS += STM32F4Pins STM32F4System STM32F4IWDG STM32F4Flash ARMv7MSTM32F4WWDG
-OLS += I2CBus CRC16CCITT8408 CRC16CCITT1021 CRC8 MemFormatters Config STM32F4Config
+OLS += I2CBus CRC16CCITT8408 CRC16CCITT1021 CRC8 MemFormatters Config OneWire
+OLS += STM32F4Config STM32F4Pins STM32F4System STM32F4IWDG STM32F4Flash ARMv7MSTM32F4WWDG STM32F4OneWire
 
-MOD = $(addprefix src/, $(addprefix Micro., $(addsuffix .mod, $(OLS))))
-OBF = $(addprefix build/, $(addprefix Micro., $(addsuffix .obf, $(OLS))))
+MOD += $(addprefix src/, $(addprefix Micro., $(addsuffix .mod, $(OLS))))
+OBF += $(addprefix build/, $(addprefix Micro., $(addsuffix .obf, $(OLS))))
+OBF += build/Micro.StaticData.obf
 
 .PHONY: all
 all : micro.lib
