@@ -60,6 +60,13 @@ dis: build/dis.obf build/test.rom
 run: build/test.rom
 	$(QEMU) $(QEMUFLAGS) --image $<
 
+.PHONY: install
+install: micro.lib stm32f4run.obf
+	@echo Install
+	@cp -f micro.lib /c/EigenCompilerSuite/runtime/
+	@cp -f stm32f4run.obf /c/EigenCompilerSuite/runtime/
+	@cp -f build/micro.*.sym /c/EigenCompilerSuite/libraries/oberon/
+
 .PHONY: clean
 clean:
 	@echo Clean
