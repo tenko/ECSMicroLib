@@ -70,7 +70,7 @@ Send and optinal receive data on 1-wire bus
 Return TRUE if no error occured.
 *)
 PROCEDURE (VAR p- : Port) SendReceive*(sendReset : INTEGER; cmd : ADDRESS; clen : LENGTH; data : ADDRESS; dlen, rStart: LENGTH): BOOLEAN;
-BEGIN HALT(6); RETURN FALSE
+BEGIN RETURN FALSE
 END SendReceive;
 
 (** Reset ROM search *)

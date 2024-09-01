@@ -313,6 +313,8 @@ MODULE ARMv7M IN Micro;
 				IDISAR4*    = ADDRESS(0E000ED70H); (* Instruction Set Attribute Register 4 *)
 				IDISAR5*    = ADDRESS(0E000ED74H);
 
+    PROCEDURE ^ SysIdle* ["sysidle"] ();
+
     PROCEDURE WFI*();
     BEGIN SYSTEM.ASM("wfi")
     END WFI;

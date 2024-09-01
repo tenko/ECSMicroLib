@@ -1,5 +1,6 @@
 # Folders
 build/
+tmp/
 doc/_static
 doc/_templates
 doc/src

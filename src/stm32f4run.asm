@@ -57,7 +57,7 @@
     .qbyte @isr_i2c2_ev + 1             ; I2C2 event interrupt
     .qbyte @isr_i2c2_er + 1             ; I2C2 error interrupt
     .qbyte @isr_spi1 + 1                ; SPI1 global interrupt
-    .qbyte @isr_spi2 + 1                ; SPI1 global interrupt
+    .qbyte @isr_spi2 + 1                ; SPI2 global interrupt
     .qbyte @isr_usart1 + 1              ; USART1 global interrupt
     .qbyte @isr_usart2 + 1              ; USART2 global interrupt
     .qbyte @isr_usart3 + 1              ; USART3 global interrupt
@@ -313,6 +313,12 @@ skip:
 
 ; standard putchar function
 .code putchar
+    .replaceable
+    .alignment    4
+    bx.n	 lr
+
+; system idle function, defaults to nop
+.code sysidle
     .replaceable
     .alignment    4
     bx.n	 lr
