@@ -11,9 +11,11 @@ ECS := /c/EigenCompilerSuite/runtime
 
 RTS = ../micro.lib $(ECS)/stdarmt32.lib ../stm32f4run.obf  $(ECS)/armt32run.obf $(ECS)/obarmt32run.lib
 
-OLS += ARMv7M ARMv7MTraps ARMv7MSTM32SysTick0 STM32F4
-OLS += I2CBus CRC16CCITT8408 CRC16CCITT1021 CRC8 MemFormatters Config OneWire
-OLS += STM32F4Config STM32F4Pins STM32F4System STM32F4IWDG STM32F4Flash ARMv7MSTM32F4WWDG STM32F4OneWire
+OLS += ARMv7M ARMv7MTraps ARMv7MSTM32SysTick0 STM32F4 STM32L4
+OLS += BusI2C BusSPI BusUart OneWire CRC16CCITT8408 CRC16CCITT1021 CRC8 MemFormatters Config
+OLS += STM32F4Config STM32F4Pins STM32F4System STM32F4IWDG STM32F4Flash ARMv7MSTM32F4WWDG
+OLS += STM32F4SPI1 STM32F4Uart STM32F4OneWire STM32F405Uart
+OLS += STM32L4Pins
 OLS += DeviceDS18B20
 
 MOD += $(addprefix src/, $(addprefix Micro., $(addsuffix .mod, $(OLS))))
