@@ -65,18 +65,18 @@
     .qbyte @isr_usart3 + 1              ; USART3 global interrupt
     .qbyte @isr_exti15_10 + 1           ; EXTI Line[15:10] interrupts
     .qbyte @isr_rtc_alarm + 1           ; RTC Alarms (A and B) through EXTI line interrupt
-    .qbyte .qbyte 0x00                  ; Reserved.
-    .qbyte .qbyte 0x00                  ; Reserved.
-    .qbyte .qbyte 0x00                  ; Reserved.
-    .qbyte .qbyte 0x00                  ; Reserved.
-    .qbyte .qbyte 0x00                  ; Reserved.
-    .qbyte .qbyte 0x00                  ; Reserved.
-    .qbyte .qbyte 0x00                  ; Reserved.
+    .qbyte 0x00                         ; Reserved.
+    .qbyte 0x00                         ; Reserved.
+    .qbyte 0x00                         ; Reserved.
+    .qbyte 0x00                         ; Reserved.
+    .qbyte 0x00                         ; Reserved.
+    .qbyte 0x00                         ; Reserved.
+    .qbyte 0x00                         ; Reserved.
     .qbyte @isr_sdmmc1 + 1              ; SDMMC1 global interrupt
-    .qbyte .qbyte 0x00                  ; Reserved.
+    .qbyte 0x00                         ; Reserved.
     .qbyte @isr_spi3 + 1                ; SPI3 global interrupt
     .qbyte @isr_uart4 + 1               ; UART4 global interrupt
-    .qbyte .qbyte 0x00                  ; Reserved.
+    .qbyte 0x00                         ; Reserved.
     .qbyte @isr_tim6_dac + 1            ; TIM6 global and DAC1 underrun interrupts
     .qbyte @isr_tim7 + 1                ; TIM7 global interrupt
     .qbyte @isr_dma2_channel1 + 1       ; DMA2 channel 1 interrupt
@@ -86,7 +86,7 @@
     .qbyte @isr_dma2_channel5 + 1       ; DMA2 channel 5 interrupt
     .qbyte @isr_dfsdm1_flt0 + 1         ; DFSDM1_FLT0 global interrupt
     .qbyte @isr_dfsdm1_flt1 + 1         ; DFSDM1_FLT1 global interrupt
-    .qbyte .qbyte 0x00                  ; Reserved.
+    .qbyte 0x00                         ; Reserved.
     .qbyte @isr_comp + 1                ; COMP1/COMP2(1) through EXTI lines 21/22 interrupts
     .qbyte @isr_lptim1 + 1              ; LPTIM1 global interrupt
     .qbyte @isr_lptim2 + 1              ; LPTIM2 global interrupt
@@ -98,7 +98,7 @@
     .qbyte @isr_i2c3_ev + 1             ; I2C3 event interrupt
     .qbyte @isr_i2c3_er + 1             ; I2C3 error interrupt
     .qbyte @isr_sai1 + 1                ; SAI1 global interrupt
-    .qbyte .qbyte 0x00                  ; Reserved.
+    .qbyte 0x00                         ; Reserved.
     .qbyte @isr_swpmi1 + 1              ; SWPMI1 global interrupt
     .qbyte @isr_tsc + 1                 ; TSC global interrupt
     .qbyte @isr_lcd + 1                 ; LCD global interrupt
@@ -249,7 +249,6 @@ loop:
 
 ; standard getchar function
 .code getchar
-    .replaceable
     .alignment    4
     bx.n	 lr
 
@@ -309,7 +308,6 @@ skip:
 
 ; standard putchar function
 .code putchar
-    .replaceable
     .alignment    4
     bx.n	 lr
 
