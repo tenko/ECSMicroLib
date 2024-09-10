@@ -65,32 +65,32 @@ MODULE STM32L4Pins IN Micro;
 		y := pin * 2;
 
 		(* enable clock for pin port *)
-			SYSTEM.GET(MCU.RCCAHB2ENR, x);
-			SYSTEM.PUT(MCU.RCCAHB2ENR, x + {port});
+			SYSTEM.GET(MCU.RCC_AHB2ENR, x);
+			SYSTEM.PUT(MCU.RCC_AHB2ENR, x + {port});
 
-			SYSTEM.GET(MCU.RCCAHB2SMENR, x);
-			SYSTEM.PUT(MCU.RCCAHB2SMENR, x + {port});
+			SYSTEM.GET(MCU.RCC_AHB2SMENR, x);
+			SYSTEM.PUT(MCU.RCC_AHB2SMENR, x + {port});
 
-		r := MCU.GPIOAMODER + port * portSpacing;
+		r := MCU.GPIOA_MODER + port * portSpacing;
 		SYSTEM.GET(r, x);
 		SYSTEM.PUT(r, SYSTEM.VAL(SIGNED32, x - {y,y+1}) + SYSTEM.LSH(mode, y));
 
-		r := MCU.GPIOAOTYPER + port * portSpacing;
+		r := MCU.GPIOA_OTYPER + port * portSpacing;
 		SYSTEM.GET(r, x);
 		IF oType THEN SYSTEM.PUT(r, x + {pin})
 		ELSE SYSTEM.PUT(r, x - {pin})
 		END;
 
-		r := MCU.GPIOAOSPEEDR + port * portSpacing;
+		r := MCU.GPIOA_OSPEEDR + port * portSpacing;
 		SYSTEM.GET(r, x);
 		SYSTEM.PUT(r, SYSTEM.VAL(SIGNED32, x - {y,y+1}) + SYSTEM.LSH(oSpeed, y));
 
-		r := MCU.GPIOAPUPDR + port * portSpacing;
+		r := MCU.GPIOA_PUPDR + port * portSpacing;
 		SYSTEM.GET(r, x);
 		SYSTEM.PUT(r, SYSTEM.VAL(SIGNED32, x - {y,y+1}) + SYSTEM.LSH(pullType, y));
 
 		IF mode = alt THEN y := (pin * 4) MOD 32;
-			r := MCU.GPIOAAFRL + pin DIV 8 * 4 + port * portSpacing;
+			r := MCU.GPIOA_AFRL + pin DIV 8 * 4 + port * portSpacing;
 			SYSTEM.GET(r, x);
 			SYSTEM.PUT(r, SYSTEM.VAL(SIGNED32, x - {y..y+3}) + SYSTEM.LSH(af, y))
 		END

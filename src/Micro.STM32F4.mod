@@ -748,6 +748,7 @@ MODULE STM32F4 IN Micro;
 				DBGMCUAPB1FZ*   = ADDRESS(DBGMCU + 8);
 				DBGMCUAPB2FZ*   = ADDRESS(DBGMCU + 0CH);
 		(* interrupt sources *)
+        (* TODO: Can be removed? *)
 			WWDGInt* = 0;
 			PVDInt* = 1; EXTI16Int* = 1;
 			TAMPSTAMPInt* = 2; EXTI21Int* = 2;
