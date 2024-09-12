@@ -49,13 +49,13 @@ CONST
     pullUp* = Pins.pullUp;
 
     (* RCC AHB bits *)
-    RCCAHB1DMA1 = 21;
-    RCCAHB1DMA2 = 22;
+    RCC_AHB1DMA1 = 21;
+    RCC_AHB1DMA2 = 22;
 
     (* RCC APB bits *)
-    RCCAPB1SPI2 = 14;
-    RCCAPB1SPI3 = 15;
-    RCCAPB2SPI1 = 12;
+    RCC_APB1SPI2 = 14;
+    RCC_APB1SPI3 = 15;
+    RCC_APB2SPI1 = 12;
 
     (* interrupts *)
     SPI1Int = 35;
@@ -64,8 +64,8 @@ CONST
     DMA2Stream3Int = 59;
 
     SPI = MCU.SPI1;
-    SPIRCCAPBENR = MCU.RCCAPB2ENR;
-    SPIRCCAPBN = RCCAPB2SPI1;
+    SPI_RCCAPBENR = MCU.RCC_APB2ENR;
+    SPI_RCCAPBN = RCC_APB2SPI1;
 
     SPIInt = SPI1Int;
 
@@ -81,14 +81,14 @@ CONST
     DMATXStreamShift = 22;
     DMATXInt = DMA2Stream3Int;
 
-    DMARCCAHBENR = MCU.RCCAHB1ENR;
-    DMARCCAHBN = RCCAHB1DMA2;
+    DMA_RCCAHBENR = MCU.RCC_AHB1ENR;
+    DMA_RCCAHBN = RCC_AHB1DMA2;
 
     (* SPI registers: *)
-    CR1 = MCU.SPI1CR1;
-    CR2 = MCU.SPI1CR2;
-    SR = MCU.SPI1SR;
-    DR = MCU.SPI1DR;
+    CR1 = MCU.SPI1_CR1;
+    CR2 = MCU.SPI1_CR2;
+    SR = MCU.SPI1_SR;
+    DR = MCU.SPI1_DR;
 
     (* DMA registers: *)
     DMALISR = DMA;
@@ -325,12 +325,12 @@ BEGIN
     b.n := 0;
 
     (* enable clock for SPI *)
-    SYSTEM.GET(SPIRCCAPBENR, x);
-    SYSTEM.PUT(SPIRCCAPBENR, x + {SPIRCCAPBN}); ARMv7M.DSB;
+    SYSTEM.GET(SPI_RCCAPBENR, x);
+    SYSTEM.PUT(SPI_RCCAPBENR, x + {SPI_RCCAPBN}); ARMv7M.DSB;
 
     (* enable clock for DMA *)
-    SYSTEM.GET(DMARCCAHBENR, x);
-    SYSTEM.PUT(DMARCCAHBENR, x + {DMARCCAHBN}); ARMv7M.DSB;
+    SYSTEM.GET(DMA_RCCAHBENR, x);
+    SYSTEM.PUT(DMA_RCCAHBENR, x + {DMA_RCCAHBN}); ARMv7M.DSB;
 
     SYSTEM.PUT(CR1, {});
     SYSTEM.PUT(CR2, {});

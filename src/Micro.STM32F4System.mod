@@ -66,7 +66,7 @@ MODULE STM32F4System IN Micro;
 		fHSE := 8000000;
 		fVCOIn := 2000000;
 		PLLR := 2;
-		SYSTEM.GET(MCU.DBGMCUIDCODE, id); id := id MOD 1000H;
+		SYSTEM.GET(MCU.DBGMCU_IDCODE, id); id := id MOD 1000H;
         
         IF (id = 413H) OR (id = 0) THEN (* STM32F4{0,1}{5,7} *) (* note : qemu return 0 *)
 			VOS := {VOS0}; (* fHCLKmax = 168 MHz *)
@@ -157,11 +157,11 @@ MODULE STM32F4System IN Micro;
 
         IF PLLSRC = HSE THEN
 			(* Enable HSE *)
-				SYSTEM.GET(MCU.RCCCR, x);
-				SYSTEM.PUT(MCU.RCCCR, x + {HSEON});
-			REPEAT UNTIL SYSTEM.BIT(MCU.RCCCR, HSERDY)
+				SYSTEM.GET(MCU.RCC_CR, x);
+				SYSTEM.PUT(MCU.RCC_CR, x + {HSEON});
+			REPEAT UNTIL SYSTEM.BIT(MCU.RCC_CR, HSERDY)
 		ELSE
-			REPEAT UNTIL SYSTEM.BIT(MCU.RCCCR, HSIRDY)
+			REPEAT UNTIL SYSTEM.BIT(MCU.RCC_CR, HSIRDY)
 		END;
 
 	END SetSysClock;
@@ -192,20 +192,20 @@ MODULE STM32F4System IN Micro;
 
 			(* RCC *)
 				(* Reset clock configuration to the default reset state *)
-					SYSTEM.GET(MCU.RCCCR, x);
-					SYSTEM.PUT(MCU.RCCCR, x + {HSION});
+					SYSTEM.GET(MCU.RCC_CR, x);
+					SYSTEM.PUT(MCU.RCC_CR, x + {HSION});
 				(* Reset CFGR register *)
-					SYSTEM.PUT(MCU.RCCCFGR, SET32({}));
+					SYSTEM.PUT(MCU.RCC_CFGR, SET32({}));
 				(* Reset HSEON, CSSON and PLLON bits *)
-					SYSTEM.GET(MCU.RCCCR, x);
-					SYSTEM.PUT(MCU.RCCCR, x - {HSEON,CSSON,PLLON});
+					SYSTEM.GET(MCU.RCC_CR, x);
+					SYSTEM.PUT(MCU.RCC_CR, x - {HSEON,CSSON,PLLON});
 				(* Reset PLLCFGR register *)
-					SYSTEM.PUT(MCU.RCCPLLCFGR, SIGNED32(24003010H));
+					SYSTEM.PUT(MCU.RCC_PLLCFGR, SIGNED32(24003010H));
 				(* Reset HSEBYP bit *)
-					SYSTEM.GET(MCU.RCCCR, x);
-					SYSTEM.PUT(MCU.RCCCR, x - {HSEBYP});
+					SYSTEM.GET(MCU.RCC_CR, x);
+					SYSTEM.PUT(MCU.RCC_CR, x - {HSEBYP});
 				(* Disable all interrupts *)
-					SYSTEM.PUT(MCU.RCCCIR, SET32({}));
+					SYSTEM.PUT(MCU.RCC_CIR, SET32({}));
 		SetSysClock(HSE);
 	END Init;
 
