@@ -257,6 +257,7 @@ loop:
 
 ; standard getchar function
 .code getchar
+    .replaceable
     .alignment    4
     bx.n	 lr
 
@@ -316,6 +317,7 @@ skip:
 
 ; standard putchar function
 .code putchar
+    .replaceable
     .alignment    4
     bx.n	 lr
 

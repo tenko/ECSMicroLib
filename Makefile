@@ -8,8 +8,9 @@ LK := linkmem
 QEMU := qemu-system-gnuarmeclipse
 QEMUFLAGS=--verbose --board STM32F4-Discovery --mcu STM32F407ZG --semihosting-config enable=on,target=native -d unimp,guest_errors
 ECS := /c/EigenCompilerSuite/runtime
+MCU := stm32l4
 
-RTS = ../micro.lib $(ECS)/stdarmt32.lib ../stm32f4run.obf  $(ECS)/armt32run.obf $(ECS)/obarmt32run.lib
+RTS = ../micro.lib $(ECS)/stdarmt32.lib ../$(MCU)run.obf  $(ECS)/armt32run.obf $(ECS)/obarmt32run.lib
 
 OLS += ARMv7M ARMv7MTraps ARMv7MSTM32SysTick0 STM32F4 STM32L4
 OLS += BusI2C BusSPI BusUart OneWire CRC16CCITT8408 CRC16CCITT1021 CRC8 MemFormatters Config
@@ -23,7 +24,7 @@ OBF += $(addprefix build/, $(addprefix Micro., $(addsuffix .obf, $(OLS))))
 OBF += build/Micro.StaticData.obf
 
 .PHONY: all
-all : micro.lib stm32f4run.obf
+all : micro.lib $(MCU)run.obf
 
 build/Micro.ARMv7MSTM32SysTick0.obf : src/Micro.ARMv7M.mod
 build/Micro.STM32F4System.obf : src/Micro.ARMv7M.mod src/Micro.STM32F4.mod
@@ -46,10 +47,10 @@ micro.lib : $(OBF)
 	@touch $@
 	@linklib $@ $^
 
-stm32f4run.obf : build/stm32f4run.obf
-	@cp -f build/stm32f4run.obf .
+$(MCU)run.obf : build/$(MCU)run.obf
+	@cp -f build/$(MCU)run.obf .
 
-build/test.rom: misc/test.mod micro.lib stm32f4run.obf
+build/test.rom: misc/test.mod micro.lib $(MCU)run.obf
 	@echo linking $@
 	@mkdir -p build
 	@cd build && cp -f ../misc/test.mod .
@@ -63,10 +64,10 @@ run: build/test.rom
 	$(QEMU) $(QEMUFLAGS) --image $<
 
 .PHONY: install
-install: micro.lib stm32f4run.obf
+install: micro.lib $(MCU)run.obf
 	@echo Install
 	@cp -f micro.lib /c/EigenCompilerSuite/runtime/
-	@cp -f stm32f4run.obf /c/EigenCompilerSuite/runtime/
+	@cp -f $(MCU)run.obf /c/EigenCompilerSuite/runtime/
 	@cp -f build/micro.*.sym /c/EigenCompilerSuite/libraries/oberon/
 
 .PHONY: clean
