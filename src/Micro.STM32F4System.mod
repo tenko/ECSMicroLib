@@ -209,6 +209,4 @@ MODULE STM32F4System IN Micro;
 		SetSysClock(HSE);
 	END Init;
 
-BEGIN
-	Init
 END STM32F4System.   

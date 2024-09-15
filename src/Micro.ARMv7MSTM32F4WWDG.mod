@@ -52,7 +52,7 @@ MODULE ARMv7MSTM32F4WWDG;
 
 	PROCEDURE Update*;
 	BEGIN
-		SYSTEM.PUT(MCU.WWDGCR, cr)
+		SYSTEM.PUT(MCU.WWDG_CR, cr)
 	END Update;
 
 	(* timeout = 4096 * 2^WDGTB / PCLK1 * (T + 1) *)
@@ -73,10 +73,10 @@ MODULE ARMv7MSTM32F4WWDG;
 
 		SYSTEM.PUT(ICER, SET32({int})); ARMv7M.ISB;
 
-		SYSTEM.GET(MCU.RCCAPB1ENR, x);
-		SYSTEM.PUT(MCU.RCCAPB1ENR, x + {WWDGEN}); ARMv7M.DSB;
+		SYSTEM.GET(MCU.RCC_APB1ENR, x);
+		SYSTEM.PUT(MCU.RCC_APB1ENR, x + {WWDGEN}); ARMv7M.DSB;
 
-		SYSTEM.PUT(MCU.WWDGCFR,
+		SYSTEM.PUT(MCU.WWDG_CFR,
 			SYSTEM.VAL(SET, W + WDGTB * 80H) + {EWI}); (* W, WDGTB, EWI *)
 
 		(* decrease priority of all interrupts *)
@@ -88,12 +88,12 @@ MODULE ARMv7MSTM32F4WWDG;
 		(* increase priority of WWDG interrupts *)
 			SYSTEM.PUT(IPR, SIGNED32(0X)); (* set priority to 0 *)
 
-		SYSTEM.GET(MCU.WWDGSR, x);
-		SYSTEM.PUT(MCU.WWDGSR, x - {EWIF});
+		SYSTEM.GET(MCU.WWDG_SR, x);
+		SYSTEM.PUT(MCU.WWDG_SR, x - {EWIF});
 
 		cr := SYSTEM.VAL(SET, T + 40H) + {WDGA};
 
-		SYSTEM.PUT(MCU.WWDGCR, cr); (* enable *)
+		SYSTEM.PUT(MCU.WWDG_CR, cr); (* enable *)
 
 		SYSTEM.PUT(ISER, SET32({int}))
 	END Init;

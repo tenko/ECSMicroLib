@@ -8,7 +8,7 @@ LK := linkmem
 QEMU := qemu-system-gnuarmeclipse
 QEMUFLAGS=--verbose --board STM32F4-Discovery --mcu STM32F407ZG --semihosting-config enable=on,target=native -d unimp,guest_errors
 ECS := /c/EigenCompilerSuite/runtime
-MCU := stm32l4
+MCU := stm32f4
 
 RTS = ../micro.lib $(ECS)/stdarmt32.lib ../$(MCU)run.obf  $(ECS)/armt32run.obf $(ECS)/obarmt32run.lib
 

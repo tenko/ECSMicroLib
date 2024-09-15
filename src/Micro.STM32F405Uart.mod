@@ -18,6 +18,4 @@ BEGIN
     STM32F4Uart.bus.Interrupt
 END InterruptHandler;
 
-BEGIN
-    ASSERT((n = 1) OR (n = 2) OR (n = 3) OR (n = 4) OR (n = 5) OR (n = 6));
 END STM32F405Uart.
