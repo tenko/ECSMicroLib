@@ -7,14 +7,19 @@ DAS := armt32dism
 LK := linkmem
 QEMU := qemu-system-gnuarmeclipse
 QEMUFLAGS=--verbose --board STM32F4-Discovery --mcu STM32F407ZG --semihosting-config enable=on,target=native -d unimp,guest_errors
-ECS := /c/EigenCompilerSuite/runtime
 MCU := stm32f4
 
-RTS = ../micro.lib $(ECS)/stdarmt32.lib ../$(MCU)run.obf  $(ECS)/armt32run.obf $(ECS)/obarmt32run.lib
+ifdef MSYSTEM
+	ECS := /c/EigenCompilerSuite/
+else
+	ECS := ~/.local/lib/ecs/
+endif
+
+RTS = ../micro.lib $(ECS)/runtime/stdarmt32.lib ../$(MCU)run.obf  $(ECS)/runtime/armt32run.obf $(ECS)/runtime/obarmt32run.lib
 
 OLS += ARMv7M ARMv7MTraps ARMv7MSTM32SysTick0 STM32F4 STM32L4
 OLS += BusI2C BusSPI BusUart OneWire CRC16CCITT8408 CRC16CCITT1021 CRC8 MemFormatters Config
-OLS += STM32F4Config STM32F4Pins STM32F4System STM32F4IWDG STM32F4Flash ARMv7MSTM32F4WWDG
+OLS += STM32F4Flash STM32F4Config STM32F4Pins STM32F4System STM32F4IWDG ARMv7MSTM32F4WWDG
 OLS += STM32F4SPI1 STM32F4Uart STM32F4OneWire STM32F405Uart
 OLS += STM32L4Pins
 OLS += DeviceDS18B20
@@ -66,9 +71,9 @@ run: build/test.rom
 .PHONY: install
 install: micro.lib $(MCU)run.obf
 	@echo Install
-	@cp -f micro.lib /c/EigenCompilerSuite/runtime/
-	@cp -f $(MCU)run.obf /c/EigenCompilerSuite/runtime/
-	@cp -f build/micro.*.sym /c/EigenCompilerSuite/libraries/oberon/
+	@cp -f micro.lib $(ECS)/runtime/
+	@cp -f $(MCU)run.obf $(ECS)/runtime/
+	@cp -f build/micro.*.sym $(ECS)/libraries/oberon/
 
 .PHONY: clean
 clean:
