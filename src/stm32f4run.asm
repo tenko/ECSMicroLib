@@ -1,14 +1,9 @@
-; Only works on Cortex-M profile ARMv7-M and STM32F4
-; RM0368, Reference manual STM32F401x{B,C,D,E}
 ; RM0090, Reference manual STM32F405xx/07xx [ STM32F415xx/17xx ]
-; RM0383, Reference manual STM32F411xC/E
-; RM0390, Reference manual STM32F446xx
-; Flash/memory origin and size must be changed to values for target device configuration.
 .code vector
     .required
-    .origin 0x00000000                  ; Flash start address
+    .origin {BOOTSTART}                 ; Flash start address
 
-    .qbyte 0x20008000                   ; Stack = ram top (32K ram size)
+    .qbyte {RAMSTART} + {RAMSIZE}       ; Stack = ram top
     .qbyte extent (@vector) + 1         ; Initial PC. (+1 for Thumb flag)
     .qbyte @isr_nmi + 1;                ; Non maskable interrupt.
     .qbyte @isr_hardfault + 1           ; All class of fault.
@@ -112,126 +107,126 @@
     #endrep
 
 #define exception_code
-	.code #0
-		.replaceable
+  .code #0
+    .replaceable
         .alignment    4
         bkpt    0x00        ; try to go to debugger
 loop:   b.n    loop         ; loop forever if return from bkpt
 #enddef
-	exception_code	isr_nmi
-    exception_code	isr_hardfault
-    exception_code	isr_memmanage
-    exception_code	isr_busfault
-    exception_code	isr_usagefault
+    exception_code  isr_nmi
+    exception_code  isr_hardfault
+    exception_code  isr_memmanage
+    exception_code  isr_busfault
+    exception_code  isr_usagefault
 #undef exception_code
 
 #define isr_code
-	.code #0
-		.replaceable
+  .code #0
+    .replaceable
         .alignment    4
-        bx.n	 lr   ; ignore interrupt
+        bx.n   lr   ; ignore interrupt
 #enddef
-    isr_code    isr_svc
-    isr_code    isr_debugmonitor
-    isr_code    isr_pendsvc
-    isr_code	isr_systick
-	isr_code	isr_wwdg
-    isr_code	isr_pvd
-    isr_code	isr_tamp_stamp
-    isr_code	isr_rtc_wkup
-    isr_code	isr_flash
-    isr_code	isr_rcc
-    isr_code	isr_exti0
-    isr_code	isr_exti1
-    isr_code	isr_exti2
-    isr_code	isr_exti3
-    isr_code	isr_exti4
-    isr_code	isr_dma1_stream0
-    isr_code	isr_dma1_stream1
-    isr_code	isr_dma1_stream2
-    isr_code	isr_dma1_stream3
-    isr_code	isr_dma1_stream4
-    isr_code	isr_dma1_stream5
-    isr_code	isr_dma1_stream6
-    isr_code	isr_adc
-    isr_code	isr_can1_tx
-    isr_code	isr_can1_rx0
-    isr_code	isr_can1_rx1
-    isr_code	isr_can1_sce
-    isr_code	isr_exti9_5
-    isr_code	isr_tim1_brk_tim9
-    isr_code	isr_tim1_up_tim10
-    isr_code	isr_tim1_trg_com_tim11
-    isr_code	isr_tim1_cc
-    isr_code	isr_tim2
-    isr_code	isr_tim3
-    isr_code	isr_tim4
-    isr_code	isr_i2c1_ev
-    isr_code	isr_i2c1_er
-    isr_code	isr_i2c2_ev
-    isr_code	isr_i2c2_er
-    isr_code	isr_spi1
-    isr_code	isr_spi2
-    isr_code	isr_usart1
-    isr_code	isr_usart2
-    isr_code	isr_usart3
-    isr_code	isr_exti15_10
-    isr_code	isr_rtc_alarm
-    isr_code	isr_otg_fs_wkup
-    isr_code	isr_tim8_brk_tim12
-    isr_code	isr_tim8_up_tim13
-    isr_code	isr_tim8_trg_com_tim14
-    isr_code	isr_tim8_cc
-    isr_code	isr_dma1_stream7
-    isr_code	isr_fsmc
-    isr_code	isr_sdio
-    isr_code	isr_tim5
-    isr_code	isr_spi3
-    isr_code	isr_uart4
-    isr_code	isr_uart5
-    isr_code	isr_tim6_dac
-    isr_code	isr_tim7
-    isr_code	isr_dma2_stream0
-    isr_code	isr_dma2_stream1
-    isr_code	isr_dma2_stream2
-    isr_code	isr_dma2_stream3
-    isr_code	isr_dma2_stream4
-    isr_code	isr_eth
-    isr_code	isr_eth_wkup
-    isr_code	isr_can2_tx
-    isr_code	isr_can2_rx0
-    isr_code	isr_can2_rx1
-    isr_code	isr_can2_sce
-    isr_code	isr_otg_fs
-    isr_code	isr_dma2_stream5
-    isr_code	isr_dma2_stream6
-    isr_code	isr_dma2_stream7
-    isr_code	isr_usart6
-    isr_code	isr_i2c3_ev
-    isr_code	isr_i2c3_er
-    isr_code	isr_otg_hs_ep1_out
-    isr_code	isr_otg_hs_ep1_in
-    isr_code	isr_otg_hs_wkup
-    isr_code	isr_otg_hs
-    isr_code	isr_dcmi
-    isr_code	isr_cryp
-    isr_code	isr_hash_rng
-    isr_code	isr_fpu
+    isr_code  isr_svc
+    isr_code  isr_debugmonitor
+    isr_code  isr_pendsvc
+    isr_code  isr_systick
+    isr_code  isr_wwdg
+    isr_code  isr_pvd
+    isr_code  isr_tamp_stamp
+    isr_code  isr_rtc_wkup
+    isr_code  isr_flash
+    isr_code  isr_rcc
+    isr_code  isr_exti0
+    isr_code  isr_exti1
+    isr_code  isr_exti2
+    isr_code  isr_exti3
+    isr_code  isr_exti4
+    isr_code  isr_dma1_stream0
+    isr_code  isr_dma1_stream1
+    isr_code  isr_dma1_stream2
+    isr_code  isr_dma1_stream3
+    isr_code  isr_dma1_stream4
+    isr_code  isr_dma1_stream5
+    isr_code  isr_dma1_stream6
+    isr_code  isr_adc
+    isr_code  isr_can1_tx
+    isr_code  isr_can1_rx0
+    isr_code  isr_can1_rx1
+    isr_code  isr_can1_sce
+    isr_code  isr_exti9_5
+    isr_code  isr_tim1_brk_tim9
+    isr_code  isr_tim1_up_tim10
+    isr_code  isr_tim1_trg_com_tim11
+    isr_code  isr_tim1_cc
+    isr_code  isr_tim2
+    isr_code  isr_tim3
+    isr_code  isr_tim4
+    isr_code  isr_i2c1_ev
+    isr_code  isr_i2c1_er
+    isr_code  isr_i2c2_ev
+    isr_code  isr_i2c2_er
+    isr_code  isr_spi1
+    isr_code  isr_spi2
+    isr_code  isr_usart1
+    isr_code  isr_usart2
+    isr_code  isr_usart3
+    isr_code  isr_exti15_10
+    isr_code  isr_rtc_alarm
+    isr_code  isr_otg_fs_wkup
+    isr_code  isr_tim8_brk_tim12
+    isr_code  isr_tim8_up_tim13
+    isr_code  isr_tim8_trg_com_tim14
+    isr_code  isr_tim8_cc
+    isr_code  isr_dma1_stream7
+    isr_code  isr_fsmc
+    isr_code  isr_sdio
+    isr_code  isr_tim5
+    isr_code  isr_spi3
+    isr_code  isr_uart4
+    isr_code  isr_uart5
+    isr_code  isr_tim6_dac
+    isr_code  isr_tim7
+    isr_code  isr_dma2_stream0
+    isr_code  isr_dma2_stream1
+    isr_code  isr_dma2_stream2
+    isr_code  isr_dma2_stream3
+    isr_code  isr_dma2_stream4
+    isr_code  isr_eth
+    isr_code  isr_eth_wkup
+    isr_code  isr_can2_tx
+    isr_code  isr_can2_rx0
+    isr_code  isr_can2_rx1
+    isr_code  isr_can2_sce
+    isr_code  isr_otg_fs
+    isr_code  isr_dma2_stream5
+    isr_code  isr_dma2_stream6
+    isr_code  isr_dma2_stream7
+    isr_code  isr_usart6
+    isr_code  isr_i2c3_ev
+    isr_code  isr_i2c3_er
+    isr_code  isr_otg_hs_ep1_out
+    isr_code  isr_otg_hs_ep1_in
+    isr_code  isr_otg_hs_wkup
+    isr_code  isr_otg_hs
+    isr_code  isr_dcmi
+    isr_code  isr_cryp
+    isr_code  isr_hash_rng
+    isr_code  isr_fpu
 #undef isr_code
 
 .data ram
-	.required
-	.origin	    0x20000000 ; ram start
-    .require	_init_ram
+  .required
+  .origin     {RAMSTART}
+    .require  _init_ram
 
 .initdata _init_ram
     .alignment    4
 
     mov     r0, 0
-	ldr	    r1, [pc, offset (start)]
+    ldr     r1, [pc, offset (start)]
     ldr     r2, [pc, offset (ext)]
     b       cond
-start:  .qbyte	0x20000000
+start:  .qbyte  {RAMSTART}
 ext:    .qbyte  extent (@_trailer)
 loop:    
     str     r0, [r1]
@@ -253,19 +248,19 @@ loop:
 ; standard _Exit function
 .code _Exit
     .alignment    4
-	bl       @abort
+    bl       @abort
 
 ; standard getchar function
 .code getchar
     .replaceable
     .alignment    4
-    bx.n	 lr
+    bx.n   lr
 
 ; standard free function
 .code free
     .replaceable
     .alignment    4
-	bx.n	lr
+    bx.n  lr
 
 ; standard malloc function
 .code malloc
@@ -273,45 +268,45 @@ loop:
     .alignment    4
 
     ldr.n   r2, offset (heap) + offset (heap) % 4
-	ldr.n	r0, [r2, 0]
-	ldr.n	r3, [sp, 0]
+    ldr.n r0, [r2, 0]
+    ldr.n r3, [sp, 0]
 
     ; round up to nearest word
-    mov	r1, 3
-	add	r4, r3, r1
-    mov	r1, 4
-	rsb	r1, 0
-	and	r3, r4, r1
+    mov r1, 3
+    add r4, r3, r1
+    mov r1, 4
+    rsb r1, 0
+    and r3, r4, r1
+    
+    add.n r3, r3, r0
+    str.n r3, [r2, 0]
+    bx.n  lr
 
-	add.n	r3, r3, r0
-	str.n	r3, [r2, 0]
-	bx.n	lr
-
-heap:	.qbyte	@_heap_start
+heap: .qbyte  @_heap_start
 
 ; heap start
 .data _heap_start
 
-	.alignment	4
-	.reserve	4
-	.require	_init_heap
+  .alignment  4
+  .reserve  4
+  .require  _init_heap
 
 .initdata _init_heap
     .alignment    4
 
-	ldr	    r0, [pc, offset (heap)]
+    ldr     r0, [pc, offset (heap)]
     ldr     r3, [pc, offset (start)]
 
     ; round up to nearest word
-    mov	r1, 3
-	add	r4, r3, r1
-    mov	r1, 4
-	rsb	r1, 0
-	and	r3, r4, r1
-    
-	str	    r3, [r0, 0]
-	b	    skip
-heap:   .qbyte	@_heap_start
+    mov r1, 3
+    add r4, r3, r1
+    mov r1, 4
+    rsb r1, 0
+    and r3, r4, r1
+      
+    str     r3, [r0, 0]
+    b     skip
+heap:   .qbyte  @_heap_start
 start:  .qbyte  extent (@_trailer)
 skip:
 
@@ -319,10 +314,10 @@ skip:
 .code putchar
     .replaceable
     .alignment    4
-    bx.n	 lr
+    bx.n   lr
 
 ; system idle function, defaults to nop
 .code sysidle
     .replaceable
     .alignment    4
-    bx.n	 lr
+    bx.n   lr

@@ -1,10 +1,9 @@
-; RM0394, Reference manual STM32L41xxx/42xxx/43xxx/44xxx/45xxx/46xxx
-; RM0351, Reference manual STM32L47xxx, STM32L48xxx, STM32L49xxx and STM32L4Axxx
+; RM0090, Reference manual STM32F42xxx, STM32F43xxx
 .code vector
     .required
     .origin {BOOTSTART}                 ; Flash start address
 
-    .qbyte {RAMSTART} + {RAMSIZE}       ; Stack = ram top (40K ram size for smallest device)
+    .qbyte {RAMSTART} + {RAMSIZE}       ; Stack = ram top
     .qbyte extent (@vector) + 1         ; Initial PC. (+1 for Thumb flag)
     .qbyte @isr_nmi + 1;                ; Non maskable interrupt.
     .qbyte @isr_hardfault + 1           ; All class of fault.
@@ -20,7 +19,7 @@
     .qbyte @isr_pendsvc + 1             ; Pendable request for system service.
     .qbyte @isr_systick + 1             ; System tick timer.
 
-    ; Start of STM32L4
+    ; Start of STM32F42xxx, STM32F43xxx vector. Ref. RM0090 Reference manual
     .qbyte @isr_wwdg + 1                ; Window Watchdog interrupt
     .qbyte @isr_pvd + 1                 ; PVD through EXTI line detection interrupt
     .qbyte @isr_tamp_stamp + 1          ; Tamper and TimeStamp interrupts through the EXTI line
@@ -32,14 +31,14 @@
     .qbyte @isr_exti2 + 1               ; EXTI Line2 interrupt
     .qbyte @isr_exti3 + 1               ; EXTI Line3 interrupt
     .qbyte @isr_exti4 + 1               ; EXTI Line4 interrupt
-    .qbyte @isr_dma1_channel1 + 1       ; DMA1 channel 1 interrupt
-    .qbyte @isr_dma1_channel2 + 1       ; DMA1 channel 2 interrupt
-    .qbyte @isr_dma1_channel3 + 1       ; DMA1 channel 3 interrupt
-    .qbyte @isr_dma1_channel4 + 1       ; DMA1 channel 4 interrupt
-    .qbyte @isr_dma1_channel5 + 1       ; DMA1 channel 5 interrupt
-    .qbyte @isr_dma1_channel6 + 1       ; DMA1 channel 6 interrupt
-    .qbyte @isr_dma1_channel7 + 1       ; DMA1 channel 7 interrupt
-    .qbyte @isr_adc + 1                 ; ADC1 and ADC2 global interrupts
+    .qbyte @isr_dma1_stream0 + 1        ; DMA1 Stream0 global interrupt
+    .qbyte @isr_dma1_stream1 + 1        ; DMA1 Stream1 global interrupt
+    .qbyte @isr_dma1_stream2 + 1        ; DMA1 Stream2 global interrupt
+    .qbyte @isr_dma1_stream3 + 1        ; DMA1 Stream3 global interrupt
+    .qbyte @isr_dma1_stream4 + 1        ; DMA1 Stream4 global interrupt
+    .qbyte @isr_dma1_stream5 + 1        ; DMA1 Stream5 global interrupt
+    .qbyte @isr_dma1_stream6 + 1        ; DMA1 Stream6 global interrupt
+    .qbyte @isr_adc + 1                 ; ADC1, ADC2 and ADC3 global interrupts
     .qbyte @isr_can1_tx + 1             ; CAN1 TX interrupts
     .qbyte @isr_can1_rx0 + 1            ; CAN1 RX0 interrupts
     .qbyte @isr_can1_rx1 + 1            ; CAN1 RX1 interrupts
@@ -51,7 +50,7 @@
     .qbyte @isr_tim1_cc + 1             ; TIM1 Capture Compare interrupt
     .qbyte @isr_tim2 + 1                ; TIM2 global interrupt
     .qbyte @isr_tim3 + 1                ; TIM3 global interrupt
-    .qbyte 0x00                         ; Reserved.
+    .qbyte @isr_tim4 + 1                ; TIM4 global interrupt
     .qbyte @isr_i2c1_ev + 1             ; I2C1 event interrupt
     .qbyte @isr_i2c1_er + 1             ; I2C1 error interrupt
     .qbyte @isr_i2c2_ev + 1             ; I2C2 event interrupt
@@ -63,50 +62,56 @@
     .qbyte @isr_usart3 + 1              ; USART3 global interrupt
     .qbyte @isr_exti15_10 + 1           ; EXTI Line[15:10] interrupts
     .qbyte @isr_rtc_alarm + 1           ; RTC Alarms (A and B) through EXTI line interrupt
-    .qbyte 0x00                         ; Reserved.
-    .qbyte 0x00                         ; Reserved.
-    .qbyte 0x00                         ; Reserved.
-    .qbyte 0x00                         ; Reserved.
-    .qbyte 0x00                         ; Reserved.
-    .qbyte 0x00                         ; Reserved.
-    .qbyte 0x00                         ; Reserved.
-    .qbyte @isr_sdmmc1 + 1              ; SDMMC1 global interrupt
-    .qbyte 0x00                         ; Reserved.
+    .qbyte @isr_otg_fs_wkup + 1         ; USB On-The-Go FS Wake-up through EXTI line interrupt
+    .qbyte @isr_tim8_brk_tim12 + 1      ; TIM8 Break interrupt and TIM12 global interrupt
+    .qbyte @isr_tim8_up_tim13 + 1       ; TIM8 Update interrupt and TIM13 global interrupt
+    .qbyte @isr_tim8_trg_com_tim14 + 1  ; TIM8 Trigger and Commutation interrupts and TIM14 global interrupt
+    .qbyte @isr_tim8_cc + 1             ; TIM8 Capture Compare interrupt
+    .qbyte @isr_dma1_stream7 + 1        ; DMA1 Stream7 global interrupt
+    .qbyte @isr_fsmc + 1                ; FSMC global interrupt
+    .qbyte @isr_sdio + 1                ; SDIO global interrupt
+    .qbyte @isr_tim5 + 1                ; TIM5 global interrupt
     .qbyte @isr_spi3 + 1                ; SPI3 global interrupt
     .qbyte @isr_uart4 + 1               ; UART4 global interrupt
-    .qbyte 0x00                         ; Reserved.
-    .qbyte @isr_tim6_dac + 1            ; TIM6 global and DAC1 underrun interrupts
+    .qbyte @isr_uart5 + 1               ; UART5 global interrupt
+    .qbyte @isr_tim6_dac + 1            ; TIM6 global interrupt, DAC1 and DAC2 underrun error interrupts
     .qbyte @isr_tim7 + 1                ; TIM7 global interrupt
-    .qbyte @isr_dma2_channel1 + 1       ; DMA2 channel 1 interrupt
-    .qbyte @isr_dma2_channel2 + 1       ; DMA2 channel 2 interrupt
-    .qbyte @isr_dma2_channel3 + 1       ; DMA2 channel 3 interrupt
-    .qbyte @isr_dma2_channel4 + 1       ; DMA2 channel 4 interrupt
-    .qbyte @isr_dma2_channel5 + 1       ; DMA2 channel 5 interrupt
-    .qbyte @isr_dfsdm1_flt0 + 1         ; DFSDM1_FLT0 global interrupt
-    .qbyte @isr_dfsdm1_flt1 + 1         ; DFSDM1_FLT1 global interrupt
-    .qbyte 0x00                         ; Reserved.
-    .qbyte @isr_comp + 1                ; COMP1/COMP2(1) through EXTI lines 21/22 interrupts
-    .qbyte @isr_lptim1 + 1              ; LPTIM1 global interrupt
-    .qbyte @isr_lptim2 + 1              ; LPTIM2 global interrupt
+    .qbyte @isr_dma2_stream0 + 1        ; DMA2 Stream0 global interrupt
+    .qbyte @isr_dma2_stream1 + 1        ; DMA2 Stream1 global interrupt
+    .qbyte @isr_dma2_stream2 + 1        ; DMA2 Stream2 global interrupt
+    .qbyte @isr_dma2_stream3 + 1        ; DMA2 Stream3 global interrupt
+    .qbyte @isr_dma2_stream4 + 1        ; DMA2 Stream4 global interrupt
+    .qbyte @isr_eth + 1                 ; Ethernet global interrupt
+    .qbyte @isr_eth_wkup + 1            ; Ethernet Wake-up through EXTI line interrupt
+    .qbyte @isr_can2_tx + 1             ; CAN2 TX interrupts
+    .qbyte @isr_can2_rx0 + 1            ; CAN2 RX0 interrupts
+    .qbyte @isr_can2_rx1 + 1            ; CAN2 RX1 interrupt
+    .qbyte @isr_can2_sce + 1            ; CAN2 SCE interrupt
     .qbyte @isr_otg_fs + 1              ; USB On The Go FS global interrupt
-    .qbyte @isr_dma2_channel6 + 1       ; DMA2 channel 6 interrupt
-    .qbyte @isr_dma2_channel7 + 1       ; DMA2 channel 7 interrupt
-    .qbyte @isr_lpuart1 + 1             ; LPUART1 global interrupt
-    .qbyte @isr_quadspi + 1             ; QUADSPI global interrupt
+    .qbyte @isr_dma2_stream5 + 1        ; DMA2 Stream5 global interrupt
+    .qbyte @isr_dma2_stream6 + 1        ; DMA2 Stream6 global interrupt
+    .qbyte @isr_dma2_stream7 + 1        ; DMA2 Stream7 global interrupt
+    .qbyte @isr_usart6 + 1              ; USART6 global interrupt
     .qbyte @isr_i2c3_ev + 1             ; I2C3 event interrupt
     .qbyte @isr_i2c3_er + 1             ; I2C3 error interrupt
-    .qbyte @isr_sai1 + 1                ; SAI1 global interrupt
-    .qbyte 0x00                         ; Reserved.
-    .qbyte @isr_swpmi1 + 1              ; SWPMI1 global interrupt
-    .qbyte @isr_tsc + 1                 ; TSC global interrupt
-    .qbyte @isr_lcd + 1                 ; LCD global interrupt
-    .qbyte @isr_aes + 1                 ; AES global interrupt
-    .qbyte @isr_rng + 1                 ; RNG global interrupt
+    .qbyte @isr_otg_hs_ep1_out + 1      ; USB On The Go HS End Point 1 Out global interrupt 
+    .qbyte @isr_otg_hs_ep1_in + 1       ; USB On The Go HS End Point 1 In global interrupt 
+    .qbyte @isr_otg_hs_wkup + 1         ; USB On The Go HS Wake-up through EXTI interrupt 
+    .qbyte @isr_otg_hs + 1              ; USB On The Go HS global interrupt
+    .qbyte @isr_dcmi + 1                ; DCMI global interrupt
+    .qbyte @isr_cryp + 1                ; CRYP crypto global interrupt
+    .qbyte @isr_hash_rng + 1            ; Hash and Rng global interrupt
     .qbyte @isr_fpu + 1                 ; FPU global interrupt
-    .qbyte @isr_crs + 1                 ; CRS interrupt
-    .qbyte @isr_i2c4_ev + 1             ; I2C4 event interrupt, wakeup through EXTI line 40
-    .qbyte @isr_i2c4_er + 1             ; I2C4 error interrupt
-    #repeat 27                          ; Pad to 128 word size
+    .qbyte @isr_uart7 + 1               ; UART 7 global interrupt
+    .qbyte @isr_uart8 + 1               ; UART 8 global interrupt
+    .qbyte @isr_spi4 + 1                ; SPI4 global interrupt
+    .qbyte @isr_spi5 + 1                ; SPI5 global interrupt
+    .qbyte @isr_spi6 + 1                ; SPI6 global interrupt
+    .qbyte @isr_sai1 + 1                ; SAI1 global interrupt
+    .qbyte @isr_ltdc + 1                ; LTDC global interrupt
+    .qbyte @isr_ltdc_er + 1             ; LTDC error interrupt
+    .qbyte @isr_dma2d + 1               ; DMA2D global interrupt
+    #repeat 21                          ; Pad to 128 word size
         .qbyte 0x00                     ; Reserved
     #endrep
 
@@ -145,13 +150,13 @@ loop:   b.n    loop         ; loop forever if return from bkpt
     isr_code  isr_exti2
     isr_code  isr_exti3
     isr_code  isr_exti4
-    isr_code  isr_dma1_channel1
-    isr_code  isr_dma1_channel2
-    isr_code  isr_dma1_channel3
-    isr_code  isr_dma1_channel4
-    isr_code  isr_dma1_channel5
-    isr_code  isr_dma1_channel6
-    isr_code  isr_dma1_channel7
+    isr_code  isr_dma1_stream0
+    isr_code  isr_dma1_stream1
+    isr_code  isr_dma1_stream2
+    isr_code  isr_dma1_stream3
+    isr_code  isr_dma1_stream4
+    isr_code  isr_dma1_stream5
+    isr_code  isr_dma1_stream6
     isr_code  isr_adc
     isr_code  isr_can1_tx
     isr_code  isr_can1_rx0
@@ -164,6 +169,7 @@ loop:   b.n    loop         ; loop forever if return from bkpt
     isr_code  isr_tim1_cc
     isr_code  isr_tim2
     isr_code  isr_tim3
+    isr_code  isr_tim4
     isr_code  isr_i2c1_ev
     isr_code  isr_i2c1_er
     isr_code  isr_i2c2_ev
@@ -175,38 +181,55 @@ loop:   b.n    loop         ; loop forever if return from bkpt
     isr_code  isr_usart3
     isr_code  isr_exti15_10
     isr_code  isr_rtc_alarm
-    isr_code  isr_sdmmc1
+    isr_code  isr_otg_fs_wkup
+    isr_code  isr_tim8_brk_tim12
+    isr_code  isr_tim8_up_tim13
+    isr_code  isr_tim8_trg_com_tim14
+    isr_code  isr_tim8_cc
+    isr_code  isr_dma1_stream7
+    isr_code  isr_fsmc
+    isr_code  isr_sdio
+    isr_code  isr_tim5
     isr_code  isr_spi3
     isr_code  isr_uart4
+    isr_code  isr_uart5
     isr_code  isr_tim6_dac
     isr_code  isr_tim7
-    isr_code  isr_dma2_channel1
-    isr_code  isr_dma2_channel2
-    isr_code  isr_dma2_channel3
-    isr_code  isr_dma2_channel4
-    isr_code  isr_dma2_channel5
-    isr_code  isr_dfsdm1_flt0
-    isr_code  isr_dfsdm1_flt1
-    isr_code  isr_comp
-    isr_code  isr_lptim1
-    isr_code  isr_lptim2
+    isr_code  isr_dma2_stream0
+    isr_code  isr_dma2_stream1
+    isr_code  isr_dma2_stream2
+    isr_code  isr_dma2_stream3
+    isr_code  isr_dma2_stream4
+    isr_code  isr_eth
+    isr_code  isr_eth_wkup
+    isr_code  isr_can2_tx
+    isr_code  isr_can2_rx0
+    isr_code  isr_can2_rx1
+    isr_code  isr_can2_sce
     isr_code  isr_otg_fs
-    isr_code  isr_dma2_channel6
-    isr_code  isr_dma2_channel7
-    isr_code  isr_lpuart1
-    isr_code  isr_quadspi
+    isr_code  isr_dma2_stream5
+    isr_code  isr_dma2_stream6
+    isr_code  isr_dma2_stream7
+    isr_code  isr_usart6
     isr_code  isr_i2c3_ev
     isr_code  isr_i2c3_er
-    isr_code  isr_sai1
-    isr_code  isr_swpmi1
-    isr_code  isr_tsc
-    isr_code  isr_lcd
-    isr_code  isr_aes
-    isr_code  isr_rng
+    isr_code  isr_otg_hs_ep1_out
+    isr_code  isr_otg_hs_ep1_in
+    isr_code  isr_otg_hs_wkup
+    isr_code  isr_otg_hs
+    isr_code  isr_dcmi
+    isr_code  isr_cryp
+    isr_code  isr_hash_rng
     isr_code  isr_fpu
-    isr_code  isr_crs
-    isr_code  isr_i2c4_ev
-    isr_code  isr_i2c4_er
+    isr_code  isr_uart7
+    isr_code  isr_uart8
+    isr_code  isr_spi4
+    isr_code  isr_spi5
+    isr_code  isr_spi6
+    isr_code  isr_sai1
+    isr_code  isr_ltdc
+    isr_code  isr_ltdc_er
+    isr_code  isr_dma2d
 #undef isr_code
 
 .data ram
@@ -272,7 +295,7 @@ loop:
     mov r1, 4
     rsb r1, 0
     and r3, r4, r1
-
+    
     add.n r3, r3, r0
     str.n r3, [r2, 0]
     bx.n  lr
@@ -298,7 +321,7 @@ heap: .qbyte  @_heap_start
     mov r1, 4
     rsb r1, 0
     and r3, r4, r1
-    
+      
     str     r3, [r0, 0]
     b     skip
 heap:   .qbyte  @_heap_start

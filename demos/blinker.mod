@@ -1,0 +1,32 @@
+MODULE Test;
+IMPORT BoardConfig, SYSTEM;
+
+IN Micro IMPORT ARMv7M;
+IN Micro IMPORT Trap := ARMv7MTraps;
+IN Micro IMPORT SysTick := ARMv7MSTM32SysTick0;
+
+CONST Pins = BoardConfig.Pins;
+
+VAR pin : Pins.Pin;
+
+PROCEDURE SysIdle ["sysidle"];
+BEGIN ARMv7M.WFI
+END SysIdle;
+
+BEGIN
+	TRACE("START");
+    BoardConfig.Init;
+    
+    pin.Init(BoardConfig.USER_LED1_PORT, BoardConfig.USER_LED1_PIN, Pins.output,
+             Pins.pushPull, Pins.medium, Pins.noPull, Pins.AF0);
+
+    SysTick.Init(BoardConfig.HCLK, 1000);
+    REPEAT
+        pin.On;
+        TRACE("ON0");
+        WHILE ~SysTick.OnTimer() DO ARMv7M.SysIdle END;
+        pin.Off;
+        TRACE("OFF0");
+        WHILE ~SysTick.OnTimer() DO ARMv7M.SysIdle END;
+    UNTIL FALSE
+END Test.
