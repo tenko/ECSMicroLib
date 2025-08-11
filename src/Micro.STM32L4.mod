@@ -401,7 +401,7 @@ MODULE STM32L4 IN Micro;
 					RCC_CR*          = ADDRESS(RCC + 0);
 					RCC_ICSCR*       = ADDRESS(RCC + 4);
 					RCC_CFGR*        = ADDRESS(RCC + 8);
-					RCC_CPLLCFGR*    = ADDRESS(RCC + 0CH);
+					RCC_PLLCFGR*     = ADDRESS(RCC + 0CH);
 					RCC_PLLSAI1CFGR* = ADDRESS(RCC + 10H);
 					RCC_CIER*        = ADDRESS(RCC + 18H);
                     RCC_CIFR*        = ADDRESS(RCC + 1CH);
@@ -521,4 +521,9 @@ MODULE STM32L4 IN Micro;
                 	RNG_CR*  = ADDRESS(RNG + 0);
                     RNG_SR*  = ADDRESS(RNG + 4);
                     RNG_DR*  = ADDRESS(RNG + 8);
+                DBGMCU* = ADDRESS(0E0042000H);
+				DBGMCU_IDCODE*   = ADDRESS(DBGMCU + 0);
+				DBGMCU_CR*       = ADDRESS(DBGMCU + 4);
+				DBGMCU_APB1FZ*   = ADDRESS(DBGMCU + 8);
+				DBGMCU_APB2FZ*   = ADDRESS(DBGMCU + 0CH);
 END STM32L4.

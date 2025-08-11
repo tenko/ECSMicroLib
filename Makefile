@@ -19,9 +19,8 @@ RTS = ../micro.lib $(ECS)/runtime/stdarmt32.lib ../$(MCU)run.obf  $(ECS)/runtime
 
 OLS += ARMv7M ARMv7MTraps ARMv7MSTM32SysTick0 STM32F4 STM32L4
 OLS += BusI2C BusSPI BusUart OneWire CRC16CCITT8408 CRC16CCITT1021 CRC8 MemFormatters Config
-OLS += STM32F4Flash STM32F4Config STM32F4Pins STM32F4System STM32F4IWDG ARMv7MSTM32F4WWDG
-OLS += STM32F4SPI1 STM32F4Uart STM32F4OneWire STM32F405Uart
-OLS += STM32L4Pins
+OLS += STM32F4Flash STM32F4Config STM32F4Pins STM32F4System STM32L4System STM32L4Pins STM32F4IWDG
+OLS += ARMv7MSTM32F4WWDG STM32F4SPI1 STM32F4Uart STM32F4OneWire STM32F405Uart
 OLS += DeviceDS18B20
 
 MOD += $(addprefix src/, $(addprefix Micro., $(addsuffix .mod, $(OLS))))
@@ -33,6 +32,7 @@ all : micro.lib $(MCU)run.obf
 
 build/Micro.ARMv7MSTM32SysTick0.obf : src/Micro.ARMv7M.mod
 build/Micro.STM32F4System.obf : src/Micro.ARMv7M.mod src/Micro.STM32F4.mod
+build/Micro.STM32L4System.obf : src/Micro.ARMv7M.mod src/Micro.STM32L4.mod
 
 build/%.obf: src/%.mod
 	@echo compiling $<
