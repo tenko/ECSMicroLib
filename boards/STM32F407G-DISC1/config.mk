@@ -7,5 +7,5 @@ FLASHSTART 	:= 0x08000000
 QEMUFLAGS := --verbose --board STM32F4-Discovery --mcu STM32F407ZG --semihosting-config enable=on,target=native -d unimp,guest_errors
 
 ifeq ($(DEMO),)
-$(error Error: DEMO is not set. Expected blinker.)
+$(error Error: DEMO is not set. Expected blinker or uartecho.)
 endif

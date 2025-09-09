@@ -11,49 +11,30 @@ RM0383, Reference manual,
 RM0390, Reference manual,
     STM32F446xx (U1..U6)
 *)
-MODULE STM32F4Uart IN Micro;
+MODULE STM32F4Uart(n*) IN Micro;
 
 IMPORT SYSTEM;
 IN Micro IMPORT ARMv7M;
+IN Micro IMPORT BusUart;
 IN Micro IMPORT MCU := STM32F4;
 IN Micro IMPORT Pins := STM32F4Pins;
-IN Micro IMPORT BusUart;
+IN Micro IMPORT InBuffer := ADTRingBuffer(SYSTEM.BYTE, 128);
+IN Micro IMPORT OutBuffer := ADTRingBuffer(SYSTEM.BYTE, 512);
 
 CONST
-    USART1* = 0;
-    USART2* = 1;
-    USART3* = 2;
-    UART4* = 3;
-    UART5* = 4;
-    USART6* = 5;
-    UART7* = 6;
-    UART8* = 7;
+    Isr = SEL(n = 1, "isr_usart1", SEL(n = 2, "isr_usart2", SEL(n = 3, "isr_usart3", SEL(n = 4, "isr_uart4", SEL(n = 5, "isr_uart5", SEL(n = 6, "isr_usart6", SEL(n = 7, "isr_uart7", "isr_uart8")))))));
 
     parityNone* = 0; parityEven* = 8 + 2; parityOdd* = 8 + 3;
     stopBits1* = 0; stopBits05* = 1; stopBits2* = 2; stopBits15* = 3;
-
-    outBufLen* = BusUart.outBufLen;
-    inBufLen* = BusUart.inBufLen;
-
+    
     (* U[S]ARTxSR bits: *)
-    PE = 0; FE = 1; NF = 2; ORE = 3; IDLE = 4; RXNE = 5; TC = 6; TXE = 7;
-
-    (* NVIC *)
-    (* interrupt sources *)
-    USART1Int = 37;
-    USART2Int = 38;
-    USART3Int = 39;
-    UART4Int = 52;
-    UART5Int = 53;
-    USART6Int = 71;
-    UART7Int = 82;
-    UART8Int = 83;
+    PE = 0; RXNE = 5; TC = 6;
 
 TYPE
+    BYTE = SYSTEM.BYTE;
     ADDRESS = SYSTEM.ADDRESS;
-
+    
     InitPar* = RECORD
-        n*: INTEGER;
         RXPinPort*, RXPinN*, RXPinAF*: INTEGER;
         TXPinPort*, TXPinN*, TXPinAF*: INTEGER;
         UCLK*: INTEGER;
@@ -64,175 +45,107 @@ TYPE
     END;
 
     Bus* = RECORD (BusUart.Bus)
-        n, UCLK, UEN: INTEGER;
-        ISER, ICER: ADDRESS;
-        intS: SET;
+        inBuffer : InBuffer.RingBuffer;
+        outBuffer : OutBuffer.RingBuffer;
         enableTCI, disableTCI: SET;
-        SR, DR, CR1, CR3, BRR: ADDRESS;
+        SR, DR, CR1: ADDRESS;
     END;
-    PBus = POINTER TO VAR Bus;
+    PtrBus = POINTER TO VAR Bus;
 
-VAR bus- : PBus;
+(* Pointer for access to bus in ISR *)
+VAR bus : PtrBus;
 
-PROCEDURE (VAR b : Bus) SendNext;
-VAR x: CHAR;
-BEGIN
-    IF b.outFree < outBufLen THEN
-        b.outBusy := TRUE;
-        (* Get(x) *)
-        x := b.outBuf[b.outR]; b.outR := (b.outR + 1) MOD outBufLen;
-        INC(b.outFree);
-        SYSTEM.PUT(b.DR, ORD(x))
-    ELSE
-        SYSTEM.PUT(b.CR1, b.disableTCI);
-        b.outBusy := FALSE
-    END
-END SendNext;
-
-(* This procedure may be called from RX interrupts handler only *)
-PROCEDURE (VAR b : Bus) ByteReceived (x: CHAR);
-BEGIN
-    IF b.inFree > 0 THEN
-        (* Put(x) *)
-        DEC(b.inFree);
-        b.inBuf[b.inW] := x; b.inW := (b.inW + 1) MOD inBufLen
-    END
-END ByteReceived;
-
-PROCEDURE (VAR b : Bus) Interrupt*;
-VAR s: SET;
-    n, x: INTEGER;
-BEGIN
-    n := 400H;
-    SYSTEM.GET(b.SR, s);
-    WHILE (s * {PE,RXNE} # {}) & (n > 0) DO
-        IF RXNE IN s THEN
-            SYSTEM.GET(b.DR, x);
-            b.ByteReceived(CHR(x))
-        END;
-        DEC(n);
-        SYSTEM.GET(b.SR, s)
-    END;
-    n := 100H;
-    WHILE b.outBusy & (TC IN s) & (n > 0) DO
-        b.SendNext;
-        DEC(n);
-        SYSTEM.GET(b.SR, s)
-    END
-END Interrupt;
-
-(** Initialize U[s]art bus *)
-PROCEDURE (VAR b : Bus) Init* (par: InitPar);
+(** Initialize U[s]art[n] bus *)
+PROCEDURE Init* (VAR b : Bus; par-: InitPar);
 CONST
     (* U[S]ARTxCR1 bits: *)
     RE = 2; TE = 3;
-    IDLEIE = 4; RXNEIE = 5; TCIE = 6; TXEIE = 7; PEIE = 8;
-    M = 12; UE = 13;
-    (* U[S]ARTxCR3 bits: *)
-    EIE = 0; DMAR = 6; DMAT = 7;
-VAR 
+    RXNEIE = 5; TCIE = 6; PEIE = 8;
+    UE = 13;
+VAR
     rxpin,txpin : Pins.Pin;
-    x, intS: SET;
-    baud, UEN: INTEGER;
-    Int, ISER, ICER: ADDRESS;
-    base, CR1, CR2, CR3, BRR, SR, DR, GTPR: ADDRESS;
+    x: SET32;
+    baud, Int, UEN: INTEGER;
+    base, CR1, CR2, CR3, BRR, GTPR: ADDRESS;
     URCCENR, URCCLPENR: ADDRESS;
 BEGIN
+    ASSERT((n > 0) & (n < 9));
     ASSERT(par.UCLK > 0);
     ASSERT(par.baud > 0);
     ASSERT((par.parity = parityNone) OR (par.parity = parityEven) OR (par.parity = parityOdd));
     ASSERT(par.stopBits DIV 4 = 0);
-
-    IF par.n = USART1 THEN
-        Int := USART1Int;
+    
+    IF n = 1 THEN
+        Int := MCU.USART1Int;
         URCCENR := MCU.RCC_APB2ENR;
         URCCLPENR := MCU.RCC_APB2LPENR;
         UEN := 4;
         base := MCU.USART1
-    ELSIF par.n = USART2 THEN
-        Int := USART2Int;
+    ELSIF n = 2 THEN
+        Int := MCU.USART2Int;
         URCCENR := MCU.RCC_APB1ENR;
         URCCLPENR := MCU.RCC_APB1LPENR;
         UEN := 17;
         base := MCU.USART2
-    ELSIF par.n = USART3 THEN
-        Int := USART3Int;
+    ELSIF n = 3 THEN
+        Int := MCU.USART3Int;
         URCCENR := MCU.RCC_APB1ENR;
         URCCLPENR := MCU.RCC_APB1LPENR;
         UEN := 18;
         base := MCU.USART3
-    ELSIF par.n = UART4 THEN
+    ELSIF n = 4 THEN
         ASSERT(par.stopBits IN {stopBits1,stopBits2});
-		Int := UART4Int;
+		Int := MCU.UART4Int;
         URCCENR := MCU.RCC_APB1ENR;
         URCCLPENR := MCU.RCC_APB1LPENR;
         UEN := 19;
         base := MCU.UART4
-    ELSIF par.n = UART5 THEN
+    ELSIF n = 5 THEN
         ASSERT(par.stopBits IN {stopBits1,stopBits2});
-		Int := UART5Int;
+		Int := MCU.UART5Int;
         URCCENR := MCU.RCC_APB1ENR;
         URCCLPENR := MCU.RCC_APB1LPENR;
         UEN := 20;
         base := MCU.UART5
-    ELSIF par.n = USART6 THEN
-        Int := USART6Int;
+    ELSIF n = 6 THEN
+        Int := MCU.USART6Int;
         URCCENR := MCU.RCC_APB2ENR;
         URCCLPENR := MCU.RCC_APB2LPENR;
         UEN := 5;
         base := MCU.USART6
-    ELSIF par.n = UART7 THEN
-        Int := UART7Int;
+    ELSIF n = 7 THEN
+        Int := MCU.UART7Int;
         URCCENR := MCU.RCC_APB1ENR;
         URCCLPENR := MCU.RCC_APB1LPENR;
         UEN := 30;
         base := MCU.UART7
-    ELSIF par.n = UART8 THEN
-        Int := UART8Int;
+    ELSE
+        Int := MCU.UART8Int;
         URCCENR := MCU.RCC_APB1ENR;
         URCCLPENR := MCU.RCC_APB1LPENR;
         UEN := 31;
         base := MCU.UART8
-    ELSE HALT(1)
     END;
-
-    bus := PTR(b);
-    b.n := par.n; b.UCLK := par.UCLK; b.UEN := UEN;
-
-    SR := base;
-    DR := base + 4;
+    
     BRR := base + 8;
     CR1 := base + 0CH;
     CR2 := base + 10H;
     CR3 := base + 14H;
     GTPR := base + 18H;
 
-    intS := {Int MOD 32};
-	ISER := ARMv7M.NVICISER0 + (Int DIV 32) * 4;
-	ICER := ARMv7M.NVICICER0 + (Int DIV 32) * 4;
+    bus := PTR(b);
+    bus.CR1 := CR1;
+    bus.SR := base;
+    bus.DR := base + 4;
 
+    InBuffer.Init(bus.inBuffer);
+    OutBuffer.Init(bus.outBuffer);
+    
 	(* disable interrupts *)
-	SYSTEM.PUT(ICER, intS); ARMv7M.ISB;
+	SYSTEM.PUT(ARMv7M.NVICICER0 + (Int DIV 32) * 4, SET32({Int MOD 32})); (* ICER *)
+	ARMv7M.ISB;
 
-    b.ISER := ISER; b.ICER := ICER; b.intS := intS;
-    b.SR := SR; b.DR := DR; b.CR1 := CR1; b.CR3 := CR3; b.BRR := BRR;
-
-    (* enable clock for USART *)
-    SYSTEM.GET(URCCENR, x);
-    SYSTEM.PUT(URCCENR, x + {UEN});
-
-    (* out *)
-    b.outW := 0;
-    b.outR := 0;
-    b.outFree := outBufLen;
-    b.outBusy := FALSE;
-
-    (* in *)
-    b.inW := 0;
-    b.inFree := inBufLen;
-    b.inR := 0;
-
-    (* enable clock for U[S]ART *)
+	(* enable clock for U[S]ART *)
     SYSTEM.GET(URCCENR, x);
     SYSTEM.PUT(URCCENR, x + {UEN});
 
@@ -240,10 +153,8 @@ BEGIN
     SYSTEM.PUT(URCCLPENR, x + {UEN});
 
     (* configure U[S]ART pins *)
-    rxpin.Init(par.RXPinPort, par.RXPinN,
-        Pins.alt, Pins.pushPull, Pins.low, Pins.pullUp, par.RXPinAF);
-    txpin.Init(par.TXPinPort, par.TXPinN,
-        Pins.alt, Pins.pushPull, Pins.low, Pins.pullUp, par.TXPinAF);
+    rxpin.Init(par.RXPinPort, par.RXPinN, Pins.alt, Pins.pushPull, Pins.low, Pins.pullUp, par.RXPinAF);
+    txpin.Init(par.TXPinPort, par.TXPinN, Pins.alt, Pins.pushPull, Pins.low, Pins.pullUp, par.TXPinAF);
 
     (* defaults *)
     SYSTEM.PUT(CR1, {});
@@ -251,22 +162,23 @@ BEGIN
     SYSTEM.PUT(CR3, {});
     SYSTEM.PUT(GTPR, {});
 
+    (* enable U[S]ART *)
     SYSTEM.GET(CR1, x);
-    SYSTEM.PUT(CR1, x + {UE}); (* enable U[S]ART *)
-
+    SYSTEM.PUT(CR1, x + {UE});
+    
     (* select number of stop bits *)
     SYSTEM.GET(CR2, x);
-    SYSTEM.PUT(CR2, x + SYSTEM.VAL(SET, par.stopBits * 1000H));
+    SYSTEM.PUT(CR2, x + SET32(par.stopBits * 1000H));
 
     (* select parity *)
     SYSTEM.GET(CR1, x);
-    SYSTEM.PUT(CR1, x + SYSTEM.VAL(SET, par.parity * 200H));
+    SYSTEM.PUT(CR1, x + SET32(par.parity * 200H));
 
     (* baud rate register *)
     baud := par.UCLK DIV par.baud;
     ASSERT(baud DIV 10000H = 0);
     SYSTEM.PUT(BRR, baud);
-
+    
     (* enable receiver and transmitter *)
     SYSTEM.GET(CR1, x);
     IF par.disableReceiver THEN
@@ -275,68 +187,100 @@ BEGIN
         SYSTEM.PUT(CR1, x + {RE,TE})
     END;
 
-    (* enable interrupts *)
+	(* enable interrupts *)
     SYSTEM.GET(CR1, x);
-    b.disableTCI := x + {RXNEIE,PEIE};
-    b.enableTCI := b.disableTCI + {TCIE};
-    SYSTEM.PUT(CR1, b.disableTCI);
-    SYSTEM.PUT(ISER, intS)
+    bus.disableTCI := x + {RXNEIE,PEIE};
+    bus.enableTCI := bus.disableTCI + {TCIE};
+    SYSTEM.PUT(bus.CR1, bus.disableTCI);
+    
+    SYSTEM.PUT(ARMv7M.NVICISER0 + (Int DIV 32) * 4, SET32({Int MOD 32})); (* ISER *)
 END Init;
 
-(** Read n bytes to memory buffer at adr. done contains actual read bytes. *)
-PROCEDURE (VAR b : Bus) Read*(adr: ADDRESS; len: LENGTH; VAR done: LENGTH);
-VAR x: CHAR;
+(** Return number of characters available in read buffer *)
+PROCEDURE (VAR this : Bus) Any*(): LENGTH;
+BEGIN RETURN this.inBuffer.Size() END Any;
+
+(** Return TRUE if we are not currently transmitting data *)
+PROCEDURE (VAR this : Bus) TXDone*(): BOOLEAN;
+VAR x: SET32;
 BEGIN
-    (* CRITICAL *)
-    done := inBufLen - b.inFree; (* Available *)
+    SYSTEM.GET(bus.CR1, x);
+    RETURN x = bus.disableTCI
+END TXDone;
 
-    IF len < done THEN done := len END;
+PROCEDURE (VAR this : Bus) TXEnable();
+BEGIN SYSTEM.PUT(bus.CR1, bus.enableTCI);
+END TXEnable;
 
-    IF done > 0 THEN
-        len := done;
-        REPEAT
-            (* Get(x) *)
-            x := b.inBuf[b.inR]; b.inR := (b.inR + 1) MOD inBufLen;
-            (* Put(x) *)
-            SYSTEM.PUT(adr, x); INC(adr);
-            DEC(len)
-        UNTIL len = 0;
-        (* CRITICAL *)
-        SYSTEM.PUT(b.ICER, b.intS); ARMv7M.ISB;
-        b.inFree := b.inFree + done;
-        SYSTEM.PUT(b.ISER, b.intS)
-    END
-END Read;
+PROCEDURE (VAR this : Bus) TXDisable();
+BEGIN SYSTEM.PUT(bus.CR1, bus.disableTCI);
+END TXDisable;
 
-(** Write len bytes memory buffer at adr. done contains actual written bytes. *)
-PROCEDURE (VAR b : Bus) Write* (adr: ADDRESS; len: LENGTH; VAR done: LENGTH);
-VAR x: CHAR;
+(** Read bytes into buffer with start and length. *)
+PROCEDURE (VAR this: Bus) ReadBytes*(VAR buffer : ARRAY OF BYTE; start, length : LENGTH): LENGTH;
+VAR
+    i : LENGTH;
+    x : BYTE;
 BEGIN
-	ASSERT(len >= 0);
+    i := 0;
+    WHILE (i < length) & this.inBuffer.Pop(x) DO
+        buffer[start + i] := x;
+        INC(i);
+    END;
+    RETURN i
+END ReadBytes;
 
-    done := b.outFree; (* outFree access is safe here, because it may be incremented only in interrupts handler *)
+(** Read `CHAR` value. Return `TRUE` if success. *)
+PROCEDURE (VAR this: Bus) ReadChar*(VAR value : CHAR): BOOLEAN;
+BEGIN RETURN this.ReadBytes(value, 0, 1) = 1 END ReadChar;
 
-    IF len < done THEN done := len END;
+(** Write bytes from buffer with start and length. *)
+PROCEDURE (VAR this: Bus) WriteBytes*(VAR buffer : ARRAY OF BYTE; start, length: LENGTH): LENGTH;
+VAR i : LENGTH;
+BEGIN
+    i := 0;
+    LOOP
+        IF i >= length THEN EXIT; END;
+        IF ~this.outBuffer.Push(buffer[start + i]) THEN EXIT END;
+        INC(i);
+    END;
+    (* enable tx interrupt if needed *)
+    IF (i > 0) & this.TXDone() THEN
+        this.TXEnable()
+    END;
+    RETURN i
+END WriteBytes;
+  
+(** Write `CHAR` value. Return `TRUE` if success. *)
+PROCEDURE (VAR this: Bus) WriteChar*(value : CHAR): BOOLEAN;
+BEGIN RETURN this.WriteBytes(value, 0, 1) = 1
+END WriteChar;
 
-    IF done > 0 THEN
-        len := done;
-        REPEAT
-            (* Get(x) *)
-            SYSTEM.GET(adr, x); INC(adr);
-            (* Put(x) *)
-            b.outBuf[b.outW] := x; b.outW := (b.outW + 1) MOD outBufLen;
-            DEC(len)
-        UNTIL len = 0;
-
-        (* CRITICAL *)
-        SYSTEM.PUT(b.ICER, b.intS); ARMv7M.ISB;
-        b.outFree := b.outFree - done;
-        IF ~b.outBusy THEN
-            b.SendNext();
-            SYSTEM.PUT(b.CR1, b.enableTCI)
+PROCEDURE InterruptHandler [Isr] ();
+VAR
+    n : LENGTH;
+    s : SET32;
+    x : BYTE;
+BEGIN
+    IF bus = NIL THEN RETURN END;
+    n := 8 * InBuffer.Size;
+    SYSTEM.GET(bus.SR, s);
+    WHILE (s * {PE,RXNE} # {}) & (n > 0) DO
+        IF RXNE IN s THEN
+            SYSTEM.GET(bus.DR, x);
+            IGNORE(bus.inBuffer.Push(x));
         END;
-        SYSTEM.PUT(b.ISER, b.intS)
-    END
-END Write;
+        DEC(n);
+        SYSTEM.GET(bus.SR, s);
+    END;
+    WHILE (bus.outBuffer.Size() > 0) & (TC IN s) DO
+        IGNORE(bus.outBuffer.Pop(x));
+        SYSTEM.PUT(bus.DR, x);
+        SYSTEM.GET(bus.SR, s);
+    END;
+    IF bus.outBuffer.Size() = 0 THEN
+        bus.TXDisable()
+    END;
+END InterruptHandler;
 
 END STM32F4Uart.

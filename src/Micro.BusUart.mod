@@ -8,52 +8,26 @@ MODULE BusUart IN Micro;
 
 IMPORT SYSTEM;
 
-CONST
-    outBufLen* = 512; (* 2^n *)
-    inBufLen* = 128; (* 2^n *)
-
 TYPE
-    ADDRESS = SYSTEM.ADDRESS;
-
-    Bus* = RECORD
-        (* out *)
-            outFree*: INTEGER;
-            (* W *)
-                outW*: INTEGER; (* writer *)
-            (* R *)
-                outR*: INTEGER; (* reader *)
-            outBusy*: BOOLEAN;
-
-        (* in *)
-            inFree*: INTEGER;
-            (* W *)
-                inW*: INTEGER; (* writer *)
-            (* R *)
-                inR*: INTEGER; (* reader *) 
-
-        inBuf*: ARRAY inBufLen OF CHAR;
-        outBuf*: ARRAY outBufLen OF CHAR
-    END;
+    BYTE = SYSTEM.BYTE;
+    Bus* = RECORD* END;
 
 (** Return number of characters available in read buffer *)
-PROCEDURE (VAR b- : Bus) Any*(): LENGTH;
-BEGIN RETURN inBufLen - b.inFree END Any;
+PROCEDURE* (VAR this : Bus) Any*(): LENGTH;
 
-(** Return TRUE if write buffer can accomodate len characters *)
-PROCEDURE (VAR b- : Bus) WriteAvailable*(len: LENGTH) : BOOLEAN;
-BEGIN RETURN b.outFree >= len (* outFree access is safe here *)
-END WriteAvailable;
+(** Return FALSE if we are currently transmitting data *)
+PROCEDURE* (VAR this : Bus) TXDone*(): BOOLEAN;
 
-(** Callback on idle condition *)
-PROCEDURE (VAR b- : Bus) OnIdle*;
-BEGIN END OnIdle;
+(** Read bytes into buffer with start and length. *)
+PROCEDURE* (VAR this: Bus) ReadBytes*(VAR buffer : ARRAY OF BYTE; start, length : LENGTH): LENGTH;
 
-(** Read n bytes to memory buffer at adr. done contains actual read bytes. *)
-PROCEDURE (VAR b : Bus) Read*(adr: ADDRESS; len: LENGTH; VAR done: LENGTH);
-BEGIN END Read;
+(** Read `CHAR` value. Return `TRUE` if success. *)
+PROCEDURE* (VAR this: Bus) ReadChar*(VAR value : CHAR): BOOLEAN;
 
-(** Write len bytes memory buffer at adr. done contains actual written bytes. *)
-PROCEDURE (VAR b : Bus) Write* (adr: ADDRESS; len: LENGTH; VAR done: LENGTH);
-BEGIN END Write;
+(** Write bytes from buffer with start and length. *)
+PROCEDURE* (VAR this: Bus) WriteBytes*(VAR buffer : ARRAY OF BYTE; start, length: LENGTH): LENGTH;
+
+(** Write `CHAR` value. Return `TRUE` if success. *)
+PROCEDURE* (VAR this: Bus) WriteChar*(value : CHAR): BOOLEAN;
 
 END BusUart.

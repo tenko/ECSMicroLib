@@ -65,11 +65,11 @@ MODULE STM32L4Pins IN Micro;
 		y := pin * 2;
 
 		(* enable clock for pin port *)
-			SYSTEM.GET(MCU.RCC_AHB2ENR, x);
-			SYSTEM.PUT(MCU.RCC_AHB2ENR, x + {port});
+		SYSTEM.GET(MCU.RCC_AHB2ENR, x);
+		SYSTEM.PUT(MCU.RCC_AHB2ENR, x + {port});
 
-			SYSTEM.GET(MCU.RCC_AHB2SMENR, x);
-			SYSTEM.PUT(MCU.RCC_AHB2SMENR, x + {port});
+		SYSTEM.GET(MCU.RCC_AHB2SMENR, x);
+		SYSTEM.PUT(MCU.RCC_AHB2SMENR, x + {port});
 
 		r := MCU.GPIOA_MODER + port * portSpacing;
 		SYSTEM.GET(r, x);

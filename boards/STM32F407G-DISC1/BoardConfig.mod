@@ -7,6 +7,7 @@
 MODULE BoardConfig;
 
 IN Micro IMPORT STM32F4Pins;
+IN Micro IMPORT STM32F4Uart := STM32F4Uart(2);
 IN Micro IMPORT STM32F4System;
 
 CONST
@@ -15,6 +16,7 @@ CONST
     USER_LED1_PIN* = 15;
 
     Pins* = STM32F4Pins;
+    Uart* = STM32F4Uart;
     
     (* Clocks *)
     fHSE = 8000000; (* Hz external crystal *)
@@ -25,6 +27,19 @@ VAR
 	PCLK2*, TIMCLK2*,
 	QCLK*, (* QCLK <= 48 MHz, best is 48 MHz *)
 	RCLK*: INTEGER; (* Hz *)
+
+PROCEDURE InitUart*(VAR bus : Uart.Bus; baud, parity, stopBits : INTEGER);
+VAR par : Uart.InitPar;
+BEGIN
+    par.RXPinPort := Pins.A; par.RXPinN := 3; par.RXPinAF := Pins.AF7;
+    par.TXPinPort := Pins.A; par.TXPinN := 2;  par.TXPinAF := Pins.AF7;
+    par.UCLK := PCLK1;
+    par.baud := baud;
+    par.parity := parity;
+    par.stopBits := stopBits;
+    par.disableReceiver := FALSE;
+    Uart.Init(bus, par);
+END InitUart;
 
 PROCEDURE Init*;
 BEGIN

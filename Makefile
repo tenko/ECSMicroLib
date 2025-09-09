@@ -20,4 +20,5 @@ help:
 .PHONY: clean
 clean:
 	@echo Clean
+	@-rm micro.lib
 	@-rm -rf build

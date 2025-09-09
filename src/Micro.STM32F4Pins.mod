@@ -57,7 +57,7 @@ MODULE STM32F4Pins IN Micro;
     TYPE
         ADDRESS = SYSTEM.ADDRESS;
         Pin* = RECORD
-            BASE : ADDRESS;
+            BASE- : ADDRESS;
             port-, pin- : INTEGER;
         END;
 

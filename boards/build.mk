@@ -65,7 +65,7 @@ build/test.obf: build/BoardConfig.obf demos/$(DEMO).mod
 
 .PHONY: flash
 flash: build/test.rom
-	@$(STFLASH) --format binary write build/test.rom $(FLASHSTART)
+	@$(STFLASH) --connect-under-reset --format binary write build/test.rom $(FLASHSTART)
 
 .PHONY: dis
 dis: build/dis.obf build/test.rom
@@ -73,9 +73,9 @@ dis: build/dis.obf build/test.rom
 
 .PHONY: server
 server:
-	@$(STUTIL) --semihosting
+	@$(STUTIL) --connect-under-reset --semihosting
 
 .PHONY: gdb
 gdb:
-	@$(GDB) -ex 'printf "NOTE : Start with run command.\n"' -ex "target extended localhost:4242"
+	@$(GDB) -ex "target extended localhost:4242" -ex "continue"
 	

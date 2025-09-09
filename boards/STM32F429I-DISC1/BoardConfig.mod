@@ -5,7 +5,11 @@
 *)
 MODULE BoardConfig;
 
+IN Micro IMPORT SysTick := ARMv7MSTM32SysTick0;
 IN Micro IMPORT STM32F4Pins;
+IN Micro IMPORT STM32F4Uart := STM32F4Uart(1);
+IN Micro IMPORT STM32F4I2C;
+IN Micro IMPORT STM32F4SPI5 := STM32F4SPI(5);
 IN Micro IMPORT STM32F4System;
 
 CONST
@@ -18,6 +22,9 @@ CONST
     USER_BUTTON1_PIN* = 0; (* B1 Blue PushButton *)
 
     Pins* = STM32F4Pins;
+    Uart* = STM32F4Uart;
+    I2C* = STM32F4I2C;
+    SPI5* = STM32F4SPI5;
     
     (* Clocks *)
     fHSE = 8000000; (* Hz external crystal *)
@@ -28,6 +35,81 @@ VAR
 	PCLK2*, TIMCLK2*,
 	QCLK*, (* QCLK <= 48 MHz, best is 48 MHz *)
 	RCLK*: INTEGER; (* Hz *)
+
+PROCEDURE InitUart*(VAR bus : Uart.Bus; baud, parity, stopBits : INTEGER);
+VAR par : Uart.InitPar;
+BEGIN
+    par.RXPinPort := Pins.A; par.RXPinN := 10; par.RXPinAF := Pins.AF7;
+    par.TXPinPort := Pins.A; par.TXPinN := 9;  par.TXPinAF := Pins.AF7;
+    IF HCLK = STM32F4System.fHSI THEN 
+        par.UCLK := HCLK;
+    ELSE
+        par.UCLK := PCLK2;
+    END;
+    par.baud := baud;
+    par.parity := parity;
+    par.stopBits := stopBits;
+    par.disableReceiver := FALSE;
+    Uart.Init(bus, par);
+END InitUart;
+
+PROCEDURE InitSTMPE811I2C* (VAR bus : I2C.Bus);
+VAR
+    par: I2C.InitPar;
+BEGIN
+    par.n := 3;
+    par.SCLPinPort := Pins.A;
+    par.SCLPinN := 8;
+    par.SCLPinAF := Pins.AF4;
+    par.SDAPinPort := Pins.C;
+    par.SDAPinN := 9;
+    par.SDAPinAF := Pins.AF4;
+    par.PCLK1 := PCLK1;
+    par.freq := 100000;
+    par.getTicks := SysTick.GetTicks;
+    par.timeout := 5000;
+    I2C.Init(bus, par);
+END InitSTMPE811I2C;
+
+PROCEDURE InitI3G4250DSPI* (VAR bus : SPI5.Bus);
+VAR
+    par: SPI5.InitPar;
+BEGIN
+    par.SCKPinPort := Pins.F;
+    par.SCKPinN := 7;
+    par.SCKPinAF := Pins.AF5;
+    par.MISOPinPort := Pins.F;
+    par.MISOPinN := 8;
+    par.MISOPinAF := Pins.AF5;
+    par.MOSIPinPort := Pins.F;
+    par.MOSIPinN := 9;
+    par.MOSIPinAF := Pins.AF5;
+    par.pullType := SPI5.noPull;
+    par.br := 7;
+    par.cPha := FALSE;
+    par.cPol := FALSE;
+    par.configNSS := FALSE;
+    SPI5.Init(bus, par);
+END InitI3G4250DSPI;
+
+PROCEDURE InitILI9341SPI* (VAR bus : SPI5.Bus);
+VAR
+    par: SPI5.InitPar;
+BEGIN
+    par.SCKPinPort := Pins.F;
+    par.SCKPinN := 7;
+    par.SCKPinAF := Pins.AF5;
+    par.MISOPinPort := -1;
+    par.MOSIPinPort := Pins.F;
+    par.MOSIPinN := 9;
+    par.MOSIPinAF := Pins.AF5;
+    par.pullType := SPI5.noPull;
+    par.br := 0;
+    par.cPha := FALSE;
+    par.cPol := FALSE;
+    par.configNSS := FALSE;
+    SPI5.Init(bus, par);
+END InitILI9341SPI;
 
 PROCEDURE Init*;
 BEGIN

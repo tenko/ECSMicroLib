@@ -1,10 +1,11 @@
 # Board specific configuration
 RUNTIME 	:= stm32l4run.asm
+EXMODULES   := 
 BOOTSTART 	:= 0x00000000
 RAMSTART 	:= 0x20000000
-RAMSIZE 	:= 0x00008000
+RAMSIZE 	:= 0x00006000
 FLASHSTART 	:= 0x08000000
 
 ifeq ($(DEMO),)
-$(error Error: DEMO is not set. Expected blinker.)
+$(error Error: DEMO is not set. Expected blinker or uartecho.)
 endif

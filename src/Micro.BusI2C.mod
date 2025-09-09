@@ -1,52 +1,30 @@
 MODULE BusI2C IN Micro;
 
-(* Alexander Shiryaev, 2016.12
-    Modified by Tenko for use with ECS
-*)
 IMPORT SYSTEM;
 
-CONST
-    (* read options *)
-    opt0* = 0;
-
-    (* res *)
-    ok* = 0;
-    
-    outBufLen* = 128;
-	inBufLen* = 128;
-
 TYPE
-    ADDRESS = SYSTEM.ADDRESS;
-    
-    Bus* = RECORD
-        outBuf: ARRAY outBufLen OF CHAR;
-		inBuf: ARRAY inBufLen OF CHAR;
-    END;
-
-(** Callback on operation completion *)
-PROCEDURE (VAR b- : Bus) OnComplete*;
-BEGIN END OnComplete;
-
-(** Read len bytes to memory location adr from peripheral specified by addr *)
-PROCEDURE (VAR b : Bus) Read*(addr: INTEGER; adr: ADDRESS; len: LENGTH; VAR ok: BOOLEAN);
-BEGIN END Read;
+    BYTE = SYSTEM.BYTE;
+    Bus* = RECORD* END;
 
 (**
-Read len bytes to memory location adr from peripheral specified by addr starting
-from the memory address maddr.
+Probe address adr for device respons.
+Return 0 if device responded.
 *)
-PROCEDURE (VAR b : Bus) ReadMem*(addr, maddr: INTEGER; adr: ADDRESS; len: LENGTH; VAR ok: BOOLEAN);
-BEGIN END ReadMem;
-
-(** Write len bytes from memory location adr to peripheral specified by addr *)
-PROCEDURE (VAR b : Bus) Write*(addr: INTEGER; adr: ADDRESS; len: LENGTH; VAR ok: BOOLEAN);
-BEGIN END Write;
+PROCEDURE* (VAR this: Bus) Probe*(adr : INTEGER): INTEGER;
 
 (**
-Write len bytes to memory location adr to peripheral specified by addr starting
-from the memory address maddr.
+Read into buffer from the peripheral specified by addr.
+The number of bytes read is length and the data is written
+to the buffer starting from start index.
+The function returns the number of bytes that were received.
 *)
-PROCEDURE (VAR b : Bus) WriteMem*(addr, maddr: INTEGER; adr: ADDRESS; len: LENGTH; VAR ok: BOOLEAN);
-BEGIN END WriteMem;
+PROCEDURE* (VAR this: Bus) Read*(adr : INTEGER; VAR buffer : ARRAY OF BYTE; start, length : LENGTH): LENGTH;
+
+(**
+Write bytes from the buffer to the peripheral specified by addr.
+The number of bytes written is length and starting from start index.
+The function returns the number of bytes that were sent.
+*)
+PROCEDURE* (VAR this: Bus) Write*(adr : INTEGER; VAR buffer : ARRAY OF BYTE; start, length : LENGTH; stop : BOOLEAN): LENGTH;
 
 END BusI2C.

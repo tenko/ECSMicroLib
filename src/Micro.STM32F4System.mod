@@ -144,7 +144,6 @@ BEGIN
 	ELSE
 		REPEAT UNTIL FALSE (* HALT *)
 	END;
-	
 	fVCOOut := fVCOIn * PLLN;
 	fPLLOut := fVCOOut DIV PLLP;
 	PLLQ := (fVCOOut - 1) DIV QCLK + 1;
@@ -153,6 +152,7 @@ BEGIN
 	HCLK := SYSTEM.LSH(fPLLOut, -HPREN);
 	PCLK1 := SYSTEM.LSH(HCLK, -PPRE1N);
 	PCLK2 := SYSTEM.LSH(HCLK, -PPRE2N);
+	
 	IF PPRE1N = 0 THEN
 		TIMCLK1 := PCLK1
 	ELSE
@@ -172,6 +172,61 @@ BEGIN
 	ELSE
 		REPEAT UNTIL SYSTEM.BIT(MCU.RCC_CR, HSIRDY)
 	END;
+
+	(* Select regulator voltage output Scale 1 mode *)
+	SYSTEM.GET(MCU.RCC_APB1ENR, x);
+	SYSTEM.PUT(MCU.RCC_APB1ENR, x + {PWREN});
+	SYSTEM.GET(MCU.PWR_CR, x);
+	SYSTEM.PUT(MCU.PWR_CR, x - {VOS0,VOS1} + VOS);
+
+    (* NOTE: The AHB clock frequency must be at least 25 MHz when the Ethernet is used *)
+	SYSTEM.GET(MCU.RCC_CFGR, x);
+	SYSTEM.PUT(MCU.RCC_CFGR, x - {4..7} + SET32((HPREN + 7) * 10H));
+
+	SYSTEM.GET(MCU.RCC_CFGR, x);
+	SYSTEM.PUT(MCU.RCC_CFGR, x - {13,14,15} + SET32((PPRE2N + 3) * 2000H));
+
+	SYSTEM.GET(MCU.RCC_CFGR, x);
+	SYSTEM.PUT(MCU.RCC_CFGR, x - {10,11,12} + SET32((PPRE1N + 3) * 400H));
+
+    (* Configure the main PLL *)
+	IF PLLSRC = HSE THEN PLLM := fHSE DIV fVCOIn
+	ELSE PLLM := fHSI DIV fVCOIn
+	END; (* 2 <= PLLM <= 63 *)
+	SYSTEM.PUT(MCU.RCC_PLLCFGR, PLLM + PLLN * 40H
+		+ (PLLP DIV 2 - 1) * 10000H
+		+ PLLSRC * 400000H
+		+ PLLQ * 1000000H
+		+ PLLR * 10000000H);
+
+	(* Enable the main PLL *)
+	SYSTEM.GET(MCU.RCC_CR, x);
+	SYSTEM.PUT(MCU.RCC_CR, x + {PLLON});
+	REPEAT UNTIL SYSTEM.BIT(MCU.RCC_CR, PLLRDY);
+
+	IF HCLK > 168000000 THEN
+		(* Enable the Over-drive to extend the clock frequency to 180 MHz *)
+		SYSTEM.GET(MCU.PWR_CR, x);
+		SYSTEM.PUT(MCU.PWR_CR, x + {ODEN});
+		REPEAT UNTIL SYSTEM.BIT(MCU.PWR_CSR, ODRDY);
+
+		SYSTEM.GET(MCU.PWR_CR, x);
+		SYSTEM.PUT(MCU.PWR_CR, x + {ODSWEN});
+		REPEAT UNTIL SYSTEM.BIT(MCU.PWR_CSR, ODSWRDY)
+	END;
+
+	(*
+		Configure Flash prefetch, Instruction cache, Data cache
+		and wait state
+	*)
+	SYSTEM.PUT(MCU.FLASH_ACR, {PRFTEN,ICEN,DCEN} + SET32(flashLatency));
+
+	(* Select the main PLL as system clock source *)
+	SYSTEM.GET(MCU.RCC_CFGR, x);
+	SYSTEM.PUT(MCU.RCC_CFGR, x - {0,1});
+	SYSTEM.GET(MCU.RCC_CFGR, x);
+	SYSTEM.PUT(MCU.RCC_CFGR, x - {0} + {1});
+	REPEAT SYSTEM.GET(MCU.RCC_CFGR, x) UNTIL x * {2,3} = {3}
 END SetPLLSysClock;
 
 PROCEDURE Init*;

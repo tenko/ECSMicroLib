@@ -7,34 +7,50 @@ IMPORT SYSTEM;
 
 CONST
     (* res values: *)
-    resComplete* = 0;
-    resNotStarted* = 1;
-    resStarted* = 2;
-    resError* = 3;
+    OK* = 0;
+    ErrorTimeout* = -1;
 
 TYPE
     ADDRESS = SYSTEM.ADDRESS;
+    BYTE = SYSTEM.BYTE;
     
     Bus* = RECORD
-        res*, err*: INTEGER;
-		n*: INTEGER;
-		overruns*: INTEGER;
+        res*: INTEGER;
     END;
 
-(** Callback on operation completion *)
-PROCEDURE (VAR b- : Bus) OnComplete*;
-BEGIN END OnComplete;
+(** Callback during transfer idle *)
+PROCEDURE (VAR this : Bus) Idle*;
+BEGIN
+END Idle;
 
-(** Read len bytes to memory location in adr and send TXChar *)
-PROCEDURE (VAR b : Bus) Read* (adr: ADDRESS; len: LENGTH; TXChar : CHAR);
-BEGIN END Read;
+(**
+General transfer routine.
+ - rxAdr : address to read buffer. Can be 0 for tx only.
+ - txAdr : address to write buffer. Can be 0 for rx only.
+ - txConst : if TRUE then tx constant value.
+ - dataSize : 8 or 16 bit.
+ - len : length of buffer
+ *)
+PROCEDURE (VAR this : Bus) Transfer* (rxAdr, txAdr : ADDRESS; txConst : BOOLEAN; dataSize, len : LENGTH);
+BEGIN END Transfer;
 
-(** Write len bytes from memory location in adr *)
-PROCEDURE (VAR b : Bus) Write* (adr: ADDRESS; len: LENGTH);
-BEGIN END Write;
+(** Read length bytes to buffer begining at start index and send TXByte *)
+PROCEDURE (VAR this : Bus) Read*(VAR buffer : ARRAY OF BYTE; start, length : LENGTH; TXByte : BYTE);
+BEGIN
+END Read;
 
-(** Write and read len bytes from/to memory locations in txAdr and rxArd *)
-PROCEDURE (VAR b : Bus) ReadWrite* (txAdr, rxAdr: ADDRESS; len: LENGTH);
-BEGIN END ReadWrite;
+(** Write length bytes from buffer begining at start index *)
+PROCEDURE (VAR this : Bus) Write*(VAR buffer : ARRAY OF BYTE; start, length : LENGTH);
+BEGIN
+END Write;
+
+(**
+Write length bytes from buffer begining at TXStart index
+and at the same time read length bytes to buffer begining
+at RXStart index.
+*)
+PROCEDURE (VAR this : Bus) ReadWrite*(VAR RXBuffer : ARRAY OF BYTE;VAR TXBuffer : ARRAY OF BYTE; RXStart, TXStart, length : LENGTH);
+BEGIN
+END ReadWrite;
 
 END BusSPI.

@@ -526,4 +526,12 @@ MODULE STM32L4 IN Micro;
 				DBGMCU_CR*       = ADDRESS(DBGMCU + 4);
 				DBGMCU_APB1FZ*   = ADDRESS(DBGMCU + 8);
 				DBGMCU_APB2FZ*   = ADDRESS(DBGMCU + 0CH);
+
+				(* NVIC *)
+                (* interrupt sources *)
+                USART1Int* = 37;
+                USART2Int* = 38;
+                USART3Int* = 39;
+                UART4Int* = 52;
+
 END STM32L4.
