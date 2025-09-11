@@ -15,7 +15,7 @@ TYPE
     BYTE = SYSTEM.BYTE;
     
     Bus* = RECORD
-        res*: INTEGER;
+        res*, maxTransferSize*: INTEGER;
     END;
 
 (** Callback during transfer idle *)

@@ -92,7 +92,7 @@ BEGIN
     SPI5.Init(bus, par);
 END InitI3G4250DSPI;
 
-PROCEDURE InitILI9341SPI* (VAR bus : SPI5.Bus);
+PROCEDURE InitILI9341SPI* (VAR bus : SPI5.Bus; VAR rst, cs, dc : Pins.Pin);
 VAR
     par: SPI5.InitPar;
 BEGIN
@@ -109,6 +109,13 @@ BEGIN
     par.cPol := FALSE;
     par.configNSS := FALSE;
     SPI5.Init(bus, par);
+
+    rst.Init(Pins.A, 7, Pins.output, Pins.pushPull, Pins.low, Pins.noPull, Pins.AF0);
+    rst.On;
+    cs.Init(Pins.C, 2, Pins.output, Pins.pushPull, Pins.low, Pins.noPull, Pins.AF0);
+    cs.On;
+    dc.Init(Pins.D, 13, Pins.output, Pins.pushPull, Pins.low, Pins.noPull, Pins.AF0);
+    dc.On;
 END InitILI9341SPI;
 
 PROCEDURE Init*;

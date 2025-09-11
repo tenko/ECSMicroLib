@@ -111,6 +111,7 @@ BEGIN
 
     bus := PTR(b);
     b.res := OK;
+    b.maxTransferSize := MaxTransferSize;
     
     IF n = 1 THEN
         Int := MCU.SPI1Int;
@@ -319,6 +320,34 @@ PROCEDURE (VAR this : Bus) Idle*;
 BEGIN
 END Idle;
 
+(** Enable SPI device *)
+PROCEDURE (VAR this : Bus) Enable*;
+CONST
+    (* SPI CR1 bits: *)
+    SPE = 6;
+VAR
+    x : SET32;
+BEGIN
+    SYSTEM.GET(this.CR1, x);
+    SYSTEM.PUT(this.CR1, x + {SPE});
+END Enable;
+
+(** Disable SPI device *)
+PROCEDURE (VAR this : Bus) Disable*;
+CONST
+    (* SPI SR bits: *)
+    BSY = 7;
+    (* SPI CR1 bits: *)
+    SPE = 6;
+VAR
+    x : SET32;
+BEGIN
+    WHILE SYSTEM.BIT(this.SR, BSY) DO END;
+    SYSTEM.GET(this.CR1, x);
+    SYSTEM.PUT(this.CR1, x - {SPE});
+    WHILE SYSTEM.BIT(this.CR1, SPE) DO END;
+END Disable;
+
 (**
 General transfer routine.
  - rxAdr : address to read buffer. Can be 0 for tx only.
@@ -342,25 +371,39 @@ VAR
     x : SET32;
     t0 : UNSIGNED32;
     dummy : UNSIGNED16;
+    currentDataSize : INTEGER;
+    enabled : BOOLEAN;
 BEGIN
     ASSERT((rxAdr # 0) OR (txAdr # 0));
     ASSERT((dataSize = 8) OR (dataSize = 16));
     ASSERT(len > 0);
     ASSERT(len DIV 10000H = 0); (* [0; 65536) *)
-    
-    (* disable SPI *)
-    SYSTEM.GET(this.CR1, x);
-    SYSTEM.PUT(this.CR1, x - {SPE});
-    WHILE SYSTEM.BIT(this.CR1, SPE) DO END;
-    
-    IF dataSize = 8 THEN
-        (* setup data frame length: 8-bit *)
-        SYSTEM.GET(this.CR1, x);
-        SYSTEM.PUT(this.CR1, x - {DFF});
+
+    enabled := SYSTEM.BIT(this.CR1, SPE);
+    IF SYSTEM.BIT(this.CR1, DFF) THEN 
+        currentDataSize := 16
     ELSE
-        (* setup data frame length: 16-bit *)
-        SYSTEM.GET(this.CR1, x);
-        SYSTEM.PUT(this.CR1, x + {DFF});
+        currentDataSize := 8
+    END;
+    
+    (* disable SPI if needed *)
+    IF dataSize # currentDataSize THEN
+        IF enabled THEN
+            SYSTEM.GET(this.CR1, x);
+            SYSTEM.PUT(this.CR1, x - {SPE});
+            WHILE SYSTEM.BIT(this.CR1, SPE) DO END;
+            enabled := FALSE;
+        END;
+        
+        IF dataSize = 8 THEN
+            (* setup data frame length: 8-bit *)
+            SYSTEM.GET(this.CR1, x);
+            SYSTEM.PUT(this.CR1, x - {DFF});
+        ELSE
+            (* setup data frame length: 16-bit *)
+            SYSTEM.GET(this.CR1, x);
+            SYSTEM.PUT(this.CR1, x + {DFF});
+        END;
     END;
     
     (* clear DMA RX transfer complete interrupt flags *)
@@ -430,10 +473,12 @@ BEGIN
     (* enable SPI DMA requests *)
     SYSTEM.GET(this.CR2, x);
     SYSTEM.PUT(this.CR2, x + {RXDMAEN,TXDMAEN});
-
+    
     (* enable SPI *)
-    SYSTEM.GET(this.CR1, x);
-    SYSTEM.PUT(this.CR1, x + {SPE});
+    IF ~enabled THEN
+        SYSTEM.GET(this.CR1, x);
+        SYSTEM.PUT(this.CR1, x + {SPE});
+    END;
     
     (* Wait for transfere complete or timeout *)
     t0 := SysTick.GetTicks();
@@ -453,18 +498,15 @@ BEGIN
     (* Wait for BUSY flag to reset *)
     WHILE SYSTEM.BIT(this.SR, BSY) DO END;
     
-    (* Clear OVR flag *)
-    SYSTEM.GET(this.DR, x);
-    SYSTEM.GET(this.SR, x);
+    (* clear DMA TX transfer complete interrupt flags *)
+    SYSTEM.PUT(this.DMATXIFCR, {this.DMATXISRTCIF});
+
+    (* clear DMA RX transfer complete interrupt flags *)
+    SYSTEM.PUT(this.DMARXIFCR, {this.DMARXISRTCIF});
     
     (* disable SPI DMA requests *)
     SYSTEM.GET(this.CR2, x);
     SYSTEM.PUT(this.CR2, x - {RXDMAEN,TXDMAEN});
-
-    (* disable SPI *)
-    SYSTEM.GET(this.CR1, x);
-    SYSTEM.PUT(this.CR1, x - {SPE});
-    WHILE SYSTEM.BIT(this.CR1, SPE) DO END;
 END Transfer;
 
 (** Read length bytes to buffer begining at start index and send TXByte *)

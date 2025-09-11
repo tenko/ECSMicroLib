@@ -24,8 +24,8 @@ MODULE STM32F4Pins IN Micro;
 	*)
 
 	IMPORT SYSTEM;
-    IN Micro IMPORT ARMv7M, MCU := STM32F4;
-
+    IN Micro IMPORT ARMv7M, MCU := STM32F4, BasePin := Pin;
+    
 	CONST
 		(* ports *)
 			A* = 0; B* = 1; C* = 2; D* = 3; E* = 4; F* = 5; G* = 6; H* = 7;
@@ -56,7 +56,7 @@ MODULE STM32F4Pins IN Micro;
 
     TYPE
         ADDRESS = SYSTEM.ADDRESS;
-        Pin* = RECORD
+        Pin* = RECORD (BasePin.Pin)
             BASE- : ADDRESS;
             port-, pin- : INTEGER;
         END;
