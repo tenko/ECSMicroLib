@@ -8,10 +8,9 @@ Ref.: https://blog.embeddedexpert.io/?p=2081
 MODULE DeviceILI9341 IN Micro;
 
 IMPORT SYSTEM;
-IN Micro IMPORT Display;
 IN Micro IMPORT BusSPI;
 IN Micro IMPORT Pin;
-IN Micro IMPORT SysTick := ARMv7MSTM32SysTick0;
+IN Micro IMPORT Timing;
 
 TYPE
     BYTE = SYSTEM.BYTE;
@@ -20,10 +19,13 @@ TYPE
     PtrBus = POINTER TO VAR BusSPI.Bus;
     PtrPin = POINTER TO VAR Pin.Pin;
     
-    ILI9341* = RECORD (Display.Canvas)
+    ILI9341* = RECORD
         rotation : INTEGER;
         bus : PtrBus;
         rst, cs, dc : PtrPin;
+        width- : INTEGER;
+		height- : INTEGER;
+		depth- : INTEGER;
     END;
     
 CONST
@@ -91,150 +93,148 @@ BEGIN
     dev.cs := PTR(cs);
     dev.dc := PTR(dc);
     dev.rotation := 1;
-    dev.SetSize(WIDTH, HEIGHT);
+    dev.width := WIDTH;
+    dev.height := HEIGHT;
+    dev.depth := 16;
 END Init;
 
 (** Reset display *)
-PROCEDURE (VAR dev : ILI9341) Reset*;
+PROCEDURE (VAR this : ILI9341) Reset*;
 BEGIN
-    dev.rst.Off;
-    SysTick.Delay(50);
-    dev.rst.On;
-    SysTick.Delay(20);
+    this.rst.Off;
+    Timing.DelayMS(50);
+    this.rst.On;
+    Timing.DelayMS(20);
 END Reset;
 
-PROCEDURE (VAR dev : ILI9341) WriteCmd(cmd : BYTE);
+PROCEDURE (VAR this : ILI9341) WriteCmd(cmd : BYTE);
 BEGIN
-    dev.cs.Off; dev.dc.Off;
-    dev.bus.Write(cmd, 0, 1);
-    dev.cs.On;
+    this.cs.Off; this.dc.Off;
+    this.bus.Write(cmd, 0, 1);
+    this.cs.On;
 END WriteCmd;
 
-PROCEDURE (VAR dev : ILI9341) WriteCmdCont(cmd : BYTE);
+PROCEDURE (VAR this : ILI9341) WriteCmdCont(cmd : BYTE);
 BEGIN
-    dev.dc.Off;
-    dev.bus.Write(cmd, 0, 1);
+    this.dc.Off;
+    this.bus.Write(cmd, 0, 1);
 END WriteCmdCont;
 
-PROCEDURE (VAR dev : ILI9341) WriteData(data : BYTE);
+PROCEDURE (VAR this : ILI9341) WriteData(data : BYTE);
 BEGIN
-    dev.cs.Off; dev.dc.On;
-    dev.bus.Write(data, 0, 1);
-    dev.cs.On;
+    this.cs.Off; this.dc.On;
+    this.bus.Write(data, 0, 1);
+    this.cs.On;
 END WriteData;
 
-PROCEDURE (VAR dev : ILI9341) WriteDataCont(data : BYTE);
+PROCEDURE (VAR this : ILI9341) WriteDataCont(data : BYTE);
 BEGIN
-    dev.dc.On;
-    dev.bus.Write(data, 0, 1);
+    this.dc.On;
+    this.bus.Write(data, 0, 1);
 END WriteDataCont;
 
-PROCEDURE (VAR dev : ILI9341) WriteData16(VAR data : ARRAY OF BYTE);
+PROCEDURE (VAR this : ILI9341) WriteData16(VAR data : ARRAY OF BYTE);
 BEGIN
-    dev.cs.Off; dev.dc.On;
-    dev.bus.Transfer(0, SYSTEM.ADR(data), TRUE, 16, 1);
-    dev.cs.On;
+    this.cs.Off; this.dc.On;
+    this.bus.Transfer(0, SYSTEM.ADR(data), TRUE, 16, 1);
+    this.cs.On;
 END WriteData16;
 
-PROCEDURE (VAR dev : ILI9341) WriteData16Cont(VAR data : ARRAY OF BYTE);
+PROCEDURE (VAR this : ILI9341) WriteData16Cont(VAR data : ARRAY OF BYTE);
 VAR arr : ARRAY 2 OF BYTE;
 BEGIN
-    dev.dc.On;
-    dev.bus.Transfer(0, SYSTEM.ADR(data), TRUE, 16, 1);
+    this.dc.On;
+    this.bus.Transfer(0, SYSTEM.ADR(data), TRUE, 16, 1);
 END WriteData16Cont;
 
-PROCEDURE (VAR dev : ILI9341) Config*;
+PROCEDURE (VAR this : ILI9341) Config*;
 BEGIN
-    dev.Reset;
-    dev.WriteCmd    (CMD_DISPLAY_OFF);  (* display off *)
-	dev.WriteCmd    (CMD_POWER1);       (* power control *)
-	dev.WriteData   (026X);             (* GVDD = 4.75v *)
-	dev.WriteCmd    (CMD_POWER2);       (* power control *)
-	dev.WriteData   (011X);             (* AVDD=VCIx2, VGH=VCIx7, VGL=-VCIx3 *)
-	dev.WriteCmd    (CMD_VCOM1);        (* vcom control *)
-	dev.WriteData   (035X);             (* Set the VCOMH voltage (0x35 = 4.025v) *)
-	dev.WriteData   (03EX);             (* Set the VCOML voltage (0x3E = -0.950v) *)
-	dev.WriteCmd    (CMD_VCOM2);        (* vcom control *)
-	dev.WriteData   (0BEX);
-	dev.WriteCmd    (CMD_MAC);          (* memory access control *)
-	dev.WriteData   (048X);
-    dev.WriteCmd    (CMD_PIXEL_FORMAT); (* pixel format set *)
-	dev.WriteData   (055X);             (* 16bit /pixel *)
-	dev.WriteCmd    (CMD_FRC);
-	dev.WriteData   (00X);
-	dev.WriteData   (01FX);
-	dev.WriteCmd    (CMD_COLUMN_ADDR);  (* column set *)
-	dev.WriteData   (00X);              (* x0_HIGH---0 *)
-	dev.WriteData   (00X);              (* x0_LOW----0 *)
-	dev.WriteData   (00X);              (* x1_HIGH---240 *)
-	dev.WriteData   (01DX);             (* x1_LOW----240 *)
-	dev.WriteCmd    (CMD_PAGE_ADDR);    (* page address set *)
-	dev.WriteData   (00X);              (* y0_HIGH---0 *)
-	dev.WriteData   (00X);              (* y0_LOW----0 *)
-	dev.WriteData   (00X);              (* y1_HIGH---320 *)
-	dev.WriteData   (027X);             (* y1_LOW----320 *)
-	dev.WriteCmd    (CMD_TEARING_OFF);  (* tearing effect off *)
-	dev.WriteCmd    (CMD_Entry_Mode_Set); (* entry mode set *)
-	dev.WriteData   (07X);
-	dev.WriteCmd    (CMD_DFC);          (* display function control *)
-	dev.WriteData   (0AX);
-	dev.WriteData   (082X);
-	dev.WriteData   (027X);
-	dev.WriteData   (00X);              (* clock divisor  *)
-	dev.WriteCmd    (CMD_SLEEP_OUT);    (* sleep out *)
-	SysTick.Delay   (100);
-	dev.WriteCmd    (CMD_DISPLAY_ON);   (* display on *)
-	SysTick.Delay   (100);
-	dev.WriteCmd    (CMD_GRAM);         (* memory write *)
-	SysTick.Delay   (5);
+    this.Reset;
+    this.WriteCmd    (CMD_DISPLAY_OFF);  (* display off *)
+	this.WriteCmd    (CMD_POWER1);       (* power control *)
+	this.WriteData   (026X);             (* GVDD = 4.75v *)
+	this.WriteCmd    (CMD_POWER2);       (* power control *)
+	this.WriteData   (011X);             (* AVDD=VCIx2, VGH=VCIx7, VGL=-VCIx3 *)
+	this.WriteCmd    (CMD_VCOM1);        (* vcom control *)
+	this.WriteData   (035X);             (* Set the VCOMH voltage (0x35 = 4.025v) *)
+	this.WriteData   (03EX);             (* Set the VCOML voltage (0x3E = -0.950v) *)
+	this.WriteCmd    (CMD_VCOM2);        (* vcom control *)
+	this.WriteData   (0BEX);
+	this.WriteCmd    (CMD_MAC);          (* memory access control *)
+	this.WriteData   (048X);
+    this.WriteCmd    (CMD_PIXEL_FORMAT); (* pixel format set *)
+	this.WriteData   (055X);             (* 16bit /pixel *)
+	this.WriteCmd    (CMD_FRC);
+	this.WriteData   (00X);
+	this.WriteData   (01FX);
+	this.WriteCmd    (CMD_COLUMN_ADDR);  (* column set *)
+	this.WriteData   (00X);              (* x0_HIGH---0 *)
+	this.WriteData   (00X);              (* x0_LOW----0 *)
+	this.WriteData   (00X);              (* x1_HIGH---240 *)
+	this.WriteData   (01DX);             (* x1_LOW----240 *)
+	this.WriteCmd    (CMD_PAGE_ADDR);    (* page address set *)
+	this.WriteData   (00X);              (* y0_HIGH---0 *)
+	this.WriteData   (00X);              (* y0_LOW----0 *)
+	this.WriteData   (00X);              (* y1_HIGH---320 *)
+	this.WriteData   (027X);             (* y1_LOW----320 *)
+	this.WriteCmd    (CMD_TEARING_OFF);  (* tearing effect off *)
+	this.WriteCmd    (CMD_Entry_Mode_Set); (* entry mode set *)
+	this.WriteData   (07X);
+	this.WriteCmd    (CMD_DFC);          (* display function control *)
+	this.WriteData   (0AX);
+	this.WriteData   (082X);
+	this.WriteData   (027X);
+	this.WriteData   (00X);              (* clock divisor  *)
+	this.WriteCmd    (CMD_SLEEP_OUT);    (* sleep out *)
+	Timing.DelayMS   (100);
+	this.WriteCmd    (CMD_DISPLAY_ON);   (* display on *)
+	Timing.DelayMS   (100);
+	this.WriteCmd    (CMD_GRAM);         (* memory write *)
+	Timing.DelayMS   (1);
 END Config;
 
-PROCEDURE (VAR dev : ILI9341) Begin*;
-BEGIN dev.cs.Off END Begin;
-
-PROCEDURE (VAR dev : ILI9341) End*;
-BEGIN dev.cs.On END End;
-
-PROCEDURE (VAR dev : ILI9341) SetCursorPosition(x1, y1, x2, y2 : UNSIGNED16);
+PROCEDURE (VAR this : ILI9341) SetCursorPosition(x1, y1, x2, y2 : UNSIGNED16);
 VAR i : LENGTH;
 BEGIN
-    dev.cs.Off;
-    dev.WriteCmdCont(CMD_COLUMN_ADDR);
-    dev.WriteData16Cont(x1);
-    dev.WriteData16Cont(x2);
-	dev.WriteCmdCont(CMD_PAGE_ADDR);
-	dev.WriteData16Cont(y1);
-    dev.WriteData16Cont(y2);
-	dev.WriteCmdCont(CMD_GRAM);
-	SysTick.Delay(1);
+    this.cs.Off;
+    this.WriteCmdCont(CMD_COLUMN_ADDR);
+    this.WriteData16Cont(x1);
+    this.WriteData16Cont(x2);
+	this.WriteCmdCont(CMD_PAGE_ADDR);
+	this.WriteData16Cont(y1);
+    this.WriteData16Cont(y2);
+	this.WriteCmdCont(CMD_GRAM);
+	Timing.DelayMS(1);
 END SetCursorPosition;
 
-PROCEDURE (VAR dev : ILI9341) SetRotation*(rotate : INTEGER);
+PROCEDURE (VAR this : ILI9341) SetRotation*(rotate : INTEGER);
 BEGIN
-    dev.rotation := rotate;
+    this.rotation := rotate;
     IF rotate = 2 THEN
-        dev.WriteCmd     (CMD_MEMCONTROL);
-        dev.WriteData    (BYTE(SET8(CMD_MADCTL_MV) + SET8(CMD_MADCTL_BGR)));
+        this.WriteCmd     (CMD_MEMCONTROL);
+        this.WriteData    (BYTE(SET8(CMD_MADCTL_MV) + SET8(CMD_MADCTL_BGR)));
     ELSIF rotate = 3 THEN
-        dev.WriteCmd     (CMD_MEMCONTROL);
-        dev.WriteData    (BYTE(SET8(CMD_MADCTL_MX) + SET8(CMD_MADCTL_BGR)));
+        this.WriteCmd     (CMD_MEMCONTROL);
+        this.WriteData    (BYTE(SET8(CMD_MADCTL_MX) + SET8(CMD_MADCTL_BGR)));
     ELSIF rotate = 4 THEN
-        dev.WriteCmd     (CMD_MEMCONTROL);
-        dev.WriteData    (BYTE(SET8(CMD_MADCTL_MX) +SET8(CMD_MADCTL_MY) + SET8(CMD_MADCTL_MV) + SET8(CMD_MADCTL_BGR)));
+        this.WriteCmd     (CMD_MEMCONTROL);
+        this.WriteData    (BYTE(SET8(CMD_MADCTL_MX) +SET8(CMD_MADCTL_MY) + SET8(CMD_MADCTL_MV) + SET8(CMD_MADCTL_BGR)));
     ELSE
-        dev.rotation := 1;
-        dev.WriteCmd     (CMD_MEMCONTROL);
-        dev.WriteData    (BYTE(SET8(CMD_MADCTL_MY) + SET8(CMD_MADCTL_BGR)));
+        this.rotation := 1;
+        this.WriteCmd     (CMD_MEMCONTROL);
+        this.WriteData    (BYTE(SET8(CMD_MADCTL_MY) + SET8(CMD_MADCTL_BGR)));
     END;
-    IF (dev.rotation = 1) OR (dev.rotation = 3) THEN
-        dev.SetSize(WIDTH, HEIGHT);
+    IF (this.rotation = 1) OR (this.rotation = 3) THEN
+        this.width := WIDTH;
+        this.height := HEIGHT;
     ELSE
-        dev.SetSize(HEIGHT, WIDTH);
+        this.width := HEIGHT;
+        this.height := WIDTH;
     END;
 END SetRotation;
 
 (** Convert RGB format to RGB565 display format *)
-PROCEDURE (VAR dev : ILI9341) ColorRGB*(r, b, g : INTEGER): INTEGER;
+PROCEDURE (VAR this : ILI9341) ColorRGB*(r, b, g : INTEGER): INTEGER;
 VAR s : SET16;
 BEGIN
     s := SET16(SYSTEM.LSH(g, -3)) * {0..4};
@@ -244,51 +244,51 @@ BEGIN
 END ColorRGB;
 
 (** Set pixel to color at location x, y. *)
-PROCEDURE (VAR dev : ILI9341) SetPixel*(x, y, color : INTEGER);
+PROCEDURE (VAR this: ILI9341) SetPixel*(x, y, color : INTEGER);
 VAR data : ARRAY 2 OF BYTE;
 BEGIN
-    dev.SetCursorPosition(UNSIGNED16(x), UNSIGNED16(y), UNSIGNED16(x), UNSIGNED16(y));
-    dev.dc.On;
+    this.SetCursorPosition(UNSIGNED16(x), UNSIGNED16(y), UNSIGNED16(x), UNSIGNED16(y));
+    this.dc.On;
     data[1] := SYSTEM.VAL(BYTE, SYSTEM.LSH(color, -8));
     data[0] := SYSTEM.VAL(BYTE, color);
-    dev.bus.Transfer(0, SYSTEM.ADR(data[0]), TRUE, 16, 1);
-    dev.WriteCmdCont(CMD_NOP);
-	dev.cs.On;
+    this.bus.Transfer(0, SYSTEM.ADR(data[0]), TRUE, 16, 1);
+    this.WriteCmdCont(CMD_NOP);
+	this.cs.On;
 END SetPixel;
 
 (** Fill canvas with color *)
-PROCEDURE (VAR dev : ILI9341) Fill*(color : INTEGER);
+PROCEDURE (VAR this : ILI9341) Fill*(color : INTEGER);
 VAR
     low, high : BYTE;
     n : LENGTH;
     data : ARRAY 2 OF BYTE;
 BEGIN
-    IF (dev.rotation = 1) OR (dev.rotation = 3) THEN
-        dev.SetCursorPosition(0, 0, WIDTH - 1, HEIGHT - 1);
+    IF (this.rotation = 1) OR (this.rotation = 3) THEN
+        this.SetCursorPosition(0, 0, WIDTH - 1, HEIGHT - 1);
     ELSE
-        dev.SetCursorPosition(0, 0, HEIGHT - 1, WIDTH - 1);
+        this.SetCursorPosition(0, 0, HEIGHT - 1, WIDTH - 1);
     END;
 
     data[1] := SYSTEM.VAL(BYTE, SYSTEM.LSH(color, -8));
     data[0] := SYSTEM.VAL(BYTE, color);
 	
-    dev.dc.On;
+    this.dc.On;
     n := PIXEL_COUNT;
-    WHILE n > dev.bus.maxTransferSize DO
-        dev.bus.Transfer(0, SYSTEM.ADR(data[0]), TRUE, 16, dev.bus.maxTransferSize);
-        DEC(n, dev.bus.maxTransferSize);
+    WHILE n > this.bus.maxTransferSize DO
+        this.bus.Transfer(0, SYSTEM.ADR(data[0]), TRUE, 16, this.bus.maxTransferSize);
+        DEC(n, this.bus.maxTransferSize);
     END;
     IF n > 0 THEN
-        dev.bus.Transfer(0, SYSTEM.ADR(data[0]), TRUE, 16, n);
+        this.bus.Transfer(0, SYSTEM.ADR(data[0]), TRUE, 16, n);
     END;
-    dev.WriteCmdCont(CMD_NOP);
-    dev.dc.Off;
-    dev.cs.On;
-    SysTick.Delay(1);
+    this.WriteCmdCont(CMD_NOP);
+    this.dc.Off;
+    this.cs.On;
+    Timing.DelayMS(1);
 END Fill;
 
 (** Draw a filled rectangle at the given location, size and color. *)
-PROCEDURE (VAR dev : ILI9341) FilledRect*(x, y, w, h, color : INTEGER);
+PROCEDURE (VAR this : ILI9341) FilledRect*(x, y, w, h, color : INTEGER);
 VAR
     low, high : BYTE;
     n : LENGTH;
@@ -300,24 +300,48 @@ BEGIN
 	IF x < 0 THEN x := 0 END;
 	IF y < 0 THEN y := 0 END;
 	
-    dev.SetCursorPosition(UNSIGNED16(x), UNSIGNED16(y), UNSIGNED16(x + w - 1), UNSIGNED16(y + h - 1));
+    this.SetCursorPosition(UNSIGNED16(x), UNSIGNED16(y), UNSIGNED16(x + w - 1), UNSIGNED16(y + h - 1));
 
     data[1] := SYSTEM.VAL(BYTE, SYSTEM.LSH(color, -8));
     data[0] := SYSTEM.VAL(BYTE, color);
 	
-    dev.dc.On;
+    this.dc.On;
     n := w * h;
-    WHILE n > dev.bus.maxTransferSize DO
-        dev.bus.Transfer(0, SYSTEM.ADR(data[0]), TRUE, 16, dev.bus.maxTransferSize);
-        DEC(n, dev.bus.maxTransferSize);
+    WHILE n > this.bus.maxTransferSize DO
+        this.bus.Transfer(0, SYSTEM.ADR(data[0]), TRUE, 16, this.bus.maxTransferSize);
+        DEC(n, this.bus.maxTransferSize);
     END;
     IF n > 0 THEN
-        dev.bus.Transfer(0, SYSTEM.ADR(data[0]), TRUE, 16, n);
+        this.bus.Transfer(0, SYSTEM.ADR(data[0]), TRUE, 16, n);
     END;
-    dev.WriteCmdCont(CMD_NOP);
-    dev.dc.Off;
-    dev.cs.On;
-    SysTick.Delay(1);
+    this.WriteCmdCont(CMD_NOP);
+    this.dc.Off;
+    this.cs.On;
+    Timing.DelayMS(1);
 END FilledRect;
+
+(** Draw into framebuffer with raw data at the given location, size. *)
+PROCEDURE (VAR this : ILI9341) BlitRaw*(x, y, w, h : INTEGER; data : ADDRESS);
+VAR
+    n : LENGTH;
+BEGIN
+	IF x < 0 THEN x := 0 END;
+	IF y < 0 THEN y := 0 END;
+    this.SetCursorPosition(UNSIGNED16(x), UNSIGNED16(y), UNSIGNED16(x + w - 1), UNSIGNED16(y + h - 1));
+	
+    this.dc.On;
+    n := w * h;
+    WHILE n > this.bus.maxTransferSize DO
+        this.bus.Transfer(0, data, FALSE, 16, this.bus.maxTransferSize);
+        DEC(n, this.bus.maxTransferSize);
+        INC(data, this.bus.maxTransferSize)
+    END;
+    IF n > 0 THEN
+        this.bus.Transfer(0, data, FALSE, 16, n);
+    END;
+    this.dc.Off;
+    this.cs.On;
+    Timing.DelayMS(1);
+END BlitRaw;
 
 END DeviceILI9341.

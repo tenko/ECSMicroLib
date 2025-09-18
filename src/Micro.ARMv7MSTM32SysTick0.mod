@@ -3,7 +3,8 @@ MODULE ARMv7MSTM32SysTick0 IN Micro;
 	Alexander Shiryaev, 2015.03, 2016.04
     Modified by Tenko for use with ECS
     
-	SysTick timer for producing periodic events
+	SysTick timer for producing periodic events.
+	Note that some modules expect the frequency to be 1000 (milli seconds)
 *)
 
 IMPORT SYSTEM, ARMv7M IN Micro;
@@ -13,13 +14,15 @@ VAR
 	flag: BOOLEAN;
 	freq: INTEGER;
 
+PROCEDURE ^ DelayIdle ["delay_idle"] ();
+
 PROCEDURE SysTickIntHandler ["isr_systick"] ();
 BEGIN
     INC(tick);
 	flag := TRUE;
 END SysTickIntHandler;
 
-PROCEDURE Init* (HCLK, freq: INTEGER);
+PROCEDURE Init* (HCLK, hz: INTEGER);
 CONST
    (* SYSTCSR bits: *)
    ENABLE = 0; TICKINT = 1;
@@ -27,7 +30,7 @@ VAR
 	x: INTEGER;
 BEGIN
 	SYSTEM.PUT(ARMv7M.SYSTCSR, SET32({})); (* disable SysTick *)
-	freq := freq;
+	freq := hz;
 	tick := 0;
 	flag := FALSE;
 	(* NOTE: timer is 24-bit! *)
@@ -41,17 +44,26 @@ BEGIN
 END Init;
 
 (** Get current ticks *)
-PROCEDURE GetTicks* (): UNSIGNED32;
+PROCEDURE GetTicks* ["ticks_ms"] (): UNSIGNED32;
 BEGIN RETURN tick;
 END GetTicks;
 
 (** Wait delta number of ticks *)
-PROCEDURE Delay* (delta : UNSIGNED32);
+PROCEDURE Delay* ["delay_ms"] (delta : UNSIGNED32);
 VAR t0 : UNSIGNED32;
 BEGIN
     t0 := tick;
-    WHILE tick - t0 < delta DO SYSTEM.ASM("wfi") END;
+    WHILE tick - t0 < delta DO DelayIdle END;
 END Delay;
+
+(** Wait delta seconds *)
+PROCEDURE DelayS* ["delay_s"] (delta : UNSIGNED32);
+VAR i : UNSIGNED32;
+BEGIN
+    FOR i := 0 TO delta - 1 DO
+        Delay(1000);
+    END;
+END DelayS;
 
 PROCEDURE OnTimer* (): BOOLEAN;
 VAR res: BOOLEAN;

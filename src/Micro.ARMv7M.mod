@@ -13,6 +13,11 @@ MODULE ARMv7M IN Micro;
     TYPE ADDRESS = SYSTEM.ADDRESS;
     
 	CONST
+	    (* Debug *)
+            SCB_DEMCR* = ADDRESS(0E000EDFCH);   (* Debug Exception and Monitor Control Register *)
+            DWT_CYCCNT* = ADDRESS(0E0001004H);  (* DWT Cycle Count register *)
+            DWT_CONTROL* = ADDRESS(0E0001000H); (* DWT control register*)
+	    
 		(* B1.5.2: exception numbers *)
 			Reset* = 1;
 			NMI* = 2;
@@ -312,8 +317,6 @@ MODULE ARMv7M IN Micro;
 				IDISAR3*    = ADDRESS(0E000ED6CH); (* Instruction Set Attribute Register 3 *)
 				IDISAR4*    = ADDRESS(0E000ED70H); (* Instruction Set Attribute Register 4 *)
 				IDISAR5*    = ADDRESS(0E000ED74H);
-
-    PROCEDURE ^ SysIdle* ["sysidle"] ();
 
     PROCEDURE WFI*();
     BEGIN SYSTEM.ASM("wfi")

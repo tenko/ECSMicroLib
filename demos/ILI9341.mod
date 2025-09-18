@@ -6,21 +6,20 @@ IMPORT SYSTEM;
 IN Std IMPORT Cardinal, OSStream;
 IN Micro IMPORT SysTick := ARMv7MSTM32SysTick0;
 IN Micro IMPORT DeviceILI9341;
-    
+
 CONST
     Pins = BoardConfig.Pins;
     SPI5 = BoardConfig.SPI5;
 
     Points = 0;
-    Lines = 1;
-    Rects = 2;
-    FRects = 3;
-    Fills = 4;
+    FRects = 1;
+    Fills = 2;
     
 VAR
     bus : SPI5.Bus;
     cs, rst, dc : Pins.Pin;
     dev : DeviceILI9341.ILI9341;
+    i : INTEGER;
 
 PROCEDURE RandInt(range : INTEGER): INTEGER;
 BEGIN RETURN INTEGER(Cardinal.RandomRange(range))
@@ -56,21 +55,8 @@ BEGIN
             END;
             INC(cnt);
         END;
-    ELSIF type = Lines THEN
-        name := " lines ";
-        LOOP
-            col := dev.ColorRGB(RandInt(255), RandInt(255),RandInt(255));
-            dev.Line(RandInt(dev.width - 1), RandInt(dev.height - 1),
-                     RandInt(dev.width - 1), RandInt(dev.height - 1), col);
-            IF SysTick.GetTicks() - t0 >= 1000 THEN
-                t1 := SysTick.GetTicks();
-                EXIT
-            END;
-            INC(cnt);
-        END;
-    ELSIF (type = Rects) OR (type = FRects) THEN
-        IF type = Rects THEN name := " rectangles "
-        ELSE name := " filled rectangles " END;
+    ELSIF type = FRects THEN
+        name := " filled rectangles ";
         LOOP
             col := dev.ColorRGB(RandInt(255), RandInt(255),RandInt(255));
             x1 := RandInt(dev.width - 1);
@@ -79,11 +65,7 @@ BEGIN
             y1 := RandInt(dev.height - 1);
             y2 := RandInt(dev.height - 1);
             IF y2 < y1 THEN Swap(y1, y2) END;
-            IF type = Rects THEN
-                dev.Rect(x1, y1, x2 - x1, y2 - y1, col);
-            ELSE
-                dev.FilledRect(x1, y1, x2 - x1, y2 - y1, col);
-            END;
+            dev.FilledRect(x1, y1, x2 - x1, y2 - y1, col);
             IF SysTick.GetTicks() - t0 >= 1000 THEN
                 t1 := SysTick.GetTicks();
                 EXIT
@@ -123,10 +105,6 @@ BEGIN
     TRACE("Start");
     WHILE TRUE DO
         Draw(Points);
-        SysTick.Delay(500);
-        Draw(Lines);
-        SysTick.Delay(500);
-        Draw(Rects);
         SysTick.Delay(500);
         Draw(FRects);
         SysTick.Delay(500);

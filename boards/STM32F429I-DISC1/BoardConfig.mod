@@ -109,7 +109,7 @@ BEGIN
     par.cPol := FALSE;
     par.configNSS := FALSE;
     SPI5.Init(bus, par);
-
+    
     rst.Init(Pins.A, 7, Pins.output, Pins.pushPull, Pins.low, Pins.noPull, Pins.AF0);
     rst.On;
     cs.Init(Pins.C, 2, Pins.output, Pins.pushPull, Pins.low, Pins.noPull, Pins.AF0);

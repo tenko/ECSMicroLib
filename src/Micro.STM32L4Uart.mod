@@ -15,8 +15,8 @@ IN Micro IMPORT ARMv7M;
 IN Micro IMPORT BusUart;
 IN Micro IMPORT MCU := STM32L4;
 IN Micro IMPORT Pins := STM32L4Pins;
-IN Micro IMPORT InBuffer := ADTRingBuffer(SYSTEM.BYTE, 128);
-IN Micro IMPORT OutBuffer := ADTRingBuffer(SYSTEM.BYTE, 512);
+IN Std IMPORT InBuffer := ADTRingBuffer(SYSTEM.BYTE, 128);
+IN Std IMPORT OutBuffer := ADTRingBuffer(SYSTEM.BYTE, 512);
 
 CONST
     Isr = SEL(n = 1, "isr_usart1", SEL(n = 2, "isr_usart2", SEL(n = 3, "isr_usart3", "isr_uart4")));

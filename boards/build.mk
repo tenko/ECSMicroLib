@@ -19,7 +19,7 @@ else
 	GDB := arm-none-eabi-gdb
 endif
 
-RTS = ../micro.lib $(ECS)/runtime/stdarmt32.lib $(ECS)/runtime/armt32run.obf $(ECS)/runtime/obarmt32run.lib
+RTS = ../micro.lib $(ECS)/runtime/stdarmt32.lib $(ECS)/runtime/gfxarmt32.lib $(ECS)/runtime/armt32run.obf $(ECS)/runtime/obarmt32run.lib
 
 .PHONY: all
 all : build/test.rom
@@ -36,7 +36,7 @@ build/%.obf: demos/%.asm
 	@cd build && cp -f $(addprefix ../, $<) .
 	@cd build && $(AS) $(notdir $<)
 	
-build/test.rom: build/test.obf build/BoardConfig.obf build/runtime.obf
+build/test.rom: build/test.obf build/BoardConfig.obf build/runtime.obf $(EXTRAOBJ)
 	@echo linking $@
 	@mkdir -p build
 	@cd build && $(LKM) $(notdir $^) $(RTS)

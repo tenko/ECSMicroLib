@@ -9,10 +9,6 @@ CONST Pins = BoardConfig.Pins;
 
 VAR pin : Pins.Pin;
 
-PROCEDURE SysIdle ["sysidle"];
-BEGIN ARMv7M.WFI
-END SysIdle;
-
 BEGIN
 	TRACE("START");
     BoardConfig.Init;
