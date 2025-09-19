@@ -6,26 +6,26 @@ based on the Black Box compiler.
 
 Original project [Link](https://github.com/aixp/O7)
 
-The framework has support for I2C, SPI, Uart and OneWire protocols to
-work with external devices.
+This is an early release and will be updated in the near future.
 
 ## Boards
 
 Currently supported boards:
 
-* NUCLEO-L432KC
-* STM32F407G-DISC1
-* STM32F429I-DISC1
+* [NUCLEO-L432KC](https://www.st.com/en/evaluation-tools/nucleo-l432kc.html) STM32L432KC MCU 
+* [STM32F407G-DISC1](https://www.st.com/en/evaluation-tools/stm32f4discovery.html) STM32F407VG MCU
+* [STM32F429I-DISC1](https://www.st.com/en/evaluation-tools/32f429idiscovery.html) STM32F429ZI MCU
 
-These are the boards I have on hand and are able to test.
-The original framework support more MCU, but these are
-removed until it is posible to test these.
+These are the boards I have on hand and are able to test. Most STM32F4, STM32L4 boards whould work
+if the RAM is correctly adjusted for in the config.
 
-Also the ECS compiler support more targets like AVR, AVR32, Xtensa.
+The original framework support further MCUs, but these are removed until it is posible to test these.
+
+Also the ECS compiler support more targets like AVR, AVR32, Xtensa: [Link](https://ecs.openbrace.org/manual/manualpa3.html#x53-496000III)  
 
 ## Example
 
-Hello world for MCU with LED blinking.
+Hello world for STM32 MCU with LED blinking.
 
 Test.mod:
 
@@ -74,9 +74,7 @@ GDB to start and monitor the example.
 ## TODO
 
 * Documentation
-* Add I2C & SPI drivers to STM32L4 MCU.
-* The I2C & OneWire drivers are blocking and should be changed async.
-* Add support for coroutines for cooperative multitasking.
+* Add support for coroutines and cooperative multitasking.
 
 ## Note
 
