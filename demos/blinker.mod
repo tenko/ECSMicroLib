@@ -2,7 +2,6 @@ MODULE Test;
 IMPORT BoardConfig, SYSTEM;
 
 IN Micro IMPORT ARMv7M;
-IN Micro IMPORT Trap := ARMv7MTraps;
 IN Micro IMPORT SysTick := ARMv7MSTM32SysTick0;
 
 CONST Pins = BoardConfig.Pins;
@@ -20,9 +19,9 @@ BEGIN
     REPEAT
         pin.On;
         TRACE("ON0");
-        WHILE ~SysTick.OnTimer() DO ARMv7M.SysIdle END;
+        WHILE ~SysTick.OnTimer() DO ARMv7M.WFI END;
         pin.Off;
         TRACE("OFF0");
-        WHILE ~SysTick.OnTimer() DO ARMv7M.SysIdle END;
+        WHILE ~SysTick.OnTimer() DO ARMv7M.WFI END;
     UNTIL FALSE
 END Test.
