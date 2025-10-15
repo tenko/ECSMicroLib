@@ -10,10 +10,10 @@ endif
 
 OLS += ARMv7M ARMv7MTraps ARMv7MSTM32SysTick0 ARMv7MInterrupt ARMv7MSTM32CycleCount
 OLS += Pin BusI2C BusSPI BusUart OneWire Timing
-OLS += STM32F4 STM32F4Pins STM32F4I2C STM32F4System STM32F4IWDG
+OLS += STM32F4 STM32F4Pins STM32F4PinsExtInt STM32F4I2C STM32F4System STM32F4IWDG
 OLS += ARMv7MSTM32F4WWDG STM32F4SPI STM32F4Uart STM32F4OneWire
 OLS += STM32L4 STM32L4System STM32L4Pins STM32L4Uart
-OLS += DeviceDS18B20 DeviceILI9341
+OLS += DeviceDS18B20 DeviceILI9341 DeviceSTMPE811
 
 MOD += $(addprefix src/, $(addprefix Micro., $(addsuffix .mod, $(OLS))))
 OBF += $(addprefix build/, $(addprefix Micro., $(addsuffix .obf, $(OLS))))

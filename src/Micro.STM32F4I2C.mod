@@ -20,10 +20,10 @@ IN Micro IMPORT Pins := STM32F4Pins;
 IN Micro IMPORT MCU := STM32F4;
 
 CONST
-    NoError = 0;
-    ErrorTimeout = -1;
-    ErrorNoDevice = -2;
-    ErrorArgs = -3;
+    NoError* = BusI2C.NoError;
+    ErrorTimeout* = BusI2C.ErrorTimeout;
+    ErrorNoDevice* = BusI2C.ErrorNoDevice;
+    ErrorArgs* = BusI2C.ErrorArgs;
     
     (* I2C_CR1 bits: *)
     PE = 0; START = 8; STOP = 9; ACK = 10;
@@ -33,8 +33,6 @@ CONST
 TYPE
     BYTE = SYSTEM.BYTE;
     ADDRESS = SYSTEM.ADDRESS;
-
-    GetTicks* = PROCEDURE (): UNSIGNED32;
     
     InitPar* = RECORD
         n* : INTEGER;
@@ -43,13 +41,11 @@ TYPE
         PCLK1*: INTEGER;
         freq*: INTEGER;
         timeout*: INTEGER;
-        getTicks*: GetTicks;
+        getTicks*: BusI2C.GetTicks;
     END;
     
     Bus* = RECORD (BusI2C.Bus)
         DR, CR1, SR1, SR2 : ADDRESS;
-        getTicks*: GetTicks;
-        timeout : UNSIGNED32;
     END;
 
 (** Initialize I2C bus *)
@@ -105,7 +101,8 @@ BEGIN
     b.SR2 := SR2;
     b.getTicks := par.getTicks;
     b.timeout := par.timeout;
-
+    b.error := NoError;
+    
     ARMv7M.CPSIDif; (* disable interrupts *)
     
 	(* prevent endless BUSY state *)
@@ -186,55 +183,56 @@ BEGIN
     sdapin.Init(par.SDAPinPort, par.SDAPinN, Pins.alt, Pins.openDrain, Pins.medium, Pins.noPull, par.SDAPinAF);
 END Init;
 
-(* Wait for any bits in mask to be set. Return NoError if ok *)
-PROCEDURE (VAR this: Bus) WaitBitSet(adr : ADDRESS; VAR s : SET32; mask : SET32): INTEGER;
-VAR t0 : UNSIGNED32;
-BEGIN
-    IF (this.getTicks # NIL) & (this.timeout > 0) THEN
-        t0 := this.getTicks();
-        SYSTEM.GET(adr, s);
-        WHILE (s * mask = {}) DO
-            IF this.getTicks() - t0 > this.timeout THEN
-                RETURN ErrorTimeout
-            END;
-            SYSTEM.GET(adr, s);
-        END;
-    ELSE
-        SYSTEM.GET(adr, s);
-        WHILE (s * mask = {}) DO
-            SYSTEM.GET(adr, s);
-        END;
-    END;
-    RETURN NoError;
-END WaitBitSet;
-
-(* Wait for any bits in mask to be cleared. Return NoError if ok *)
-PROCEDURE (VAR this: Bus) WaitBitClear(adr : ADDRESS; VAR s : SET32; mask : SET32): INTEGER;
-VAR t0 : UNSIGNED32;
-BEGIN
-    IF (this.getTicks # NIL) & (this.timeout > 0) THEN
-        t0 := this.getTicks();
-        SYSTEM.GET(adr, s);
-        WHILE (s * mask # {}) DO
-            IF this.getTicks() - t0 > this.timeout THEN
-                RETURN ErrorTimeout
-            END;
-            SYSTEM.GET(adr, s);
-        END;
-    ELSE
-        SYSTEM.GET(adr, s);
-        WHILE (s * mask = {}) DO
-            SYSTEM.GET(adr, s);
-        END;
-    END;
-    RETURN NoError;
-END WaitBitClear;
-
 (* Read or Write data *)
-PROCEDURE (VAR this: Bus) Transfer(adr : INTEGER; rd : BOOLEAN; VAR buf : ARRAY OF BYTE; start, len : LENGTH; stop : BOOLEAN): INTEGER;
+PROCEDURE (VAR this: Bus) Transfer*(adr : INTEGER; rd : BOOLEAN; VAR buf : ARRAY OF BYTE; start, len : LENGTH; stop : BOOLEAN): LENGTH;
 VAR
     s : SET32;
-    ret : INTEGER;
+    ret : LENGTH;
+
+    (* Wait for any bits in mask to be set. Return NoError if ok *)
+    PROCEDURE WaitBitSet(adr : ADDRESS; VAR s : SET32; mask : SET32): INTEGER;
+    VAR t0 : UNSIGNED32;
+    BEGIN
+        IF (this.getTicks # NIL) & (this.timeout > 0) THEN
+            t0 := this.getTicks();
+            SYSTEM.GET(adr, s);
+            WHILE (s * mask = {}) DO
+                IF this.getTicks() - t0 > this.timeout THEN
+                    RETURN ErrorTimeout
+                END;
+                SYSTEM.GET(adr, s);
+            END;
+        ELSE
+            SYSTEM.GET(adr, s);
+            WHILE (s * mask = {}) DO
+                SYSTEM.GET(adr, s);
+            END;
+        END;
+        RETURN NoError;
+    END WaitBitSet;
+
+    (* Wait for any bits in mask to be cleared. Return NoError if ok *)
+    PROCEDURE WaitBitClear(adr : ADDRESS; VAR s : SET32; mask : SET32): INTEGER;
+    VAR t0 : UNSIGNED32;
+    BEGIN
+        IF (this.getTicks # NIL) & (this.timeout > 0) THEN
+            t0 := this.getTicks();
+            SYSTEM.GET(adr, s);
+            WHILE (s * mask # {}) DO
+                IF this.getTicks() - t0 > this.timeout THEN
+                    RETURN ErrorTimeout
+                END;
+                SYSTEM.GET(adr, s);
+            END;
+        ELSE
+            SYSTEM.GET(adr, s);
+            WHILE (s * mask = {}) DO
+                SYSTEM.GET(adr, s);
+            END;
+        END;
+        RETURN NoError;
+    END WaitBitClear;
+
 BEGIN
     ret := ErrorNoDevice;
     (* Enable i2c *)
@@ -247,7 +245,7 @@ BEGIN
     SYSTEM.GET(this.CR1, s);
 	SYSTEM.PUT(this.CR1, s + {START});
 	(* wait for SB bit to set or timeout *)
-	IF this.WaitBitSet(this.SR1, s, {SB}) # NoError THEN
+	IF WaitBitSet(this.SR1, s, {SB}) # NoError THEN
         SYSTEM.GET(this.CR1, s);
         SYSTEM.PUT(this.CR1, s - {PE});
         RETURN ErrorTimeout;
@@ -255,7 +253,7 @@ BEGIN
     (* send the address *)
     SYSTEM.PUT(this.DR, SYSTEM.LSH(adr, 1) + INTEGER(rd));
     (* wait for AF or ADDR bit to be set  or timeout*)
-    IF this.WaitBitSet(this.SR1, s, {AF, ADDR}) # NoError THEN
+    IF WaitBitSet(this.SR1, s, {AF, ADDR}) # NoError THEN
         SYSTEM.GET(this.CR1, s);
         SYSTEM.PUT(this.CR1, s - {PE});
         RETURN ErrorTimeout;
@@ -277,7 +275,7 @@ BEGIN
         SYSTEM.GET(this.CR1, s);
         SYSTEM.PUT(this.CR1, s + {STOP});
         (* wait for STOP bit to clear or timeout *)
-        IF this.WaitBitClear(this.CR1, s, {STOP}) # NoError THEN
+        IF WaitBitClear(this.CR1, s, {STOP}) # NoError THEN
             ret := ErrorTimeout
 		END;
         (* disable i2c *)
@@ -294,7 +292,7 @@ BEGIN
             IF len <= 0 THEN
                 ret := ErrorArgs;
             ELSE (* special case for len = 1 *)
-                IF this.WaitBitSet(this.SR1, s, {RXNE}) # NoError THEN
+                IF WaitBitSet(this.SR1, s, {RXNE}) # NoError THEN
                     ret := ErrorTimeout;
                 ELSE
                     SYSTEM.GET(this.DR, buf[start]);
@@ -302,7 +300,7 @@ BEGIN
             END;   
         ELSE
             LOOP
-                IF this.WaitBitSet(this.SR1, s, {RXNE}) # NoError THEN
+                IF WaitBitSet(this.SR1, s, {RXNE}) # NoError THEN
                     ret := ErrorTimeout;
                     SYSTEM.GET(this.CR1, s);
                     SYSTEM.PUT(this.CR1, s + {STOP}); (* Send stop *)
@@ -326,18 +324,18 @@ BEGIN
                 INC(ret);
             END;
         END;
-        IF this.WaitBitClear(this.CR1, s, {STOP}) # NoError THEN
+        IF WaitBitClear(this.CR1, s, {STOP}) # NoError THEN
             ret := ErrorTimeout
 		END;
     ELSE
         LOOP (* write byte array *)
             IF len = 0 THEN EXIT END; (* all data sent *)
-            IF this.WaitBitSet(this.SR1, s, {AF, TXE}) # NoError THEN
+            IF WaitBitSet(this.SR1, s, {AF, TXE}) # NoError THEN
                 ret := ErrorTimeout;
                 EXIT;
             END;
             SYSTEM.PUT(this.DR, buf[start]);
-            IF this.WaitBitSet(this.SR1, s, {AF, BTF}) # NoError THEN
+            IF WaitBitSet(this.SR1, s, {AF, BTF}) # NoError THEN
                 ret := ErrorTimeout;
                 EXIT
             END;
@@ -351,7 +349,7 @@ BEGIN
             SYSTEM.GET(this.CR1, s);
             SYSTEM.PUT(this.CR1, s + {STOP});
             (* wait for STOP bit to clear or timeout *)
-            IF this.WaitBitClear(this.CR1, s, {STOP}) # NoError THEN
+            IF WaitBitClear(this.CR1, s, {STOP}) # NoError THEN
                 ret := ErrorTimeout
 			END;
         END;
@@ -368,7 +366,8 @@ Return 0 if device responded.
 *)
 PROCEDURE (VAR this: Bus) Probe*(adr : INTEGER): INTEGER;
 VAR tmp : ARRAY 4 OF BYTE; (* dummy buffer *)
-BEGIN RETURN this.Transfer(adr, FALSE, tmp, 0, 0, TRUE)
+BEGIN
+    RETURN this.Transfer(adr, FALSE, tmp, 0, 0, TRUE)
 END Probe;
 
 (**

@@ -20,7 +20,9 @@ CONST
     USER_LED2_PIN* = 14; (* LD4 Red Led *)
     USER_BUTTON1_PORT* = 0; (* Port A *)
     USER_BUTTON1_PIN* = 0; (* B1 Blue PushButton *)
-
+    TOUCH_INT_PORT* = 0; (* Port A *)
+    TOUCH_INT_PIN* = 15; (* INT STMPE811 *)
+    
     Pins* = STM32F4Pins;
     Uart* = STM32F4Uart;
     I2C* = STM32F4I2C;

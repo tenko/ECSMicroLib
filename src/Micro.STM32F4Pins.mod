@@ -24,7 +24,7 @@ MODULE STM32F4Pins IN Micro;
 	*)
 
 	IMPORT SYSTEM;
-    IN Micro IMPORT ARMv7M, MCU := STM32F4, BasePin := Pin;
+    IN Micro IMPORT MCU := STM32F4, BasePin := Pin;
     
 	CONST
 		(* ports *)
