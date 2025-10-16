@@ -8,5 +8,5 @@ FLASHSTART 	:= 0x08000000
 EXTRAOBJ := build/background.obf
 
 ifeq ($(DEMO),)
-$(error Error: DEMO is not set. Expected blinker or uartecho.)
+$(error Error: DEMO is not set. Expected blinker...)
 endif

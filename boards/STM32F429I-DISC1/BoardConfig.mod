@@ -7,6 +7,7 @@ MODULE BoardConfig;
 
 IN Micro IMPORT SysTick := ARMv7MSTM32SysTick0;
 IN Micro IMPORT STM32F4Pins;
+IN Micro IMPORT STM32F4ExtInt0 := STM32F4PinsExtInt(0);
 IN Micro IMPORT STM32F4Uart := STM32F4Uart(1);
 IN Micro IMPORT STM32F4I2C;
 IN Micro IMPORT STM32F4SPI5 := STM32F4SPI(5);
@@ -24,6 +25,7 @@ CONST
     TOUCH_INT_PIN* = 15; (* INT STMPE811 *)
     
     Pins* = STM32F4Pins;
+    ExtIntButton1* = STM32F4ExtInt0;
     Uart* = STM32F4Uart;
     I2C* = STM32F4I2C;
     SPI5* = STM32F4SPI5;

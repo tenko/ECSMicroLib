@@ -18,18 +18,6 @@ VAR
     dev : DeviceSTMPE811.Device;
     rawX, rawY : UNSIGNED16;
     x, y : INTEGER;
-    
-PROCEDURE Test;
-VAR
-    id : UNSIGNED16;
-    ret : LENGTH;
-BEGIN
-    ret := bus.Probe(STMPE811_ADR);
-    TRACE(ret);
-    id := dev.ReadDeviceId();
-    TRACE(id);
-    TRACE(dev.error);
-END Test;
 
 BEGIN
     TRACE("Init");
@@ -46,19 +34,24 @@ BEGIN
             dev.ReadXY(rawX, rawY);
 
             (* approx calibration values *)
-            x := INTEGER(rawX) - 330;
-            x := x DIV 14;
+            IF rawX <= 3000 THEN
+                x := 3900 - INTEGER(rawX);
+            ELSE
+                x := 3800 - INTEGER(rawX);
+            END;
+            
+            x := x DIV 15;
             IF x < 0 THEN x := 0 END;
             IF x >= 240 THEN x := 239 END;
-
+            x := 239 - x;
+            
             (* approx calibration values *)
             y := INTEGER(rawY) - 360;
             y := y DIV 11;
             IF y < 0 THEN y := 0 END;
             IF y >= 320 THEN y := 319 END;
-            
-            TRACE(x);
-            TRACE(y);
+
+            TRACE(x); TRACE(y);
         END;
     END;
     TRACE("Finish");

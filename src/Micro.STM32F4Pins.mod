@@ -90,16 +90,20 @@ MODULE STM32F4Pins IN Micro;
 		SYSTEM.GET(r, x);
 		SYSTEM.PUT(r, SYSTEM.VAL(SIGNED32, x - {y,y+1}) + SYSTEM.LSH(mode, y));
 
-		r := MCU.GPIOA_OTYPER + port * portSpacing;
-		SYSTEM.GET(r, x);
-		IF oType THEN SYSTEM.PUT(r, x + {pin})
-		ELSE SYSTEM.PUT(r, x - {pin})
-		END;
+        IF mode # input THEN
+    		r := MCU.GPIOA_OTYPER + port * portSpacing;
+    		SYSTEM.GET(r, x);
+    		IF oType THEN SYSTEM.PUT(r, x + {pin})
+    		ELSE SYSTEM.PUT(r, x - {pin})
+    		END;
+        END;
 
-		r := MCU.GPIOA_OSPEEDR + port * portSpacing;
-		SYSTEM.GET(r, x);
-		SYSTEM.PUT(r, SYSTEM.VAL(SIGNED32, x - {y,y+1}) + SYSTEM.LSH(oSpeed, y));
-
+        IF mode # input THEN
+    		r := MCU.GPIOA_OSPEEDR + port * portSpacing;
+    		SYSTEM.GET(r, x);
+    		SYSTEM.PUT(r, SYSTEM.VAL(SIGNED32, x - {y,y+1}) + SYSTEM.LSH(oSpeed, y));
+        END;
+        
 		r := MCU.GPIOA_PUPDR + port * portSpacing;
 		SYSTEM.GET(r, x);
 		SYSTEM.PUT(r, SYSTEM.VAL(SIGNED32, x - {y,y+1}) + SYSTEM.LSH(pullType, y));
