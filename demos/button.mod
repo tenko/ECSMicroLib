@@ -1,3 +1,4 @@
+(** Simple demo of using an external interrupt to detect button edge event *)
 MODULE Test;
 IMPORT BoardConfig;
 

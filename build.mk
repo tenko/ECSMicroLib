@@ -22,9 +22,25 @@ OBF += build/Micro.StaticData.obf
 .PHONY: all
 all : micro.lib
 
+build/Micro.ARMv7MInterrupt.obf : src/Micro.ARMv7M.mod
+build/Micro.ARMv7MSTM32CycleCount.obf : src/Micro.ARMv7M.mod
+build/Micro.ARMv7MSTM32F4WWDG.obf : src/Micro.ARMv7M.mod src/Micro.STM32F4.mod src/Micro.ARMv7MTraps.mod
 build/Micro.ARMv7MSTM32SysTick0.obf : src/Micro.ARMv7M.mod
+build/Micro.ARMv7MTraps.obf : src/Micro.ARMv7M.mod
+build/Micro.DeviceDS18B20.obf : src/Micro.OneWire.mod
+build/Micro.DeviceILI9341.obf : src/Micro.BusSPI.mod src/Micro.Pin.mod src/Micro.Timing.mod
+build/Micro.DeviceSTMPE811.obf : src/Micro.BusI2C.mod src/Micro.Timing.mod
+build/Micro.STM32F4I2C.obf : src/Micro.ARMv7M.mod src/Micro.BusI2C.mod src/Micro.STM32F4Pins.mod src/Micro.STM32F4.mod
+build/Micro.STM32F4IWDG.obf : src/Micro.STM32F4.mod
+build/Micro.STM32F4OneWire.obf : src/Micro.OneWire.mod src/Micro.STM32F4Pins.mod src/Micro.STM32F4.mod
+build/Micro.STM32F4Pins.obf : src/Micro.ARMv7M.mod src/Micro.STM32F4.mod src/Micro.Pin.mod
+build/Micro.STM32F4PinsExtInt.obf : src/Micro.ARMv7M.mod src/Micro.STM32F4.mod src/Micro.STM32F4Pins.mod
+build/Micro.STM32F4SPI.obf : src/Micro.ARMv7M.mod src/Micro.BusSPI.mod src/Micro.ARMv7MSTM32SysTick0.mod src/Micro.STM32F4Pins.mod src/Micro.STM32F4.mod
 build/Micro.STM32F4System.obf : src/Micro.ARMv7M.mod src/Micro.STM32F4.mod
+build/Micro.STM32F4Uart.obf : src/Micro.ARMv7M.mod src/Micro.BusUart.mod src/Micro.STM32F4Pins.mod src/Micro.STM32F4.mod
+build/Micro.STM32L4Pins.obf : src/Micro.ARMv7M.mod src/Micro.STM32L4.mod src/Micro.Pin.mod
 build/Micro.STM32L4System.obf : src/Micro.ARMv7M.mod src/Micro.STM32L4.mod
+build/Micro.STM32L4Uart.obf : src/Micro.ARMv7M.mod src/Micro.BusUart.mod src/Micro.STM32L4Pins.mod src/Micro.STM32L4.mod
 
 build/%.obf: src/%.mod
 	@echo compiling $<

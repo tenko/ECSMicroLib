@@ -1,4 +1,4 @@
-(* Test ILI9341 LCD Display *)
+(** Test ILI9341 LCD display driver *)
 MODULE Test;
 IMPORT BoardConfig;
 
@@ -19,7 +19,6 @@ VAR
     bus : SPI5.Bus;
     cs, rst, dc : Pins.Pin;
     dev : DeviceILI9341.ILI9341;
-    i : INTEGER;
 
 PROCEDURE RandInt(range : INTEGER): INTEGER;
 BEGIN RETURN INTEGER(Cardinal.RandomRange(range))

@@ -8,6 +8,7 @@ MODULE BoardConfig;
 IN Micro IMPORT SysTick := ARMv7MSTM32SysTick0;
 IN Micro IMPORT STM32F4Pins;
 IN Micro IMPORT STM32F4ExtInt0 := STM32F4PinsExtInt(0);
+IN Micro IMPORT STM32F4ExtInt15 := STM32F4PinsExtInt(15);
 IN Micro IMPORT STM32F4Uart := STM32F4Uart(1);
 IN Micro IMPORT STM32F4I2C;
 IN Micro IMPORT STM32F4SPI5 := STM32F4SPI(5);
@@ -26,6 +27,7 @@ CONST
     
     Pins* = STM32F4Pins;
     ExtIntButton1* = STM32F4ExtInt0;
+    ExtIntTouch* = STM32F4ExtInt15;
     Uart* = STM32F4Uart;
     I2C* = STM32F4I2C;
     SPI5* = STM32F4SPI5;
@@ -103,7 +105,9 @@ BEGIN
     par.SCKPinPort := Pins.F;
     par.SCKPinN := 7;
     par.SCKPinAF := Pins.AF5;
-    par.MISOPinPort := -1;
+    par.MISOPinPort := Pins.F;
+    par.MISOPinN := 8;
+    par.MISOPinAF := Pins.AF5;
     par.MOSIPinPort := Pins.F;
     par.MOSIPinN := 9;
     par.MOSIPinAF := Pins.AF5;
@@ -114,11 +118,11 @@ BEGIN
     par.configNSS := FALSE;
     SPI5.Init(bus, par);
     
-    rst.Init(Pins.A, 7, Pins.output, Pins.pushPull, Pins.low, Pins.noPull, Pins.AF0);
+    rst.Init(Pins.A, 7, Pins.output, Pins.pushPull, Pins.veryHigh, Pins.noPull, Pins.AF0);
     rst.On;
-    cs.Init(Pins.C, 2, Pins.output, Pins.pushPull, Pins.low, Pins.noPull, Pins.AF0);
+    cs.Init(Pins.C, 2, Pins.output, Pins.pushPull, Pins.veryHigh, Pins.noPull, Pins.AF0);
     cs.On;
-    dc.Init(Pins.D, 13, Pins.output, Pins.pushPull, Pins.low, Pins.noPull, Pins.AF0);
+    dc.Init(Pins.D, 13, Pins.output, Pins.pushPull, Pins.veryHigh, Pins.noPull, Pins.AF0);
     dc.On;
 END InitILI9341SPI;
 

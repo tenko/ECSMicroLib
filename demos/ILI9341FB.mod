@@ -1,8 +1,9 @@
-(* Test ILI9341 LCD Display *)
+(** Test ILI9341 LCD display driver with the Canvas module *)
 MODULE Test;
 IMPORT BoardConfig;
 
 IMPORT SYSTEM;
+IN Std IMPORT OSStream;
 IN Micro IMPORT SysTick := ARMv7MSTM32SysTick0;
 IN Micro IMPORT DeviceILI9341;
 IN Gfx IMPORT Canvas;
@@ -36,9 +37,7 @@ VAR
     dev : DeviceILI9341.ILI9341;
     col, fg, bg : INTEGER;
 
-(*
-VAR ^ Background- ["background"]: ARRAY 76800 OF UNSIGNED16;
-*)
+(* VAR ^ Background- ["background"]: ARRAY 76800 OF UNSIGNED16; *)
   
 (** Set pixel to color at location x, y. *)
 PROCEDURE (VAR this : FramebufferMono) SetPixel*(x, y, color : INTEGER);
@@ -116,11 +115,10 @@ VAR
     s : SET8;
 BEGIN 
     fbMono.Fill(0);
-    (* col := 1 - col; *)
+    col := 1 - col;
     fbMono.Line(0, 0, 240, 320, 1);
     fbMono.Line(0, 320, 240, 0, 1);
-    (* fbMono.FillRect(50, 50, 50, 50, 1); *)
-    SysTick.Delay(1); (* crash without! *)
+    fbMono.FillRect(50, 50, 50, 50, 1);
 
     t0 := SysTick.GetTicks();
     yoff := 0;
@@ -148,12 +146,12 @@ BEGIN
         INC(yoff, SIZE);
     END;
     t1 := SysTick.GetTicks();
-    (*
+    
     OSStream.StdOut.WriteString("redraw in ");
     OSStream.StdOut.FormatInteger(INTEGER(t1 - t0), 0, {});
     OSStream.StdOut.WriteString("ms.");
     OSStream.StdOut.WriteNL;
-    *)
+    
 END Draw;
 
 BEGIN

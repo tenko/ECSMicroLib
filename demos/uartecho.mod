@@ -1,3 +1,4 @@
+(** Test uart with echo of received characters. *)
 MODULE Test;
 IMPORT BoardConfig;
 

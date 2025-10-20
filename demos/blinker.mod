@@ -1,3 +1,4 @@
+(** Simple led blinker demo using the SysTick millisecond timer *)
 MODULE Test;
 IMPORT BoardConfig, SYSTEM;
 

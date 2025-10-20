@@ -25,7 +25,8 @@ CONST
     OK                  = 0;
     ERROR_WRITE_FAILED  = -1;
     ERROR_READ_FAILED   = -2;
-
+    CHIP_ID             = 0811H;
+    
     (* Registers *)
     REG_CHIP_ID*        = 000H; (* Device identification *)
     REG_ID_VER*         = 002H; (* Revision number *)
@@ -236,6 +237,22 @@ BEGIN
     Timing.DelayMS(2);
 END Reset;
 
+(** Enable FIFO Interrupt on INT pin. *)
+PROCEDURE (VAR this : Device) EnableFIFOInterrupt* ();
+VAR s : SET8;
+BEGIN
+    this.WriteData(REG_FIFO_TH, 0);
+    s := this.ReadRegister(REG_INT_EN);
+    this.WriteRegister(REG_INT_EN, s + {INT_EN_TOUCH_DET});
+    s := this.ReadRegister(REG_INT_CTRL);
+    this.WriteRegister(REG_INT_CTRL, s + {GLOBAL_INT});
+END EnableFIFOInterrupt;
+
+(* Clear pending interrupts *)
+PROCEDURE (VAR this : Device) ClearInterrupts* ();
+BEGIN this.WriteData(REG_INT_STA, 0FFX);
+END ClearInterrupts;
+
 (** Reset FIFO. *)
 PROCEDURE (VAR this : Device) ResetFIFO* ();
 VAR s : SET8;
@@ -244,11 +261,12 @@ BEGIN
     this.WriteRegister(REG_FIFO_STA, s + {FIFO_RESET});
     this.WriteRegister(REG_FIFO_STA, s - {FIFO_RESET});
 END ResetFIFO;
-
+    
 (** Config *)
 PROCEDURE (VAR this : Device) Config* ();
 VAR s : SET8;
 BEGIN
+    ASSERT(this.ReadDeviceId() = CHIP_ID);
     this.Reset();
     (* Turn off GPIO clock *)
     s := this.ReadRegister(REG_SYS_CTRL2);
@@ -279,7 +297,7 @@ BEGIN
     (* Touch mode : No window tracking index. XYZ acquisition mode *)
     this.WriteRegister(REG_TSC_CTRL, {TSC_EN});
     (* Clear all the status pending bits if any *)
-    this.WriteData(REG_INT_STA, 0FFX);
+    this.ClearInterrupts();
     Timing.DelayMS(5);
 END Config;
 

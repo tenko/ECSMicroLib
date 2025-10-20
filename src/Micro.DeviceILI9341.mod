@@ -85,6 +85,11 @@ CONST
     CMD_MADCTL_BGR 			        = 008X;
     CMD_MADCTL_MH  			        = 004X;
 
+PROCEDURE Delay;
+VAR i : LENGTH;
+BEGIN FOR i := 0 TO 9 DO SYSTEM.ASM("nop") END
+END Delay;
+
 (** Initialize driver *)
 PROCEDURE Init* (VAR dev : ILI9341; VAR bus: BusSPI.Bus; VAR rst, cs, dc : Pin.Pin);
 BEGIN
@@ -109,8 +114,9 @@ END Reset;
 
 PROCEDURE (VAR this : ILI9341) WriteCmd(cmd : BYTE);
 BEGIN
-    this.cs.Off; this.dc.Off;
+    this.dc.Off; this.cs.Off;
     this.bus.Write(cmd, 0, 1);
+    Delay;
     this.cs.On;
 END WriteCmd;
 
@@ -122,8 +128,9 @@ END WriteCmdCont;
 
 PROCEDURE (VAR this : ILI9341) WriteData(data : BYTE);
 BEGIN
-    this.cs.Off; this.dc.On;
+    this.dc.On; this.cs.Off;
     this.bus.Write(data, 0, 1);
+    Delay;
     this.cs.On;
 END WriteData;
 
@@ -135,8 +142,9 @@ END WriteDataCont;
 
 PROCEDURE (VAR this : ILI9341) WriteData16(VAR data : ARRAY OF BYTE);
 BEGIN
-    this.cs.Off; this.dc.On;
+    this.dc.On; this.cs.Off;
     this.bus.Transfer(0, SYSTEM.ADR(data), TRUE, 16, 1);
+    Delay;
     this.cs.On;
 END WriteData16;
 
@@ -204,7 +212,6 @@ BEGIN
 	this.WriteData16Cont(y1);
     this.WriteData16Cont(y2);
 	this.WriteCmdCont(CMD_GRAM);
-	Timing.DelayMS(1);
 END SetCursorPosition;
 
 PROCEDURE (VAR this : ILI9341) SetRotation*(rotate : INTEGER);
@@ -252,8 +259,9 @@ BEGIN
     data[1] := SYSTEM.VAL(BYTE, SYSTEM.LSH(color, -8));
     data[0] := SYSTEM.VAL(BYTE, color);
     this.bus.Transfer(0, SYSTEM.ADR(data[0]), TRUE, 16, 1);
-    this.WriteCmdCont(CMD_NOP);
+    Delay;
 	this.cs.On;
+	Timing.DelayMS(1);
 END SetPixel;
 
 (** Fill canvas with color *)
@@ -281,8 +289,8 @@ BEGIN
     IF n > 0 THEN
         this.bus.Transfer(0, SYSTEM.ADR(data[0]), TRUE, 16, n);
     END;
-    this.WriteCmdCont(CMD_NOP);
     this.dc.Off;
+    Delay;
     this.cs.On;
     Timing.DelayMS(1);
 END Fill;
@@ -314,8 +322,8 @@ BEGIN
     IF n > 0 THEN
         this.bus.Transfer(0, SYSTEM.ADR(data[0]), TRUE, 16, n);
     END;
-    this.WriteCmdCont(CMD_NOP);
     this.dc.Off;
+    Delay;
     this.cs.On;
     Timing.DelayMS(1);
 END FilledRect;
@@ -340,6 +348,7 @@ BEGIN
         this.bus.Transfer(0, data, FALSE, 16, n);
     END;
     this.dc.Off;
+    Delay;
     this.cs.On;
     Timing.DelayMS(1);
 END BlitRaw;
