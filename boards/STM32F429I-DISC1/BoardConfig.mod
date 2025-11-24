@@ -15,6 +15,8 @@ IN Micro IMPORT STM32F4SPI5 := STM32F4SPI(5);
 IN Micro IMPORT STM32F4System;
 
 CONST
+    Board* = "STM32F429I-DISC1";
+    MCU* = "STM32F429ZI";
     (* Board user led 1 & 2 + button *)
     USER_LED1_PORT* = 6; (* Port G *)
     USER_LED1_PIN* = 13; (* LD3 Green Led *)

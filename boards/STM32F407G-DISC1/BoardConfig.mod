@@ -11,6 +11,8 @@ IN Micro IMPORT STM32F4Uart := STM32F4Uart(2);
 IN Micro IMPORT STM32F4System;
 
 CONST
+    Board = "STM32F407G-DISC1";
+    MCU = "STM32F407VG";
     (* Board user led 1 *)
     USER_LED1_PORT* = 3; (* Port D *)
     USER_LED1_PIN* = 15;

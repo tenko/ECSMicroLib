@@ -8,6 +8,8 @@ IN Micro IMPORT STM32L4Uart := STM32L4Uart(2);
 IN Micro IMPORT STM32L4System;
 
 CONST
+    Board = "NUCLEO-L432KC";
+    MCU = "STM32L432KC";
     (* Board user led 1 *)
     USER_LED1_PORT* = 1; (* Port B *)
     USER_LED1_PIN* = 3;
