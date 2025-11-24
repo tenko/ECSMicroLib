@@ -31,11 +31,11 @@ BEGIN
     DeviceSTMPE811.Init(dev, bus, STMPE811_ADR);
     dev.bus := PTR(bus); (* TODO : Probably a bug. Check with smaller example *)
     dev.Config;
-    dev.EnableFIFOInterrupt;
+    dev.EnableTouchInterrupt;
     
     int.Init(BoardConfig.TOUCH_INT_PORT, BoardConfig.TOUCH_INT_PIN, Pins.input,
-             FALSE, 0, Pins.noPull, Pins.AF0);
-    ExtInt.Init(int, FALSE, TRUE);
+             FALSE, 0, Pins.noPull, Pins.AF0); (* Floating input pin *)
+    ExtInt.Init(int, FALSE, TRUE); (* trigger on falling edge *)
     ExtInt.Enable;
     
     WHILE TRUE DO

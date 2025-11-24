@@ -237,8 +237,8 @@ BEGIN
     Timing.DelayMS(2);
 END Reset;
 
-(** Enable FIFO Interrupt on INT pin. *)
-PROCEDURE (VAR this : Device) EnableFIFOInterrupt* ();
+(** Enable touch interrupt on INT pin. *)
+PROCEDURE (VAR this : Device) EnableTouchInterrupt* ();
 VAR s : SET8;
 BEGIN
     this.WriteData(REG_FIFO_TH, 0);
@@ -246,7 +246,7 @@ BEGIN
     this.WriteRegister(REG_INT_EN, s + {INT_EN_TOUCH_DET});
     s := this.ReadRegister(REG_INT_CTRL);
     this.WriteRegister(REG_INT_CTRL, s + {GLOBAL_INT});
-END EnableFIFOInterrupt;
+END EnableTouchInterrupt;
 
 (* Clear pending interrupts *)
 PROCEDURE (VAR this : Device) ClearInterrupts* ();
