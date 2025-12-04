@@ -14,12 +14,13 @@ MODULE ARMv7M IN Micro;
     
 	CONST
 	    (* Debug *)
+	        SCB_DHCSR* = ADDRESS(0E000EDF0H);   (* Debug Halting Control and Status Register *)
             SCB_DEMCR* = ADDRESS(0E000EDFCH);   (* Debug Exception and Monitor Control Register *)
             DWT_CYCCNT* = ADDRESS(0E0001004H);  (* DWT Cycle Count register *)
             DWT_CONTROL* = ADDRESS(0E0001000H); (* DWT control register*)
 	    
 		(* B1.5.2: exception numbers *)
-			Reset* = 1;
+			EReset* = 1;
 			NMI* = 2;
 			HardFault* = 3;
 			MemManage* = 4;
@@ -357,5 +358,13 @@ MODULE ARMv7M IN Micro;
     PROCEDURE CPSIDif*();
     BEGIN SYSTEM.ASM("cpsid if")
     END CPSIDif;
-
+    
+    PROCEDURE Reset*();
+    BEGIN
+        SYSTEM.ASM("dsb");
+    	SYSTEM.PUT(AIRCR, SIGNED32(05FA0004H)); (* SYSRESETREQ *)
+    	SYSTEM.ASM("dsb");
+    	REPEAT UNTIL FALSE
+	END Reset;
+	
 END ARMv7M.

@@ -90,6 +90,7 @@ MODULE ARMv7MTraps IN Micro;
         u32 : UNSIGNED32;
 	BEGIN
 		IF ~trapFlag THEN
+		    trapFlag := TRUE;
             trap.ext := 0;
             IF code = 0DH THEN
                 SYSTEM.GET(ARMv7M.UFSR, u16);
@@ -108,32 +109,47 @@ MODULE ARMv7MTraps IN Micro;
             END;
 			trap.code := code;
 			trap.context := context;
-			trapFlag := TRUE;
+			
             IF debug THEN
-                String('TRAP '); Hex(code); Ln;
-                IF code >= 0AH THEN
-                    IF code = 0DH THEN String('  UFSR   = ')
-                    ELSIF code = 0AH THEN String('  HFSR   = ')
-                    ELSIF code = 0BH THEN String('  MMFAR   = ')
-                    ELSIF code = 0CH THEN String('  BFAR   = ') END;
-                    Hex(trap.ext); Ln;
+                IF code < 0AH THEN
+        	       String("ECSOberon : ");
+        	       IF code = 0 THEN String("Failed assertion")
+        	       ELSIF code = 1 THEN String("Unmatched case label")
+        	       ELSIF code = 2 THEN String("Invalid array element index Array designators")
+        	       ELSIF code = 3 THEN String("Failed type guard")
+        	       ELSIF code = 3 THEN String("Unsatisfied type test")
+        	       ELSE String("Unknown") END;
+        	       Ln;
+        	       String('  LR   = '); Hex(context.LR); Ln;
+                   String('  PC   = '); Hex(context.PC); Ln;
+                ELSE
+                    String('TRAP '); Hex(code); Ln;
+                    IF code >= 0AH THEN
+                        IF code = 0DH THEN String('  UFSR   = ')
+                        ELSIF code = 0AH THEN String('  HFSR   = ')
+                        ELSIF code = 0BH THEN String('  MMFAR   = ')
+                        ELSIF code = 0CH THEN String('  BFAR   = ') END;
+                        Hex(trap.ext); Ln;
+                    END;
+                    String('  R0   = '); Hex(context.R0); Ln;
+                    String('  R1   = '); Hex(context.R1); Ln;
+                    String('  R2   = '); Hex(context.R2); Ln;
+                    String('  R3   = '); Hex(context.R3); Ln;
+                    String('  R12  = '); Hex(context.R12); Ln;
+                    String('  LR   = '); Hex(context.LR); Ln;
+                    String('  PC   = '); Hex(context.PC); Ln;
+                    String('  XPSR = '); Hex(context.XPSR); Ln;
                 END;
-                String('  R0   = '); Hex(context.R0); Ln;
-                String('  R1   = '); Hex(context.R1); Ln;
-                String('  R2   = '); Hex(context.R2); Ln;
-                String('  R3   = '); Hex(context.R3); Ln;
-                String('  R12  = '); Hex(context.R12); Ln;
-                String('  LR   = '); Hex(context.LR); Ln;
-                String('  PC   = '); Hex(context.PC); Ln;
-                String('  XPSR = '); Hex(context.XPSR); Ln;
             END;
 		END;
 		rstCheck := rstCheckKey;
-		(* system reset *)
-			ARMv7M.DSB;
-			SYSTEM.PUT(ARMv7M.AIRCR, SIGNED32(05FA0004H)); (* SYSRESETREQ *)
-			ARMv7M.DSB;
-			REPEAT UNTIL FALSE
+        IF SYSTEM.BIT(SYSTEM.ADDRESS(ARMv7M.SCB_DHCSR), 0) THEN
+            (* Running under debugger control *)
+            SYSTEM.ASM("bkpt 0x01");
+        ELSE
+            ARMv7M.Reset;
+    	END;
+    	WHILE TRUE DO END;
 	END DefaultTrapHandler;
 
     PROCEDURE SVCTrap ["isr_svc"];
