@@ -14,7 +14,7 @@ VAR
 BEGIN
     TRACE("Init");
     BoardConfig.Init;
-    BoardConfig.InitUart(bus, 4800, Uart.parityNone, Uart.stopBits1);
+    BoardConfig.InitUart(bus, 19200, Uart.parityNone, Uart.stopBits1);
     TRACE("Start");
     REPEAT
         ARMv7M.WFI;

@@ -106,7 +106,7 @@ BEGIN
     SysTick.Init(BoardConfig.HCLK, 1000);
     blink := FALSE;
     
-    BoardConfig.InitUart(bus, 4800, Uart.parityNone, Uart.stopBits1);
+    BoardConfig.InitUart(bus, 19200, Uart.parityNone, Uart.stopBits1);
     Debug.Init(cli);
     TRACE("Start");
     REPEAT

@@ -151,7 +151,7 @@ MODULE ARMv7MTraps IN Micro;
     	END;
     	WHILE TRUE DO END;
 	END DefaultTrapHandler;
-
+    
     PROCEDURE SVCTrap ["isr_svc"];
 	VAR
         ptr : SYSTEM.ADDRESS;
@@ -160,13 +160,14 @@ MODULE ARMv7MTraps IN Micro;
 		SYSTEM.ASM("
             mov     r0, r11
             mov     r1, sp
-            add     r1, r1, 16
+            add     r1, r1, 16 ; Adjust for locals stack
             str	    r1, [r0, ptr]
         ");
         SYSTEM.PUT(SYSTEM.ADR(context), ptr);
         trapHandler(INTEGER(SET(context.XPSR) * SET(0FFH )), context^);
 	END SVCTrap;
     
+    (* Procedure here use the original stack which might fail if stack failure is a stack overflow *)
     PROCEDURE HardFaultTrap ["isr_hardfault"];
 	VAR
         ptr : SYSTEM.ADDRESS;
@@ -175,13 +176,13 @@ MODULE ARMv7MTraps IN Micro;
 		SYSTEM.ASM("
             mov     r0, r11
             mov     r1, sp
-            add     r1, r1, 16
+            add     r1, r1, 16 ; Adjust for locals stack
             str	    r1, [r0, ptr]
         ");
         SYSTEM.PUT(SYSTEM.ADR(context), ptr);
         trapHandler(0AH, context^);
 	END HardFaultTrap;
-
+    
     PROCEDURE MemManageTrap ["isr_memmanage"];
 	VAR
         ptr : SYSTEM.ADDRESS;
@@ -190,7 +191,7 @@ MODULE ARMv7MTraps IN Micro;
 		SYSTEM.ASM("
             mov     r0, r11
             mov     r1, sp
-            add     r1, r1, 16
+            add     r1, r1, 16 ; Adjust for locals stack
             str	    r1, [r0, ptr]
         ");
         SYSTEM.PUT(SYSTEM.ADR(context), ptr);
@@ -205,13 +206,13 @@ MODULE ARMv7MTraps IN Micro;
 		SYSTEM.ASM("
             mov     r0, r11
             mov     r1, sp
-            add     r1, r1, 16
+            add     r1, r1, 16 ; Adjust for locals stack
             str	    r1, [r0, ptr]
         ");
         SYSTEM.PUT(SYSTEM.ADR(context), ptr);
         trapHandler(0CH, context^);
 	END BusFaultTrap;
-
+    
     PROCEDURE UsageFaultTrap ["isr_usagefault"];
 	VAR
         ptr : SYSTEM.ADDRESS;
@@ -220,7 +221,7 @@ MODULE ARMv7MTraps IN Micro;
 		SYSTEM.ASM("
             mov     r0, r11
             mov     r1, sp
-            add     r1, r1, 16
+            add     r1, r1, 16 ; Adjust for locals stack
             str	    r1, [r0, ptr]
         ");
         SYSTEM.PUT(SYSTEM.ADR(context), ptr);

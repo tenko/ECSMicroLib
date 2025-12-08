@@ -22,7 +22,7 @@ VAR
     cli : UartCLI;
     x : CHAR;
 
-(* ob trap *)
+(* Trigger oberon traps *)
 PROCEDURE ObTrap(code : INTEGER) : BOOLEAN;
 VAR
     arr : ARRAY 2 OF CHAR;
@@ -46,6 +46,7 @@ BEGIN
     RETURN FALSE;
 END ObTrap;
  
+ (* Trigger ARM traps *)
 PROCEDURE ArmTrap(code : INTEGER): BOOLEAN;
 VAR i : INTEGER;
 BEGIN
@@ -97,9 +98,9 @@ BEGIN
     W("'clear'          - Clear screen"); End;
     W("'help'           - Help message"); End;
     W("'reset'          - Reset board"); End;
-    W("'obtrap n        - Trigger oberon trap n"); End;
-    W("'trap n          - Trigger trap 10.."); End;
-    W("'quit'                       - Quit"); End;
+    W("'obtrap n'       - Trigger oberon trap n"); End;
+    W("'trap n'         - Trigger ARM trap n"); End;
+    W("'quit'           - Quit"); End;
     End;
 END OnHelpCommand;
 
@@ -126,8 +127,6 @@ BEGIN
             ret := ArmTrap(INTEGER(result));
         END;
     ELSIF ArrayOfChar.StartsWith(this.line, "obtrap ") THEN
-        TRACE(Integer.FromSubString(result, this.line, 7, this.len - 7));
-        TRACE(result);
         IF Integer.FromSubString(result, this.line, 7, this.len - 7) THEN
             ret := ObTrap(INTEGER(result));
         END;
