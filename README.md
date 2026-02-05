@@ -6,7 +6,8 @@ based on the Black Box compiler.
 
 Original project [Link](https://github.com/aixp/O7)
 
-This is an early release and will be updated in the near future.
+Recent updates added support for coroutines (ref. the **tasks** demo) and
+added a reusable CLI interface module (ref. the **uartcli** demo).
 
 ## Boards
 
@@ -16,10 +17,10 @@ Currently supported boards:
 * [STM32F407G-DISC1](https://www.st.com/en/evaluation-tools/stm32f4discovery.html) STM32F407VG MCU
 * [STM32F429I-DISC1](https://www.st.com/en/evaluation-tools/32f429idiscovery.html) STM32F429ZI MCU
 
-These are the boards I have on hand and are able to test. Most STM32F4, STM32L4 boards whould work
+These are the boards I have on hand and are able to test. Most STM32F4, STM32L4 boards would work
 if the RAM is correctly adjusted for in the config.
 
-The original framework support further MCUs, but these are removed until it is posible to test these.
+The original framework support further MCUs, but these are removed until it is possible to test these.
 
 Also the ECS compiler support more targets like AVR, AVR32, Xtensa: [Link](https://ecs.openbrace.org/manual/manualpa3.html#x53-496000III)  
 
@@ -74,7 +75,9 @@ GDB to start and monitor the example.
 ## TODO
 
 * Documentation
-* Add support for coroutines and cooperative multitasking.
+* Update I2C, OneWire and SPI drivers to polling for efficient use in coroutines.
+* Add more drivers to more MCU peripherals as needed.
+* Add support for embedded filesystem (Squashfs and FAT16)
 
 ## Note
 
