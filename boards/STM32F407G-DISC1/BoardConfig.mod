@@ -8,6 +8,7 @@ MODULE BoardConfig;
 
 IN Micro IMPORT STM32F4Pins;
 IN Micro IMPORT STM32F4Uart := STM32F4Uart(2);
+IN Micro IMPORT STM32F4OneWire;
 IN Micro IMPORT STM32F4System;
 
 CONST
@@ -19,6 +20,7 @@ CONST
 
     Pins* = STM32F4Pins;
     Uart* = STM32F4Uart;
+    OWire* = STM32F4OneWire;
     
     (* Clocks *)
     fHSE = 8000000; (* Hz external crystal *)
@@ -29,6 +31,12 @@ VAR
 	PCLK2*, TIMCLK2*,
 	QCLK*, (* QCLK <= 48 MHz, best is 48 MHz *)
 	RCLK*: INTEGER; (* Hz *)
+
+PROCEDURE InitOWire*(VAR port : OWire.Port);
+BEGIN
+    port.Init(OWire.USART2, Pins.A, 2, PCLK1); (* TX pin A2 *)
+    port.Enable;
+END InitOWire;
 
 PROCEDURE InitUart*(VAR bus : Uart.Bus; baud, parity, stopBits : INTEGER);
 VAR par : Uart.InitPar;
