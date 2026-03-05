@@ -12,7 +12,7 @@ OLS += ARMv7M ARMv7MTraps ARMv7MSTM32SysTick0 ARMv7MInterrupt ARMv7MSTM32CycleCo
 OLS += Debug Pin BusI2C BusSPI BusUart OneWire Timing
 OLS += STM32F4 STM32F4Pins STM32F4PinsExtInt STM32F4I2C STM32F4System STM32F4IWDG
 OLS += ARMv7MSTM32F4WWDG STM32F4SPI STM32F4Uart STM32F4OneWire
-OLS += STM32L4 STM32L4System STM32L4Pins STM32L4Uart
+OLS += STM32L4 STM32L4System STM32L4Pins STM32L4Uart STM32L4OneWire
 OLS += DeviceDS18B20 DeviceILI9341 DeviceSTMPE811
 
 MOD += $(addprefix src/, $(addprefix Micro., $(addsuffix .mod, $(OLS))))
@@ -41,6 +41,7 @@ build/Micro.STM32F4Uart.obf : src/Micro.ARMv7M.mod src/Micro.BusUart.mod src/Mic
 build/Micro.STM32L4Pins.obf : src/Micro.ARMv7M.mod src/Micro.STM32L4.mod src/Micro.Pin.mod
 build/Micro.STM32L4System.obf : src/Micro.ARMv7M.mod src/Micro.STM32L4.mod
 build/Micro.STM32L4Uart.obf : src/Micro.ARMv7M.mod src/Micro.BusUart.mod src/Micro.STM32L4Pins.mod src/Micro.STM32L4.mod
+build/Micro.STM32L4OneWire.obf : src/Micro.OneWire.mod src/Micro.STM32L4Pins.mod src/Micro.STM32L4.mod
 
 build/%.obf: src/%.mod
 	@echo compiling $<
