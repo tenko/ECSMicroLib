@@ -140,8 +140,6 @@ BEGIN
         
     ARMv7MTraps.Init;
     ARMv7MTraps.debug := TRUE;
-     
-    SysTick.Init(BoardConfig.HCLK, 1000);
     
     BoardConfig.InitUart(bus, 19200, Uart.parityNone, Uart.stopBits1);
     Debug.Init(cli);

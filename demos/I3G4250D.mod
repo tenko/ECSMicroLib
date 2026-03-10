@@ -39,7 +39,6 @@ END Test;
 BEGIN
     TRACE("Init");
     BoardConfig.Init;
-    SysTick.Init(BoardConfig.HCLK, 1000);
     
     cs.Init(Pins.C, 1, Pins.output, Pins.pushPull, Pins.low, Pins.noPull, Pins.AF0);
     cs.On;

@@ -16,6 +16,7 @@ TYPE
         LastDiscrepancy*: UNSIGNED8;
         LastFamilyDiscrepancy*: UNSIGNED8;
         LastDeviceFlag*: BOOLEAN;
+        Timeout*: UNSIGNED32;
     END;
 
 CONST
@@ -109,7 +110,7 @@ BEGIN
             idBit := p.ReadBit(); (* Read a bit 1 *)
             cmpIdBit := p.ReadBit(); (* Read the complement of bit 1 *)
             IF idBit & cmpIdBit THEN EXIT END; (* 11 - data error *)
-
+            
             IF idBit # cmpIdBit THEN
                 searchDirection := idBit (* Bit write value for search *)
             ELSE (* 00 - 2 devices *)
@@ -165,15 +166,6 @@ PROCEDURE (VAR p : Port) Next*(): BOOLEAN;
 BEGIN RETURN p.Search(CMD_SEARCHROM)
 END Next;
 
-(** Write ROM to array *)
-PROCEDURE (VAR p : Port) GetROM*(VAR x : ARRAY OF BYTE);
-VAR i : INTEGER;
-BEGIN
-    FOR i := 0 TO LEN(x) - 1 DO
-        x[i] := BYTE(p.ROM_NO[i]);
-    END
-END GetROM;
-
 (** Write ROM to memory area *)
 PROCEDURE (VAR p : Port) ReadROM*(adr : ADDRESS);
 VAR i : INTEGER;
@@ -183,6 +175,11 @@ BEGIN
         INC(adr)
     END;
 END ReadROM;
+
+(** Write ROM to array *)
+PROCEDURE (VAR p : Port) GetROM*(VAR x : ARRAY OF BYTE);
+BEGIN p.ReadROM(SYSTEM.ADR(x[0]));
+END GetROM;
 
 (** Calculate (MAXIM-DOW) CRC8 of memory array *)
 PROCEDURE Crc8*(adr : ADDRESS; len : LENGTH): CHAR;

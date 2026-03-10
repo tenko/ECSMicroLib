@@ -157,7 +157,6 @@ END Draw;
 BEGIN
     TRACE("Init");
     BoardConfig.Init;
-    SysTick.Init(BoardConfig.HCLK, 1000);
     
     BoardConfig.InitILI9341SPI(bus, rst, cs, dc);
     DeviceILI9341.Init(dev, bus, rst, cs, dc);

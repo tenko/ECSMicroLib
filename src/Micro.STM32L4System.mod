@@ -75,7 +75,7 @@ BEGIN
     HCLK := ASH(RCLK, -HPREN);
 	PCLK1 := ASH(HCLK, -PPRE1N);
 	PCLK2 := ASH(HCLK, -PPRE2N);
-
+    
 	SYSTEM.GET(MCU.RCC_CR, x);
 	IF PLLSRC = HSE THEN
 		(* Enable HSE *)
@@ -95,7 +95,7 @@ BEGIN
     SYSTEM.GET(MCU.PWR_CR1, x);
     SYSTEM.PUT(MCU.PWR_CR1, x - {VOS1} + {VOS0});
     REPEAT UNTIL ~SYSTEM.BIT(MCU.PWR_SR2, VOSF);
-
+    
     SYSTEM.GET(MCU.RCC_CFGR, x);
 	SYSTEM.PUT(MCU.RCC_CFGR, x - {4..7}
 		+ SET32((HPREN + 7) * 10H));
@@ -124,7 +124,6 @@ BEGIN
 	SYSTEM.GET(MCU.RCC_CR, x);
 	SYSTEM.PUT(MCU.RCC_CR, x + {PLLON});
 	REPEAT UNTIL SYSTEM.BIT(MCU.RCC_CR, PLLRDY);
-	
 	(* Configure Flash prefetch, Instruction cache, Data cache and wait state *)
 	SYSTEM.PUT(MCU.FLASH_ACR, {PRFTEN,ICEN,DCEN}
 				+ SET32(flashLatency));

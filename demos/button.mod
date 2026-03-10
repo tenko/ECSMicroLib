@@ -23,7 +23,6 @@ BEGIN
     ExtInt.Init(btn, TRUE, FALSE);
     ExtInt.Enable;
     
-    SysTick.Init(BoardConfig.HCLK, 1000);
     REPEAT
         IF ExtInt.OnTrigger() THEN
             led.Toggle;

@@ -63,6 +63,11 @@ build/test.obf: build/BoardConfig.obf demos/$(DEMO).mod
 	@cp -f demos/$(DEMO).mod build/test.mod
 	@cd build && $(OB) -t armt32 -c test.mod
 
+.PHONY: cleandemo
+cleandemo:
+	@echo Clean demo
+	@-rm -f build/test.rom build/test.obf
+
 .PHONY: flash
 flash: build/test.rom
 	@$(STFLASH) --connect-under-reset --format binary write build/test.rom $(FLASHSTART)
@@ -78,4 +83,5 @@ server:
 .PHONY: gdb
 gdb:
 	@$(GDB) -ex "target extended localhost:4242" -ex "continue"
+
 	

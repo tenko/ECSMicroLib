@@ -25,7 +25,6 @@ VAR
 BEGIN
     TRACE("Init");
     BoardConfig.Init;
-    SysTick.Init(BoardConfig.HCLK, 1000);
     
     BoardConfig.InitSTMPE811I2C(bus);
     DeviceSTMPE811.Init(dev, bus, STMPE811_ADR);

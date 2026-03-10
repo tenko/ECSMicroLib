@@ -14,6 +14,8 @@ CONST
     Uart = BoardConfig.Uart;
     Pins = BoardConfig.Pins;
     
+    BLINK = 250;
+    
 TYPE
     UartCLI = RECORD (Debug.CommandLine) END;
         
@@ -21,6 +23,7 @@ VAR
     pin : Pins.Pin;
     bus : Uart.Bus;
     cli : UartCLI;
+    t0 : UNSIGNED32;
     x : CHAR;
     blink : BOOLEAN;
 
@@ -102,18 +105,18 @@ BEGIN
     
     pin.Init(BoardConfig.USER_LED1_PORT, BoardConfig.USER_LED1_PIN, Pins.output,
              Pins.pushPull, Pins.medium, Pins.noPull, Pins.AF0);
-
-    SysTick.Init(BoardConfig.HCLK, 1000);
+    
     blink := FALSE;
+    t0 := SysTick.GetTicks();
     
     BoardConfig.InitUart(bus, 19200, Uart.parityNone, Uart.stopBits1);
     Debug.Init(cli);
     TRACE("Start");
     REPEAT
         ARMv7M.WFI;
-        IF blink & SysTick.OnTimer() THEN
-            TRACE("Blink");
+        IF blink & (SysTick.GetTicks() - t0 > BLINK) THEN
             pin.Toggle;
+            t0 := SysTick.GetTicks();
         END;
         IF (bus.Any() > 0) & bus.TXDone() THEN
             IF bus.ReadChar(x) THEN

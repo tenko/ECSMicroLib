@@ -22,8 +22,6 @@ END DelayIdle;
 	
 BEGIN
     BoardConfig.Init;
-    SysTick.Init(BoardConfig.HCLK, 1000);
-    
     BoardConfig.InitOWire(owire);
     TRACE(owire.Reset()); (* Return TRUE if device on owbus *)
     
@@ -36,7 +34,7 @@ BEGIN
     TRACE(ID);
     
     (* Set maximum resolution *)
-    TRACE(DS18B20.WriteResolution(owire, ID, 9));
+    TRACE(DS18B20.WriteResolution(owire, ID, 12));
     SysTick.Delay(1000);
     TRACE(DS18B20.ReadResolution(owire, ID, res));
     TRACE(res);

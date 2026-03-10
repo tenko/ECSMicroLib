@@ -97,8 +97,6 @@ BEGIN
     
     pin.Init(BoardConfig.USER_LED1_PORT, BoardConfig.USER_LED1_PIN, Pins.output,
              Pins.pushPull, Pins.medium, Pins.noPull, Pins.AF0);
-
-    SysTick.Init(BoardConfig.HCLK, 1000);
     
     tasks := 0;
     queue.Init(2);

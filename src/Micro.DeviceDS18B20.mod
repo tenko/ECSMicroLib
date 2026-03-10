@@ -171,7 +171,7 @@ VAR
     res, mask : SET8;
 BEGIN
     IF ~ReadScratchPad(owire, id, data) THEN RETURN FALSE END;
-
+    
     mask := {5,6};
     IF resolution = 12 THEN
         res := {5, 6};

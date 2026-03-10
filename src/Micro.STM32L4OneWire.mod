@@ -11,6 +11,7 @@ IMPORT SYSTEM;
 IN Micro IMPORT MCU := STM32L4;
 IN Micro IMPORT Pins := STM32L4Pins;
 IN Micro IMPORT OneWire;
+IN Micro IMPORT Timing;
 
 TYPE
     BYTE = SYSTEM.BYTE;
@@ -18,7 +19,7 @@ TYPE
     Port* = RECORD (OneWire.Port)
         n, UCLK, UEN: INTEGER;
         CR1, CR2, CR3, BRR: ADDRESS;
-        ISR, RDR, TDR: ADDRESS;
+        ISR, ICR, RDR, TDR: ADDRESS;
     END;
     
 CONST
@@ -39,10 +40,10 @@ CONST
     CMD_SKIPROM*        = OneWire.CMD_SKIPROM;
 
     maxPorts* = 4;
-    USART1* = 0;
-    USART2* = 1;
-    USART3* = 2;
-    UART4* = 3;
+    USART1* = 1;
+    USART2* = 2;
+    USART3* = 3;
+    UART4* = 4;
     
     (* U[S]ARTxCR1 bits: *)
     UE = 0; RE = 2; TE = 3;
@@ -50,9 +51,12 @@ CONST
     (* U[S]ARTxCR3 bits: *)
     HDSEL = 3;
     
-    (* U[S]ARTxISR bits: *)
-    RXNE = 5; TC = 6; TXE = 7;
+    (* U[S]ARTxICR bits: *)
+    IDLECF = 4; ORECF = 3; NCF = 2; FECF = 1; PECF = 0;
     
+    (* U[S]ARTxSR bits: *)
+    PE = 0; FE = 1; NF = 2; ORE = 3; RXNE = 5; TC = 6; TXE = 7;
+
 VAR ^ Crc8Data ["CRC8ONEWIRE"]: ARRAY 256 OF CHAR;
 
 (** Initialize 1-Wire bus *)
@@ -93,6 +97,7 @@ BEGIN
     p.LastDiscrepancy := 0;
     p.LastFamilyDiscrepancy := 0;
     p.LastDeviceFlag := FALSE;
+    p.Timeout := 1000;
     FOR i := 0 TO LEN(p.ROM_NO) - 1 DO p.ROM_NO[i] := 00X END;
     
     CR1 := base + 00H;
@@ -104,76 +109,139 @@ BEGIN
     p.CR1 := CR1; p.CR2 := CR2; p.CR3 := CR3; p.BRR := BRR;
     
     p.ISR := base + 1CH;
+    p.ICR := base + 20H;
     p.RDR := base + 24H;
     p.TDR := base + 28H;
+    
+    (* disable U[S]ART *)
+    SYSTEM.GET(CR1, x);
+    SYSTEM.PUT(CR1, x - {UE});
     
     (* enable clock for U[S]ART *)
     SYSTEM.GET(URCCENR, x);
     SYSTEM.PUT(URCCENR, x + {UEN});
     
     (* configure USART TXRX pin *)
-	pin.Init(TXRXPinPort, TXRXPinN, Pins.alt, Pins.pushPull, Pins.fast, Pins.pullUp, AF);
-
+	pin.Init(TXRXPinPort, TXRXPinN, Pins.alt, Pins.openDrain, Pins.fast, Pins.noPull, AF);
+    
     (* defaults *)
     SYSTEM.PUT(CR1, {});
     SYSTEM.PUT(CR2, {});
     SYSTEM.PUT(CR3, {});
     SYSTEM.PUT(GTPR, {});
+    
+    (* Single-wire Half-duplex mode *)
+    SYSTEM.PUT(CR3, {HDSEL});
+    
+    (* enable receiver and transmitter *)
+    SYSTEM.GET(CR1, x);
+    SYSTEM.PUT(CR1, x + {RE,TE});
+    
+    (* default baud rate *)
+    SYSTEM.PUT(p.BRR, UCLK DIV 115200);
  END Init;
-     
+
+PROCEDURE (VAR p- : Port) SetBaud(baud : INTEGER);
+VAR b: INTEGER;
+BEGIN;
+    p.Disable;
+    b := p.UCLK DIV baud;
+    SYSTEM.PUT(p.BRR, b);
+    p.Enable;
+END SetBaud;
+
 (** Enable 1-wire bus *)
 PROCEDURE (VAR p- : Port) Enable*;
-VAR
-    x: SET;
-    b: INTEGER;
+VAR x : SET;
 BEGIN
-    (* Enable UART *)
     SYSTEM.GET(p.CR1, x);
-	SYSTEM.PUT(p.CR1, x + {UE, RE, TE});
-    (* Single-wire Half-duplex mode *)
-    SYSTEM.PUT(p.CR3, {HDSEL});
-    (* set baud rate register *)
-    b := p.UCLK DIV 115200;
-    ASSERT(b DIV 10000H = 0);
-    SYSTEM.PUT(p.BRR, b);
+	SYSTEM.PUT(p.CR1, x + {UE});
 END Enable;
-
-(** Send reset slot and return true if devices is present on bus *)
-PROCEDURE (VAR p- : Port) Reset*(): BOOLEAN;
-VAR b, data : INTEGER;
-BEGIN;
-    (* wait for output register to be cleared *)
-    REPEAT UNTIL SYSTEM.BIT(p.ISR, TXE);
-    (* set baud rate register *)
-    b := p.UCLK DIV 9600;
-    ASSERT(b DIV 10000H = 0);
-    SYSTEM.PUT(p.BRR, b);
-    (* wait for output to be ready and send byte *)
-    REPEAT UNTIL SYSTEM.BIT(p.ISR, TXE);
-    SYSTEM.PUT(p.TDR, 0F0H);
-    (* wait for send to be complete *)
-    REPEAT UNTIL SYSTEM.BIT(p.ISR, TC);
-    (* wait for read and fetch data *)
-    REPEAT UNTIL SYSTEM.BIT(p.ISR, RXNE);
-    SYSTEM.GET(p.RDR, data);
-    (* set baud rate register *)
-    b := p.UCLK DIV 115200;
-    ASSERT(b DIV 10000H = 0);
-    SYSTEM.PUT(p.BRR, b);
-    RETURN data # 0F0H
-END Reset;
 
 (** Disable 1-wire bus *)
 PROCEDURE (VAR p- : Port) Disable*;
 VAR x : SET;
 BEGIN
     SYSTEM.GET(p.CR1, x);
-	SYSTEM.PUT(p.CR1, x - {UE, RE, TE});
+	SYSTEM.PUT(p.CR1, x - {UE});
 END Disable;
+
+(* Wait for bits *)
+PROCEDURE (VAR p- : Port) WaitBits(adr : ADDRESS; bits : SET32);
+VAR
+    x : SET32;
+BEGIN
+    ASSERT(bits # {});
+    WHILE TRUE DO
+        SYSTEM.GET(adr, x);
+        IF x * bits # {} THEN
+            RETURN
+        END;
+    END;
+END WaitBits;
+
+(* Wait for bits set or timout. Return FALSE if timeout triggered *)
+PROCEDURE (VAR p- : Port) WaitBitsOrTimeout(adr : ADDRESS; bits : SET32): BOOLEAN;
+VAR
+    x : SET32;
+    t0 : UNSIGNED32;
+BEGIN
+    ASSERT(bits # {});
+    t0 := Timing.TicksMS();
+    WHILE Timing.TicksMS() - t0 < p.Timeout DO
+        SYSTEM.GET(adr, x);
+        IF x * bits # {} THEN
+            RETURN FALSE
+        END;
+    END;
+    RETURN TRUE (* timeout *)
+END WaitBitsOrTimeout;
+
+(* Check and clear errors *)
+PROCEDURE (VAR p- : Port) CheckAndClearErrors(): BOOLEAN;
+VAR x, flags : SET32;
+BEGIN
+    SYSTEM.GET(p.ISR, x);
+    IF x * {PE, FE, NF} # {} THEN
+        SYSTEM.GET(p.ICR, flags);
+        IF PE IN x THEN flags := flags + {PECF} END;
+        IF FE IN x THEN flags := flags + {FECF} END;
+        IF NF IN x THEN flags := flags + {NCF} END;
+        SYSTEM.PUT(p.ICR, flags);
+        RETURN TRUE
+    END;
+    RETURN FALSE
+END CheckAndClearErrors;
+
+(** Send reset slot and return true if devices is present on bus *)
+PROCEDURE (VAR p- : Port) Reset*(): BOOLEAN;
+VAR data : INTEGER;
+BEGIN;
+    data := 0F0H;
+    (* set baud rate register *)
+    p.SetBaud(9600);
+    LOOP
+        (* wait for output to be ready and send byte *)
+        IF p.WaitBitsOrTimeout(p.ISR, {TXE}) THEN EXIT END;
+        SYSTEM.PUT(p.TDR, 0F0H);
+        (* wait for send to be complete *)
+        IF p.WaitBitsOrTimeout(p.ISR, {TC}) THEN EXIT END;
+        (* wait for read and fetch data *)
+        IF p.WaitBitsOrTimeout(p.ISR, {PE, FE, NF, RXNE}) THEN EXIT END;
+        (* check and clear errors *)
+        IF p.CheckAndClearErrors() THEN EXIT END;
+        (* check read status *)
+        SYSTEM.GET(p.RDR, data);
+        EXIT
+    END;
+    (* Set default baud rate *)
+    p.SetBaud(115200);
+    RETURN data # 0F0H
+END Reset;
 
 (** Write bit to 1-wire bus *)
 PROCEDURE (VAR p- : Port) WriteBit*(bit : BOOLEAN);
-VAR c : CHAR;
+VAR data : INTEGER;
 BEGIN
     (* wait for output to be ready and send byte *)
     REPEAT UNTIL SYSTEM.BIT(p.ISR, TXE);
@@ -186,12 +254,12 @@ BEGIN
     REPEAT UNTIL SYSTEM.BIT(p.ISR, TC);
     (* wait for read and fetch data *)
     REPEAT UNTIL SYSTEM.BIT(p.ISR, RXNE);
-    SYSTEM.GET(p.RDR, c);
+    SYSTEM.GET(p.RDR, data);
 END WriteBit;
 
 (** Read bit from 1-wire bus *)
 PROCEDURE (VAR p- : Port) ReadBit*(): BOOLEAN;
-VAR c : CHAR;
+VAR data : INTEGER;
 BEGIN
     (* wait for output to be ready and send byte *)
     REPEAT UNTIL SYSTEM.BIT(p.ISR, TXE);
@@ -200,8 +268,8 @@ BEGIN
     REPEAT UNTIL SYSTEM.BIT(p.ISR, TC);
     (* wait for read and fetch data *)
     REPEAT UNTIL SYSTEM.BIT(p.ISR, RXNE);
-    SYSTEM.GET(p.RDR, c);
-    RETURN c = 0FFX
+    SYSTEM.GET(p.RDR, data);
+    RETURN data = 0FFH
 END ReadBit;
 
 (**
@@ -250,13 +318,19 @@ BEGIN
         ByteToBits(x);
         (* send byte array *)
         FOR j := 0 TO LEN(buffer) - 1 DO
-            (* wait for output to be ready and send byte *)
-            REPEAT UNTIL SYSTEM.BIT(p.ISR, TXE);
-            SYSTEM.PUT(p.TDR, buffer[j]);
-            (* wait for send to be complete *)
-            REPEAT UNTIL SYSTEM.BIT(p.ISR, TC);
-            (* wait for read and fetch data *)
-            REPEAT UNTIL SYSTEM.BIT(p.ISR, RXNE);
+            LOOP
+                (* wait for output to be ready and send byte *)
+                IF p.WaitBitsOrTimeout(p.ISR, {TXE}) THEN EXIT END;
+                SYSTEM.PUT(p.TDR, buffer[j]);
+                (* wait for send to be complete *)
+                IF p.WaitBitsOrTimeout(p.ISR, {TC}) THEN EXIT END;
+                (* wait for read and fetch data *)
+                IGNORE(p.WaitBitsOrTimeout(p.ISR, {PE, FE, NF, RXNE}));
+                (* check and clear errors *)
+                IGNORE(p.CheckAndClearErrors());
+                EXIT
+            END;
+            (* check read status *)
             SYSTEM.GET(p.RDR, buffer[j]);
         END;
         (* fetch read data if requested *)
