@@ -5,7 +5,7 @@ MODULE BoardConfig;
 
 IN Micro IMPORT ARMv7MSTM32SysTick0;
 IN Micro IMPORT STM32L4Pins;
-IN Micro IMPORT STM32L4Uart := STM32L4Uart(1);
+IN Micro IMPORT STM32L4Uart := STM32L4Uart(2);
 IN Micro IMPORT STM32L4OneWire;
 IN Micro IMPORT STM32L4System;
 
@@ -15,7 +15,8 @@ CONST
     (* Board user led 1 *)
     USER_LED1_PORT* = 1; (* Port B *)
     USER_LED1_PIN* = 3;
-
+    
+    SysTick* = ARMv7MSTM32SysTick0;
     Pins* = STM32L4Pins;
     Uart* = STM32L4Uart;
     OWire* = STM32L4OneWire;
@@ -31,21 +32,19 @@ VAR
 	QCLK*,
 	RCLK* : INTEGER; (* Hz *)
 
+(* OWire on USART1. Note it needs external pull-up resistor, typical 10K *)
 PROCEDURE InitOWire*(VAR port : OWire.Port);
 BEGIN
     port.Init(OWire.USART1, Pins.A, 9, PCLK2); (* TX pin A9 *)
     port.Enable;
 END InitOWire;
 
+(* USART2 is connected to ST-Link interface *)
 PROCEDURE InitUart*(VAR bus : Uart.Bus; baud, parity, stopBits : INTEGER);
 VAR par : Uart.InitPar;
 BEGIN
-    (*
     par.RXPinPort := Pins.A; par.RXPinN := 15; par.RXPinAF := Pins.AF3;
     par.TXPinPort := Pins.A; par.TXPinN := 2;  par.TXPinAF := Pins.AF7;
-    *)
-    par.RXPinPort := Pins.A; par.RXPinN := 10; par.RXPinAF := Pins.AF7;
-    par.TXPinPort := Pins.A; par.TXPinN := 9;  par.TXPinAF := Pins.AF7;
     par.UCLK := PCLK1;
     par.baud := baud;
     par.parity := parity;

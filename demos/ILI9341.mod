@@ -2,12 +2,11 @@
 MODULE Test;
 IMPORT BoardConfig;
 
-IMPORT SYSTEM;
 IN Std IMPORT Cardinal, OSStream;
-IN Micro IMPORT SysTick := ARMv7MSTM32SysTick0;
 IN Micro IMPORT DeviceILI9341;
 
 CONST
+    SysTick = BoardConfig.SysTick;
     Pins = BoardConfig.Pins;
     SPI5 = BoardConfig.SPI5;
 

@@ -4,7 +4,6 @@ IMPORT SYSTEM;
 IMPORT BoardConfig;
 
 IN Micro IMPORT ARMv7M, ARMv7MTraps, Debug;
-IN Micro IMPORT SysTick := ARMv7MSTM32SysTick0;
 
 IN Std IMPORT ArrayOfChar, Integer;
 
@@ -12,6 +11,7 @@ CONST
     LF = 0AX; CR = 0DX;
     ESC = 01BX; DEL = 07FX;
     
+    SysTick = BoardConfig.SysTick;
     Uart = BoardConfig.Uart;
     
 TYPE

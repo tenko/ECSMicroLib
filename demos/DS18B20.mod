@@ -1,13 +1,11 @@
 (** DS18B20 1-Wire Digital Thermometer demo *)
 MODULE Test;
 
-IMPORT SYSTEM;
 IMPORT BoardConfig;
-IN Micro IMPORT ARMv7M;
-IN Micro IMPORT SysTick := ARMv7MSTM32SysTick0;
 IN Micro IMPORT DS18B20 := DeviceDS18B20;
 
 CONST
+    SysTick = BoardConfig.SysTick;
     OWire = BoardConfig.OWire;
     
 VAR
@@ -15,10 +13,6 @@ VAR
     ID : UNSIGNED64;
     temp : REAL;
     res : INTEGER;
-
-PROCEDURE DelayIdle ["delay_idle"];
-BEGIN ARMv7M.WFI
-END DelayIdle;
 	
 BEGIN
     BoardConfig.Init;

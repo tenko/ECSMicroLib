@@ -2,9 +2,8 @@
 MODULE Test;
 IMPORT BoardConfig;
 
-IN Micro IMPORT SysTick := ARMv7MSTM32SysTick0;
-
 CONST
+    SysTick = BoardConfig.SysTick;
     Pins = BoardConfig.Pins;
     ExtInt = BoardConfig.ExtIntButton1;
 

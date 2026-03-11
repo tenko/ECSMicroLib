@@ -7,9 +7,10 @@ IN Std IMPORT UInt := ADTBasicType(UNSIGNED32);
 IN Std IMPORT TaskQueue := ADTVector(Coroutine.TaskEntry);
 
 IN Micro IMPORT ARMv7M;
-IN Micro IMPORT SysTick := ARMv7MSTM32SysTick0;
 
-CONST Pins = BoardConfig.Pins;
+CONST
+    SysTick = BoardConfig.SysTick;
+    Pins = BoardConfig.Pins;
 
 TYPE
     Task1 = RECORD (Coroutine.Task) END;

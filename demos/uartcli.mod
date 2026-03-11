@@ -2,8 +2,8 @@
 MODULE Test;
 IMPORT BoardConfig;
 
-IN Micro IMPORT ARMv7M, Debug;
-IN Micro IMPORT SysTick := ARMv7MSTM32SysTick0;
+IN Micro IMPORT ARMv7M;
+IN Micro IMPORT Debug;
 
 IN Std IMPORT ArrayOfChar;
 
@@ -11,6 +11,7 @@ CONST
     LF = 0AX; CR = 0DX;
     ESC = 01BX; DEL = 07FX;
     
+    SysTick = BoardConfig.SysTick;
     Uart = BoardConfig.Uart;
     Pins = BoardConfig.Pins;
     

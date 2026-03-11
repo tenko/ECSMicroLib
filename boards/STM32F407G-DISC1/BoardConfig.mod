@@ -1,4 +1,4 @@
-(** Config for the STM32 board STM32F407G-DISC1
+(** Config for+++ the STM32 board STM32F407G-DISC1
 
 		RM0090, Reference manual,
 			STM32F405xx/07xx, STM32F415xx/17xx,
@@ -8,6 +8,8 @@ MODULE BoardConfig;
 
 IN Micro IMPORT ARMv7MSTM32SysTick0;
 IN Micro IMPORT STM32F4Pins;
+IN Micro IMPORT STM32F4ExtInt0 := STM32F4PinsExtInt(0);
+IN Micro IMPORT STM32F4ExtInt15 := STM32F4PinsExtInt(15);
 IN Micro IMPORT STM32F4Uart := STM32F4Uart(2);
 IN Micro IMPORT STM32F4OneWire;
 IN Micro IMPORT STM32F4System;
@@ -18,8 +20,12 @@ CONST
     (* Board user led 1 *)
     USER_LED1_PORT* = 3; (* Port D *)
     USER_LED1_PIN* = 15;
-
+    USER_BUTTON1_PORT* = 0; (* Port A *)
+    USER_BUTTON1_PIN* = 0; (* B1 Blue PushButton *)
+    
+    SysTick* = ARMv7MSTM32SysTick0;
     Pins* = STM32F4Pins;
+    ExtIntButton1* = STM32F4ExtInt0;
     Uart* = STM32F4Uart;
     OWire* = STM32F4OneWire;
     
@@ -33,12 +39,14 @@ VAR
 	QCLK*, (* QCLK <= 48 MHz, best is 48 MHz *)
 	RCLK*: INTEGER; (* Hz *)
 
+(* No pullup needed here *)
 PROCEDURE InitOWire*(VAR port : OWire.Port);
 BEGIN
     port.Init(OWire.USART2, Pins.A, 2, PCLK1); (* TX pin A2 *)
     port.Enable;
 END InitOWire;
 
+(* USB to UART bridge needed to connect to PC *)
 PROCEDURE InitUart*(VAR bus : Uart.Bus; baud, parity, stopBits : INTEGER);
 VAR par : Uart.InitPar;
 BEGIN

@@ -4,11 +4,11 @@ IMPORT BoardConfig;
 
 IMPORT SYSTEM;
 IN Std IMPORT OSStream;
-IN Micro IMPORT SysTick := ARMv7MSTM32SysTick0;
 IN Micro IMPORT DeviceILI9341;
 IN Gfx IMPORT Canvas;
 
 CONST
+    SysTick = BoardConfig.SysTick;
     Pins = BoardConfig.Pins;
     SPI5 = BoardConfig.SPI5;
 
@@ -20,7 +20,6 @@ CONST
 TYPE
     BYTE = SYSTEM.BYTE;
     BYTEARRAY = ARRAY OF BYTE;
-    ADDRESS = SYSTEM.ADDRESS;
     
     FramebufferMono* = RECORD (Canvas.Canvas)
         pixels : POINTER TO VAR BYTEARRAY;

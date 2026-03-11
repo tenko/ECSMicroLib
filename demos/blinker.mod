@@ -1,11 +1,10 @@
 (** Simple led blinker demo using the SysTick millisecond timer *)
 MODULE Test;
-IMPORT BoardConfig, SYSTEM;
+IMPORT BoardConfig;
 
-IN Micro IMPORT ARMv7M;
-IN Micro IMPORT SysTick := ARMv7MSTM32SysTick0;
-
-CONST Pins = BoardConfig.Pins;
+CONST
+    SysTick = BoardConfig.SysTick;
+    Pins = BoardConfig.Pins;
 
 VAR pin : Pins.Pin;
 
@@ -19,9 +18,9 @@ BEGIN
     REPEAT
         pin.On;
         TRACE("ON0");
-        WHILE ~SysTick.OnTimer() DO ARMv7M.WFI END;
+        SysTick.Delay(100);
         pin.Off;
         TRACE("OFF0");
-        WHILE ~SysTick.OnTimer() DO ARMv7M.WFI END;
+        SysTick.Delay(100);
     UNTIL FALSE
 END Test.

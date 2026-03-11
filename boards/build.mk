@@ -66,7 +66,7 @@ build/test.obf: build/BoardConfig.obf demos/$(DEMO).mod
 .PHONY: cleandemo
 cleandemo:
 	@echo Clean demo
-	@-rm -f build/test.rom build/test.obf
+	@-rm -f build/test.rom build/test.obf build/BoardConfig.obf build/runtime.obf
 
 .PHONY: flash
 flash: build/test.rom

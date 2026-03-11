@@ -3,13 +3,12 @@ MODULE Test;
 IMPORT BoardConfig;
 
 IMPORT SYSTEM;
-IN Micro IMPORT SysTick := ARMv7MSTM32SysTick0;
-IN Micro IMPORT MCU := STM32F4;
 
 TYPE
     BYTE = SYSTEM.BYTE;
     
 CONST
+    SysTick = BoardConfig.SysTick;
     Pins = BoardConfig.Pins;
     SPI5 = BoardConfig.SPI5;
 
@@ -18,7 +17,6 @@ VAR
     cs : Pins.Pin;
     txbuffer : ARRAY 4 OF BYTE;
     rxbuffer : ARRAY 4 OF BYTE;
-    i : LENGTH;
 
 PROCEDURE Test;
 BEGIN
@@ -47,7 +45,6 @@ BEGIN
     
     TRACE("Start");
     WHILE TRUE DO
-        (* FOR i := 0 TO 1000000 DO END; *)
         SysTick.Delay(1000);
         Test;
     END;

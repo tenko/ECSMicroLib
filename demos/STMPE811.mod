@@ -2,18 +2,14 @@
 MODULE Test;
 IMPORT BoardConfig;
 
-IMPORT SYSTEM;
-IN Micro IMPORT SysTick := ARMv7MSTM32SysTick0;
 IN Micro IMPORT DeviceSTMPE811;
 
 CONST
     STMPE811_ADR = 041H;
+    SysTick = BoardConfig.SysTick;
     I2C = BoardConfig.I2C;
     Pins = BoardConfig.Pins;
     ExtInt = BoardConfig.ExtIntTouch;
-    	
-TYPE
-    BYTE = SYSTEM.BYTE;
 
 VAR
     bus : I2C.Bus;
