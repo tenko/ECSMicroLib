@@ -11,11 +11,9 @@ CONST
 TYPE
     BYTE = SYSTEM.BYTE;
     
-    GetTicks* = PROCEDURE (): UNSIGNED32;
     Bus* = RECORD
-        getTicks*: GetTicks;
-        timeout*: UNSIGNED32;
-        error*: INTEGER;
+        timeout*: UNSIGNED32; (* transfere timeout in ms. 0 or lower disable timeout check *)
+        error*: INTEGER; (* last transfer error code or NoError if success *)
     END;
 
 (** Read or Write data *)

@@ -75,7 +75,6 @@ BEGIN
     par.SDAPinAF := Pins.AF4;
     par.PCLK1 := PCLK1;
     par.freq := 100000;
-    par.getTicks := SysTick.GetTicks;
     par.timeout := 5000;
     I2C.Init(bus, par);
 END InitSTMPE811I2C;
@@ -98,6 +97,7 @@ BEGIN
     par.cPha := FALSE;
     par.cPol := FALSE;
     par.configNSS := FALSE;
+    par.timeout := 1000;
     SPI5.Init(bus, par);
 END InitI3G4250DSPI;
 
@@ -119,6 +119,7 @@ BEGIN
     par.cPha := FALSE;
     par.cPol := FALSE;
     par.configNSS := FALSE;
+    par.timeout := 1000;
     SPI5.Init(bus, par);
     
     rst.Init(Pins.A, 7, Pins.output, Pins.pushPull, Pins.veryHigh, Pins.noPull, Pins.AF0);

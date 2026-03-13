@@ -30,7 +30,7 @@ BEGIN
     bus.ReadWrite(rxbuffer, txbuffer, 0, 0, 2);
     cs.On;
     TRACE(rxbuffer[1]);
-    TRACE(bus.res);
+    TRACE(bus.error);
     TRACE("test.end");
 END Test;
 

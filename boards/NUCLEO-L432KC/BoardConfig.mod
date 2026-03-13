@@ -33,10 +33,10 @@ VAR
 	RCLK* : INTEGER; (* Hz *)
 
 (* OWire on USART1. Note it needs external pull-up resistor, typical 10K *)
-PROCEDURE InitOWire*(VAR port : OWire.Port);
+PROCEDURE InitOWire*(VAR bus : OWire.Bus);
 BEGIN
-    port.Init(OWire.USART1, Pins.A, 9, PCLK2); (* TX pin A9 *)
-    port.Enable;
+    bus.Init(OWire.USART1, Pins.A, 9, PCLK2,  1000); (* TX pin A9 *)
+    bus.Enable;
 END InitOWire;
 
 (* USART2 is connected to ST-Link interface *)

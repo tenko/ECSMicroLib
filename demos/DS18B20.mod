@@ -2,47 +2,53 @@
 MODULE Test;
 
 IMPORT BoardConfig;
-IN Micro IMPORT DS18B20 := DeviceDS18B20;
+IN Micro IMPORT DeviceDS18B20;
 
 CONST
     SysTick = BoardConfig.SysTick;
     OWire = BoardConfig.OWire;
     
 VAR
-    owire : OWire.Port;
+    bus : OWire.Bus;
+    dev : DeviceDS18B20.DS18B20;
     ID : UNSIGNED64;
     temp : REAL;
     res : INTEGER;
 	
 BEGIN
     BoardConfig.Init;
-    BoardConfig.InitOWire(owire);
-    TRACE(owire.Reset()); (* Return TRUE if device on owbus *)
+    BoardConfig.InitOWire(bus);
+    
+    DeviceDS18B20.Init(dev, bus);
+    dev.bus := PTR(bus); (* probably bug in ECS *)
+    
+    TRACE(bus.Reset()); (* Return TRUE if device on owbus *)
     
     (* Search for ROM ID *)
     ID := 0;
-    owire.ResetSearch();
-    WHILE owire.Next() DO
-        owire.GetROM(ID);
+    
+    bus.ResetSearch();
+    WHILE bus.Next() DO
+        bus.GetROM(ID);
     END;
     TRACE(ID);
     
     (* Set maximum resolution *)
-    TRACE(DS18B20.WriteResolution(owire, ID, 12));
+    TRACE(dev.WriteResolution(ID, 12));
     SysTick.Delay(1000);
-    TRACE(DS18B20.ReadResolution(owire, ID, res));
+    TRACE(dev.ReadResolution(ID, res));
     TRACE(res);
 
     temp := -999;
     WHILE TRUE DO
         (* Start conversion *)
-        TRACE(DS18B20.Start(owire, ID));
+        TRACE(dev.Start(ID));
         
         (* Should delay atleast 750ms for temperature conversion to complete *)
         SysTick.Delay(1000);
         
         (* read data *)
-        TRACE(DS18B20.Read(owire, ID, temp));
+        TRACE(dev.Read(ID, temp));
         TRACE(temp);
         SysTick.Delay(1000);
     END;

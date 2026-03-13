@@ -14,6 +14,7 @@ RM0390, Reference manual,
 MODULE STM32F4I2C IN Micro;
 
 IMPORT SYSTEM;
+IN Micro IMPORT Timing;
 IN Micro IMPORT ARMv7M;
 IN Micro IMPORT BusI2C;
 IN Micro IMPORT Pins := STM32F4Pins;
@@ -40,8 +41,7 @@ TYPE
         SDAPinPort*, SDAPinN*, SDAPinAF*: INTEGER;
         PCLK1*: INTEGER;
         freq*: INTEGER;
-        timeout*: INTEGER;
-        getTicks*: BusI2C.GetTicks;
+        timeout*: INTEGER; (* transfere timeout in ms. 0 or lower disable timeout check *)
     END;
     
     Bus* = RECORD (BusI2C.Bus)
@@ -99,7 +99,6 @@ BEGIN
     b.CR1 := CR1;
     b.SR1 := SR1;
     b.SR2 := SR2;
-    b.getTicks := par.getTicks;
     b.timeout := par.timeout;
     b.error := NoError;
     
@@ -193,11 +192,11 @@ VAR
     PROCEDURE WaitBitSet(adr : ADDRESS; VAR s : SET32; mask : SET32): INTEGER;
     VAR t0 : UNSIGNED32;
     BEGIN
-        IF (this.getTicks # NIL) & (this.timeout > 0) THEN
-            t0 := this.getTicks();
+        IF this.timeout > 0 THEN
+            t0 := Timing.TicksMS();
             SYSTEM.GET(adr, s);
             WHILE (s * mask = {}) DO
-                IF this.getTicks() - t0 > this.timeout THEN
+                IF Timing.TicksMS() - t0 > this.timeout THEN
                     RETURN ErrorTimeout
                 END;
                 SYSTEM.GET(adr, s);
@@ -215,11 +214,11 @@ VAR
     PROCEDURE WaitBitClear(adr : ADDRESS; VAR s : SET32; mask : SET32): INTEGER;
     VAR t0 : UNSIGNED32;
     BEGIN
-        IF (this.getTicks # NIL) & (this.timeout > 0) THEN
-            t0 := this.getTicks();
+        IF this.timeout > 0 THEN
+            t0 := Timing.TicksMS();
             SYSTEM.GET(adr, s);
             WHILE (s * mask # {}) DO
-                IF this.getTicks() - t0 > this.timeout THEN
+                IF Timing.TicksMS() - t0 > this.timeout THEN
                     RETURN ErrorTimeout
                 END;
                 SYSTEM.GET(adr, s);

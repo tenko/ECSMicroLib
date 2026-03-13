@@ -1,25 +1,31 @@
 (**
-OneWire generic module
+OneWire generic bus module
 
 Ref.: Maxim's Application Note 187 1-Wire Seach Algorithm
 Ref.: Maxim's Appliaction Note 27 Understanding and using Cyclic Rendundancy Checks
 *)
-MODULE OneWire IN Micro;
+MODULE BusOneWire IN Micro;
 
 IMPORT SYSTEM;
 
 TYPE
     BYTE = SYSTEM.BYTE;
     ADDRESS = SYSTEM.ADDRESS;
-    Port* = RECORD
+    Bus* = RECORD
         ROM_NO*: ARRAY 8 OF CHAR; (* 8-byte ROM addres last found device *)
         LastDiscrepancy*: UNSIGNED8;
         LastFamilyDiscrepancy*: UNSIGNED8;
         LastDeviceFlag*: BOOLEAN;
-        Timeout*: UNSIGNED32;
+        error*: INTEGER; (* last transfer error code or NoError if success *)
+        timeout*: UNSIGNED32; (* transfere timeout in ms. 0 or lower disable timeout check *)
     END;
 
 CONST
+    NoError* = 0;
+    ErrorNoDevice* = -1;
+    ErrorTimeout* = -2;
+    ErrorBus* = -3;
+    
     SendReset* = 1;
     NoReset* = 2;
     ReadSlot* = 0FFX;
@@ -40,23 +46,23 @@ VAR ^ Crc8Data ["CRC8ONEWIRE"]: ARRAY 256 OF CHAR;
 VAR ^ Crc16Data ["CRC16ONEWIRE"]: ARRAY 256 OF UNSIGNED16;
 
 (** Enable 1-wire bus *)
-PROCEDURE (VAR p- : Port) Enable*;
+PROCEDURE (VAR bus- : Bus) Enable*;
 BEGIN END Enable;
 
 (** Disable 1-wire bus *)
-PROCEDURE (VAR p- : Port) Disable*;
+PROCEDURE (VAR bus- : Bus) Disable*;
 BEGIN END Disable;
 
 (** Send reset slot and return true if devices is present on bus *)
-PROCEDURE (VAR p- : Port) Reset*(): BOOLEAN;
+PROCEDURE (VAR bus : Bus) Reset*(): BOOLEAN;
 BEGIN RETURN FALSE END Reset;
 
 (** Write bit to 1-wire bus *)
-PROCEDURE (VAR p- : Port) WriteBit*(bit : BOOLEAN);
+PROCEDURE (VAR bus- : Bus) WriteBit*(bit : BOOLEAN);
 BEGIN END WriteBit;
 
 (** Read bit from 1-wire bus *)
-PROCEDURE (VAR p- : Port) ReadBit*(): BOOLEAN;
+PROCEDURE (VAR bus- : Bus) ReadBit*(): BOOLEAN;
 BEGIN RETURN FALSE END ReadBit;
 
 (**
@@ -70,23 +76,23 @@ Send and optinal receive data on 1-wire bus
 
 Return TRUE if no error occured.
 *)
-PROCEDURE (VAR p- : Port) SendReceive*(sendReset : INTEGER; cmd : ADDRESS; clen : LENGTH; data : ADDRESS; dlen, rStart: LENGTH): BOOLEAN;
+PROCEDURE (VAR bus : Bus) SendReceive*(sendReset : INTEGER; cmd : ADDRESS; clen : LENGTH; data : ADDRESS; dlen, rStart: LENGTH): BOOLEAN;
 BEGIN RETURN FALSE
 END SendReceive;
 
 (** Reset ROM search *)
-PROCEDURE (VAR p : Port) ResetSearch*;
+PROCEDURE (VAR bus : Bus) ResetSearch*;
 BEGIN
-    p.LastDiscrepancy := 0;
-    p.LastDeviceFlag := FALSE;
-    p.LastFamilyDiscrepancy := 0;
+    bus.LastDiscrepancy := 0;
+    bus.LastDeviceFlag := FALSE;
+    bus.LastFamilyDiscrepancy := 0;
 END ResetSearch;
 
 (**
 Search ROM
 Ref. Maxim APPLICATION NOTE 187
 *)
-PROCEDURE (VAR p : Port) Search*(cmd : BYTE): BOOLEAN;
+PROCEDURE (VAR bus : Bus) Search*(cmd : BYTE): BOOLEAN;
 VAR
     x : SET8;
     ch, crc : CHAR;
@@ -101,43 +107,43 @@ VAR
     END Crc8Update;
 BEGIN
     searchResult := FALSE;
-    IF ~p.LastDeviceFlag & p.SendReceive(SendReset, SYSTEM.ADR(cmd), 1, 0, 0, NoRead) THEN
+    IF ~bus.LastDeviceFlag & bus.SendReceive(SendReset, SYSTEM.ADR(cmd), 1, 0, 0, NoRead) THEN
         romByteNumber := 0;
         idBitNumber := 1;
         lastZero := 0;
         i := 0; x := {}; crc := 00X;
         LOOP
-            idBit := p.ReadBit(); (* Read a bit 1 *)
-            cmpIdBit := p.ReadBit(); (* Read the complement of bit 1 *)
+            idBit := bus.ReadBit(); (* Read a bit 1 *)
+            cmpIdBit := bus.ReadBit(); (* Read the complement of bit 1 *)
             IF idBit & cmpIdBit THEN EXIT END; (* 11 - data error *)
             
             IF idBit # cmpIdBit THEN
                 searchDirection := idBit (* Bit write value for search *)
             ELSE (* 00 - 2 devices *)
                 (* Table 3. Search Path Direction *)
-                IF idBitNumber < p.LastDiscrepancy THEN
-                    searchDirection := SET8(p.ROM_NO[romByteNumber]) * SET8(i) # {}
+                IF idBitNumber < bus.LastDiscrepancy THEN
+                    searchDirection := SET8(bus.ROM_NO[romByteNumber]) * SET8(i) # {}
                 ELSE
                     (* If bit is equal to last - pick 1 *)
                     (* If not - then pick 0 *)
-                    searchDirection := idBitNumber = p.LastDiscrepancy;
+                    searchDirection := idBitNumber = bus.LastDiscrepancy;
                 END;
                 IF ~searchDirection THEN
                     lastZero := idBitNumber;
                     IF lastZero < 9 THEN (* Check for last discrepancy in family *)
-                        p.LastFamilyDiscrepancy := lastZero
+                        bus.LastFamilyDiscrepancy := lastZero
                     END;
                 END;
             END;
             IF searchDirection THEN
                 x := x + SET8({i})
             END;
-            p.WriteBit(searchDirection); (* Search direction write bit *)
+            bus.WriteBit(searchDirection); (* Search direction write bit *)
             INC(idBitNumber); (* Next bit search - increase the id *)
             INC(i); (* Next bit *)
             IF i > 7 THEN (* Next byte *)
                 ch := CHR(SYSTEM.VAL(INTEGER, x));
-                p.ROM_NO[romByteNumber] := ch;
+                bus.ROM_NO[romByteNumber] := ch;
                 IF romByteNumber < 7 THEN Crc8Update(ch) END;
                 i := 0; x := {};
                 INC(romByteNumber)
@@ -148,37 +154,37 @@ BEGIN
             END;
         END;
         IF searchResult THEN
-            p.LastDiscrepancy := lastZero;
+            bus.LastDiscrepancy := lastZero;
             IF lastZero = 0 THEN (* If lastZero is 0 - last device found *)
-                p.LastDeviceFlag := TRUE;
+                bus.LastDeviceFlag := TRUE;
             END;
         END;
     END;
-    IF ~searchResult OR (p.ROM_NO[0] = 00X) THEN
-        p.ResetSearch;
+    IF ~searchResult OR (bus.ROM_NO[0] = 00X) THEN
+        bus.ResetSearch;
         searchResult := FALSE;
     END;
     RETURN searchResult
 END Search;
 
 (** Find next device on 1-wire bus *)
-PROCEDURE (VAR p : Port) Next*(): BOOLEAN;
-BEGIN RETURN p.Search(CMD_SEARCHROM)
+PROCEDURE (VAR bus : Bus) Next*(): BOOLEAN;
+BEGIN RETURN bus.Search(CMD_SEARCHROM)
 END Next;
 
 (** Write ROM to memory area *)
-PROCEDURE (VAR p : Port) ReadROM*(adr : ADDRESS);
+PROCEDURE (VAR bus : Bus) ReadROM*(adr : ADDRESS);
 VAR i : INTEGER;
 BEGIN
-    FOR i := 0 TO LEN(p.ROM_NO) - 1 DO
-        SYSTEM.PUT(adr, p.ROM_NO[i]);
+    FOR i := 0 TO LEN(bus.ROM_NO) - 1 DO
+        SYSTEM.PUT(adr, bus.ROM_NO[i]);
         INC(adr)
     END;
 END ReadROM;
 
 (** Write ROM to array *)
-PROCEDURE (VAR p : Port) GetROM*(VAR x : ARRAY OF BYTE);
-BEGIN p.ReadROM(SYSTEM.ADR(x[0]));
+PROCEDURE (VAR bus : Bus) GetROM*(VAR x : ARRAY OF BYTE);
+BEGIN bus.ReadROM(SYSTEM.ADR(x[0]));
 END GetROM;
 
 (** Calculate (MAXIM-DOW) CRC8 of memory array *)
@@ -219,4 +225,4 @@ BEGIN
     RETURN crc
 END Crc16;
 
-END OneWire.
+END BusOneWire.

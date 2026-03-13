@@ -40,10 +40,10 @@ VAR
 	RCLK*: INTEGER; (* Hz *)
 
 (* No pullup needed here *)
-PROCEDURE InitOWire*(VAR port : OWire.Port);
+PROCEDURE InitOWire*(VAR bus : OWire.Bus);
 BEGIN
-    port.Init(OWire.USART2, Pins.A, 2, PCLK1); (* TX pin A2 *)
-    port.Enable;
+    bus.Init(OWire.USART2, Pins.A, 2, PCLK1, 1000); (* TX pin A2 *)
+    bus.Enable;
 END InitOWire;
 
 (* USB to UART bridge needed to connect to PC *)

@@ -7,7 +7,7 @@ IMPORT SYSTEM;
 
 CONST
     (* res values: *)
-    OK* = 0;
+    NoError* = 0;
     ErrorTimeout* = -1;
 
 TYPE
@@ -15,7 +15,9 @@ TYPE
     BYTE = SYSTEM.BYTE;
     
     Bus* = RECORD
-        res*, maxTransferSize*: INTEGER;
+        maxTransferSize*: INTEGER; (* maximum BYTE transfer size supported by driver *)
+        timeout*: UNSIGNED32; (* transfere timeout in ms. 0 or lower disable timeout check *)
+        error*: INTEGER; (* last transfer error code or NoError if success *)
     END;
 
 (** Callback during transfer idle *)

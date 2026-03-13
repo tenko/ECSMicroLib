@@ -9,32 +9,38 @@ MODULE STM32F4OneWire IN Micro;
 IMPORT SYSTEM;
 IN Micro IMPORT MCU := STM32F4;
 IN Micro IMPORT Pins := STM32F4Pins;
-IN Micro IMPORT OneWire;
+IN Micro IMPORT BusOneWire;
+IN Micro IMPORT Timing;
 
 TYPE
     BYTE = SYSTEM.BYTE;
     ADDRESS = SYSTEM.ADDRESS;
-    Port* = RECORD (OneWire.Port)
+    Bus* = RECORD (BusOneWire.Bus)
         n, UCLK, UEN: INTEGER;
         SR, DR, CR1, CR3, BRR: ADDRESS;
     END;
 
 CONST
-    SendReset* = OneWire.SendReset;
-    NoReset* = OneWire.NoReset;
-    ReadSlot* = OneWire.ReadSlot;
-    NoRead* = OneWire.NoRead;
+    NoError* = BusOneWire.NoError;
+    ErrorNoDevice* = BusOneWire.ErrorNoDevice;
+    ErrorTimeout* = BusOneWire.ErrorTimeout;
+    ErrorBus* = BusOneWire.ErrorBus;
+    
+    SendReset* = BusOneWire.SendReset;
+    NoReset* = BusOneWire.NoReset;
+    ReadSlot* = BusOneWire.ReadSlot;
+    NoRead* = BusOneWire.NoRead;
 
     (* OneWire COMMANDS *)
-    CMD_RSCRATCHPAD*    = OneWire.CMD_RSCRATCHPAD;
-    CMD_WSCRATCHPAD*    = OneWire.CMD_WSCRATCHPAD;
-    CMD_CPYSCRATCHPAD*  = OneWire.CMD_CPYSCRATCHPAD;
-    CMD_RECEEPROM*      = OneWire.CMD_RECEEPROM;
-    CMD_RPWRSUPPLY*     = OneWire.CMD_RPWRSUPPLY;
-    CMD_SEARCHROM*      = OneWire.CMD_SEARCHROM;
-    CMD_READROM*        = OneWire.CMD_READROM;
-    CMD_MATCHROM*       = OneWire.CMD_MATCHROM;
-    CMD_SKIPROM*        = OneWire.CMD_SKIPROM;
+    CMD_RSCRATCHPAD*    = BusOneWire.CMD_RSCRATCHPAD;
+    CMD_WSCRATCHPAD*    = BusOneWire.CMD_WSCRATCHPAD;
+    CMD_CPYSCRATCHPAD*  = BusOneWire.CMD_CPYSCRATCHPAD;
+    CMD_RECEEPROM*      = BusOneWire.CMD_RECEEPROM;
+    CMD_RPWRSUPPLY*     = BusOneWire.CMD_RPWRSUPPLY;
+    CMD_SEARCHROM*      = BusOneWire.CMD_SEARCHROM;
+    CMD_READROM*        = BusOneWire.CMD_READROM;
+    CMD_MATCHROM*       = BusOneWire.CMD_MATCHROM;
+    CMD_SKIPROM*        = BusOneWire.CMD_SKIPROM;
 
     maxPorts* = 8;
     USART1* = 0;
@@ -58,7 +64,7 @@ CONST
 VAR ^ Crc8Data ["CRC8ONEWIRE"]: ARRAY 256 OF CHAR;
 
 (** Initialize 1-Wire bus *)
-PROCEDURE (VAR p : Port) Init* (n, TXRXPinPort, TXRXPinN, UCLK: INTEGER);
+PROCEDURE (VAR bus : Bus) Init* (n, TXRXPinPort, TXRXPinN, UCLK, timeout: INTEGER);
 VAR 
     pin : Pins.Pin;
     x : SET;
@@ -118,11 +124,14 @@ BEGIN
     ELSE HALT(1)
     END;
 
-    p.n := n; p.UCLK := UCLK; p.UEN := UEN;
-    p.LastDiscrepancy := 0;
-    p.LastFamilyDiscrepancy := 0;
-    p.LastDeviceFlag := FALSE;
-    FOR i := 0 TO LEN(p.ROM_NO) - 1 DO p.ROM_NO[i] := 00X END;
+    bus.n := n; bus.UCLK := UCLK; bus.UEN := UEN;
+    bus.LastDiscrepancy := 0;
+    bus.LastFamilyDiscrepancy := 0;
+    bus.LastDeviceFlag := FALSE;
+    bus.timeout := timeout;
+    bus.error := NoError;
+    
+    FOR i := 0 TO LEN(bus.ROM_NO) - 1 DO bus.ROM_NO[i] := 00X END;
 
     SR := base;
     DR := base + 4;
@@ -132,7 +141,7 @@ BEGIN
     CR3 := base + 14H;
     GTPR := base + 18H;
 
-    p.SR := SR; p.DR := DR; p.CR1 := CR1; p.CR3 := CR3; p.BRR := BRR;
+    bus.SR := SR; bus.DR := DR; bus.CR1 := CR1; bus.CR3 := CR3; bus.BRR := BRR;
 
     (* enable clock for USART *)
     SYSTEM.GET(URCCENR, x);
@@ -149,86 +158,127 @@ BEGIN
     SYSTEM.PUT(GTPR, {});
 END Init;
 
+PROCEDURE (VAR bus- : Bus) SetBaud(baud : INTEGER);
+VAR b: INTEGER;
+BEGIN;
+    b := bus.UCLK DIV baud;
+    ASSERT(b DIV 10000H = 0);
+    SYSTEM.PUT(bus.BRR, b);
+END SetBaud;
+
 (** Enable 1-wire bus *)
-PROCEDURE (VAR p- : Port) Enable*;
+PROCEDURE (VAR bus- : Bus) Enable*;
 VAR
     x: SET;
     b: INTEGER;
 BEGIN
     (* Enable UART *)
-    SYSTEM.GET(p.CR1, x);
-	SYSTEM.PUT(p.CR1, x + {UE, RE, TE});
+    SYSTEM.GET(bus.CR1, x);
+	SYSTEM.PUT(bus.CR1, x + {UE, RE, TE});
     (* Single-wire Half-duplex mode *)
-    SYSTEM.PUT(p.CR3, {HDSEL});
+    SYSTEM.PUT(bus.CR3, {HDSEL});
     (* set baud rate register *)
-    b := p.UCLK DIV 115200;
-    ASSERT(b DIV 10000H = 0);
-    SYSTEM.PUT(p.BRR, b);
+    bus.SetBaud(115200);
 END Enable;
 
 (** Disable 1-wire bus *)
-PROCEDURE (VAR p- : Port) Disable*;
+PROCEDURE (VAR bus- : Bus) Disable*;
 VAR x : SET;
 BEGIN
-    SYSTEM.GET(p.CR1, x);
-	SYSTEM.PUT(p.CR1, x - {UE, RE, TE});
+    SYSTEM.GET(bus.CR1, x);
+	SYSTEM.PUT(bus.CR1, x - {UE, RE, TE});
 END Disable;
 
+(* Wait for bits set or timout. Return FALSE if timeout triggered *)
+PROCEDURE (VAR bus- : Bus) WaitBitsOrTimeout(adr : ADDRESS; bits : SET32): BOOLEAN;
+VAR
+    x : SET32;
+    t0 : UNSIGNED32;
+BEGIN
+    ASSERT(bits # {});
+    IF bus.timeout > 0 THEN
+        t0 := Timing.TicksMS();
+        WHILE Timing.TicksMS() - t0 < bus.timeout DO
+            SYSTEM.GET(adr, x);
+            IF x * bits # {} THEN
+                RETURN FALSE
+            END;
+        END;
+    ELSE
+        WHILE TRUE DO
+            SYSTEM.GET(adr, x);
+            IF x * bits # {} THEN
+                RETURN FALSE
+            END;
+        END;
+    END;
+    RETURN TRUE;
+END WaitBitsOrTimeout;
+
 (** Send reset slot and return true if devices is present on bus *)
-PROCEDURE (VAR p- : Port) Reset*(): BOOLEAN;
-VAR b, data : INTEGER;
+PROCEDURE (VAR bus : Bus) Reset*(): BOOLEAN;
+VAR data : INTEGER;
 BEGIN;
-    (* wait for output register to be cleared *)
-    REPEAT UNTIL SYSTEM.BIT(p.SR, TXE);
+    data := 0F0H;
+    bus.error := NoError;
     (* set baud rate register *)
-    b := p.UCLK DIV 9600;
-    ASSERT(b DIV 10000H = 0);
-    SYSTEM.PUT(p.BRR, b);
-    (* wait for output to be ready and send byte *)
-    REPEAT UNTIL SYSTEM.BIT(p.SR, TXE);
-    SYSTEM.PUT(p.DR, 0F0H);
-    (* wait for send to be complete *)
-    REPEAT UNTIL SYSTEM.BIT(p.SR, TC);
-    (* wait for read and fetch data *)
-    REPEAT UNTIL SYSTEM.BIT(p.SR, RXNE);
-    SYSTEM.GET(p.DR, data);
-    (* set baud rate register *)
-    b := p.UCLK DIV 115200;
-    ASSERT(b DIV 10000H = 0);
-    SYSTEM.PUT(p.BRR, b);
+    bus.SetBaud(9600);
+    LOOP
+        (* wait for output to be ready and send byte *)
+        IF bus.WaitBitsOrTimeout(bus.SR, {TXE}) THEN
+            bus.error := ErrorTimeout;
+            EXIT
+        END;
+        SYSTEM.PUT(bus.DR, 0F0H);
+        (* wait for send to be complete *)
+        IF bus.WaitBitsOrTimeout(bus.SR, {TC}) THEN
+            bus.error := ErrorTimeout;
+            EXIT
+        END;
+        (* wait for read and fetch data *)
+        IF bus.WaitBitsOrTimeout(bus.SR, {RXNE}) THEN
+            bus.error := ErrorTimeout;
+            EXIT
+        END;
+        (* check read status *)
+        SYSTEM.GET(bus.DR, data);
+        EXIT
+    END;
+    (* Set default baud rate *)
+    bus.SetBaud(115200);
     RETURN data # 0F0H
 END Reset;
 
 (** Write bit to 1-wire bus *)
-PROCEDURE (VAR p- : Port) WriteBit*(bit : BOOLEAN);
+PROCEDURE (VAR bus- : Bus) WriteBit*(bit : BOOLEAN);
 VAR c : CHAR;
 BEGIN
     (* wait for output to be ready and send byte *)
-    REPEAT UNTIL SYSTEM.BIT(p.SR, TXE);
+    REPEAT UNTIL SYSTEM.BIT(bus.SR, TXE);
     IF bit THEN
-        SYSTEM.PUT(p.DR, 0FFX)
+        SYSTEM.PUT(bus.DR, 0FFX)
     ELSE
-        SYSTEM.PUT(p.DR, 00X)
+        SYSTEM.PUT(bus.DR, 00X)
     END;
     (* wait for send to be complete *)
-    REPEAT UNTIL SYSTEM.BIT(p.SR, TC);
+    REPEAT UNTIL SYSTEM.BIT(bus.SR, TC);
     (* wait for read and fetch data *)
-    REPEAT UNTIL SYSTEM.BIT(p.SR, RXNE);
-    SYSTEM.GET(p.DR, c);
+    REPEAT UNTIL SYSTEM.BIT(bus.SR, RXNE);
+    SYSTEM.GET(bus.DR, c);
 END WriteBit;
 
 (** Read bit from 1-wire bus *)
-PROCEDURE (VAR p- : Port) ReadBit*(): BOOLEAN;
+PROCEDURE (VAR bus- : Bus) ReadBit*(): BOOLEAN;
 VAR c : CHAR;
 BEGIN
     (* wait for output to be ready and send byte *)
-    REPEAT UNTIL SYSTEM.BIT(p.SR, TXE);
-    SYSTEM.PUT(p.DR, 0FFX);
+    REPEAT UNTIL SYSTEM.BIT(bus.SR, TXE);
+    SYSTEM.PUT(bus.DR, 0FFX);
     (* wait for send to be complete *)
-    REPEAT UNTIL SYSTEM.BIT(p.SR, TC);
+    REPEAT UNTIL SYSTEM.BIT(bus.SR, TC);
     (* wait for read and fetch data *)
-    REPEAT UNTIL SYSTEM.BIT(p.SR, RXNE);
-    SYSTEM.GET(p.DR, c);
+    REPEAT UNTIL SYSTEM.BIT(bus.SR, RXNE);
+    SYSTEM.GET(bus.DR, c);
     RETURN c = 0FFX
 END ReadBit;
 
@@ -243,7 +293,7 @@ Send and optinal receive data on 1-wire bus
 
 Return TRUE if no error occured.
 *)
-PROCEDURE (VAR p- : Port) SendReceive*(sendReset : INTEGER; cmd : ADDRESS; clen : LENGTH; data : ADDRESS; dlen, rStart: LENGTH): BOOLEAN;
+PROCEDURE (VAR bus : Bus) SendReceive*(sendReset : INTEGER; cmd : ADDRESS; clen : LENGTH; data : ADDRESS; dlen, rStart: LENGTH): BOOLEAN;
 VAR
     buffer: ARRAY 8 OF BYTE;
     x: SET8;
@@ -271,21 +321,39 @@ VAR
     END BitsToByte;
 BEGIN
     ASSERT(clen > 0);
-    IF (sendReset = SendReset) & ~p.Reset() THEN RETURN FALSE END;
+    bus.error := NoError;
+    
+    IF (sendReset = SendReset) & ~bus.Reset() THEN
+        IF bus.error = NoError THEN bus.error := ErrorNoDevice END;
+        RETURN FALSE
+    END;
     FOR i := 0 TO clen - 1 DO
         (* convert bit to byte array*)
         SYSTEM.GET(cmd, x); INC(cmd);
         ByteToBits(x);
         (* send byte array *)
         FOR j := 0 TO LEN(buffer) - 1 DO
-            (* wait for output to be ready and send byte *)
-            REPEAT UNTIL SYSTEM.BIT(p.SR, TXE);
-            SYSTEM.PUT(p.DR, buffer[j]);
-            (* wait for send to be complete *)
-            REPEAT UNTIL SYSTEM.BIT(p.SR, TC);
-            (* wait for read and fetch data *)
-            REPEAT UNTIL SYSTEM.BIT(p.SR, RXNE);
-            SYSTEM.GET(p.DR, buffer[j]);
+            LOOP
+                (* wait for output to be ready and send byte *)
+                IF bus.WaitBitsOrTimeout(bus.SR, {TXE}) THEN
+                    IF bus.error = NoError THEN bus.error := ErrorTimeout END;
+                    EXIT
+                END;
+                SYSTEM.PUT(bus.DR, buffer[j]);
+                (* wait for send to be complete *)
+                IF bus.WaitBitsOrTimeout(bus.SR, {TC}) THEN
+                    IF bus.error = NoError THEN bus.error := ErrorTimeout END;
+                    EXIT
+                END;
+                (* wait for read and fetch data *)
+                IF bus.WaitBitsOrTimeout(bus.SR, {RXNE}) & (rStart # NoRead) THEN
+                    IF bus.error = NoError THEN bus.error := ErrorTimeout END;
+                    EXIT
+                END;
+                EXIT
+            END;
+            (* check read status *)
+            SYSTEM.GET(bus.DR, buffer[j]);
         END;
         (* fetch read data if requested *)
         IF (rStart = 0) & (dlen > 0) THEN

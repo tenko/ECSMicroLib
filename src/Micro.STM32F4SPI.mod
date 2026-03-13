@@ -14,14 +14,14 @@ RM0390, Reference manual,
 MODULE STM32F4SPI(n*) IN Micro;
 
 IMPORT SYSTEM;
+IN Micro IMPORT Timing;
 IN Micro IMPORT ARMv7M;
 IN Micro IMPORT MCU := STM32F4;
-IN Micro IMPORT SysTick := ARMv7MSTM32SysTick0;
 IN Micro IMPORT Pins := STM32F4Pins;
 IN Micro IMPORT BusSPI;
 
 CONST
-    OK* = BusSPI.OK;
+    NoError* = BusSPI.NoError;
     ErrorTimeout* = BusSPI.ErrorTimeout;
     MaxTransferSize* = 65534;
     
@@ -43,6 +43,7 @@ TYPE
         cPha*: BOOLEAN; (* Clock phase bit. Sample data on first (FALSE) or second (TRUE) edge *)
         cPol*: BOOLEAN; (* Clock polarity bit. Define idle level for clock line *)
         configNSS*: BOOLEAN; (* Setup NSS pin *)
+        timeout*: INTEGER; (* transfere timeout in ms. 0 or lower disable timeout check *)
     END;
 
     Bus* = RECORD (BusSPI.Bus)
@@ -108,10 +109,11 @@ VAR
 BEGIN
     ASSERT((n > 0) & (n < 7));
     ASSERT(par.br DIV 8 = 0); (* [0; 7] *)
-
+    
     bus := PTR(b);
-    b.res := OK;
     b.maxTransferSize := MaxTransferSize;
+    b.error := NoError;
+    b.timeout := par.timeout;
     
     IF n = 1 THEN
         Int := MCU.SPI1Int;
@@ -480,18 +482,20 @@ BEGIN
         SYSTEM.PUT(this.CR1, x + {SPE});
     END;
     
-    (* Wait for transfere complete or timeout *)
-    t0 := SysTick.GetTicks();
+    (* Wait for transfere complete or possible timeout *)
+    t0 := Timing.TicksMS();
     LOOP
         SYSTEM.GET(this.DMATXISR, x);
         IF this.DMATXISRTCIF IN x THEN
-            this.res := OK;
+            this.error := NoError;
             EXIT
         END;
         this.Idle;
-        IF SysTick.GetTicks() - t0 > 1000 THEN
-            this.res := ErrorTimeout;
-            EXIT
+        IF (this.timeout > 0) THEN
+            IF (Timing.TicksMS() - t0 > this.timeout) THEN
+                this.error := ErrorTimeout;
+                EXIT
+            END;
         END;
     END;
     
