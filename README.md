@@ -26,7 +26,7 @@ Also the **[ECS](https://ecs.openbrace.org/)** compiler support more targets lik
 Build instructions here are for a current **ArchLinux** version, but should
 be possible to adapt to other **Linux** distributions.
 
-Windows **MSYS2** (CLANG64) also can follow these instructions and
+**Windows MSYS2** (CLANG64) also can follow these instructions and
 is known to work well, but is much slower than on **Linux**.
 
 ```shell
@@ -72,6 +72,7 @@ make -f Makefile.arm32t install  # install to ~/.local/lib
 cd ..
 
 # Build and install ECSMicroLib
+pacman -S arm-none-eabi-gdb stlink
 git clone https://github.com/tenko/ECSMicroLib.git
 cd ECSMicroLib
 # Build arm32 library
