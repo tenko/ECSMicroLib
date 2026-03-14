@@ -6,9 +6,6 @@ based on the Black Box compiler.
 
 Original project [Link](https://github.com/aixp/O7)
 
-Recent updates added support for coroutines (ref. the **tasks** demo) and
-added a reusable CLI interface module (ref. the **uartcli** demo).
-
 ## Boards
 
 Currently supported boards:
@@ -22,14 +19,15 @@ if the RAM is correctly adjusted for in the config.
 
 The original framework support further MCUs, but these are removed until it is possible to test these.
 
-Also the **ECS** compiler support more targets like **AVR**, **AVR32**, **Xtensa**: [Link](https://ecs.openbrace.org/manual/manualpa3.html#x53-496000III) 
+Also the **[ECS](https://ecs.openbrace.org/)** compiler support more targets like **AVR**, **AVR32**, **Xtensa**: [Link](https://ecs.openbrace.org/manual/manualpa3.html#x53-496000III) 
 
 ## Installation
 
-Build instructions here are for a current ArchLinux version, but should
-be possible to adapt to other distribuitions.
+Build instructions here are for a current **ArchLinux** version, but should
+be possible to adapt to other **Linux** distribuitions.
 
-Windows **MSYS2** (CLANG64) can follow these instructions.
+Windows **MSYS2** (CLANG64) also can follow these instructions and
+is known to work well, but is much slower than on **Linux**.
 
 ```shell
 # Build and install patched version of ECS
