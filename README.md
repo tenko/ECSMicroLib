@@ -72,12 +72,13 @@ GDB to start and monitor the example.
 
 ## TODO
 
-* Documentation
 * Update I2C, OneWire and SPI drivers to polling for efficient use in coroutines.
 * Add more drivers to more MCU peripherals as needed.
 * Add support for embedded filesystem (Squashfs and FAT16)
 
 ## Note
+
+Complete API Documentation: [Link](https://tenko.github.io/ECSMicroLib/)  
 
 Currently a patched version of the **ECS** compiler is needed [Link](https://github.com/tenko/ECS)  
 With the next release of the **ECS** compiler these patches should be included.
@@ -85,3 +86,4 @@ With the next release of the **ECS** compiler these patches should be included.
 The **ECSStdLib** is needed to build the library [Link](https://github.com/tenko/ECSStdLib)
 
 The **ECSGfxLib** is needed to build some examples [Link](https://github.com/tenko/ECSGfxLib)
+
