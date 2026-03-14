@@ -19,6 +19,13 @@ MOD += $(addprefix src/, $(addprefix Micro., $(addsuffix .mod, $(OLS))))
 OBF += $(addprefix build/, $(addprefix Micro., $(addsuffix .obf, $(OLS))))
 OBF += build/Micro.StaticData.obf
 
+DOC = Timing Pin Debug BusI2C BusSPI BusUart BusOneWire
+DOC += DeviceDS18B20 DeviceILI9341 DeviceSTMPE811
+DOC += STM32F4System STM32F4Pins STM32F4I2C STM32F4SPI STM32F4Uart STM32F4OneWire
+DOC += STM32L4System STM32L4Pins STM32L4Uart STM32L4OneWire
+
+DRST = $(addprefix doc/src/Micro., $(addsuffix .mod.rst, $(DOC)))
+
 .PHONY: all
 all : micro.lib
 
@@ -61,6 +68,92 @@ micro.lib : $(OBF)
 	@touch $@
 	@linklib $@ $^
 
+doc/src/Micro.Timing.mod.rst : src/Micro.Timing.mod
+	@-mkdir -p doc/src
+	./tools/docgen.py $< -o $@
+
+doc/src/Micro.Pin.mod.rst : src/Micro.Pin.mod
+	@-mkdir -p doc/src
+	./tools/docgen.py $< -o $@
+
+doc/src/Micro.Debug.mod.rst : src/Micro.Debug.mod
+	@-mkdir -p doc/src
+	./tools/docgen.py $< -o $@
+
+doc/src/Micro.BusI2C.mod.rst : src/Micro.BusI2C.mod
+	@-mkdir -p doc/src
+	./tools/docgen.py $< -o $@
+
+doc/src/Micro.BusSPI.mod.rst : src/Micro.BusSPI.mod
+	@-mkdir -p doc/src
+	./tools/docgen.py $< -o $@
+
+doc/src/Micro.BusUart.mod.rst : src/Micro.BusUart.mod
+	@-mkdir -p doc/src
+	./tools/docgen.py $< -o $@
+
+doc/src/Micro.BusOneWire.mod.rst : src/Micro.BusOneWire.mod
+	@-mkdir -p doc/src
+	./tools/docgen.py $< -o $@
+
+doc/src/Micro.DeviceDS18B20.mod.rst : src/Micro.DeviceDS18B20.mod
+	@-mkdir -p doc/src
+	./tools/docgen.py $< -o $@
+
+doc/src/Micro.DeviceILI9341.mod.rst : src/Micro.DeviceILI9341.mod
+	@-mkdir -p doc/src
+	./tools/docgen.py $< -o $@
+
+doc/src/Micro.DeviceSTMPE811.mod.rst : src/Micro.DeviceSTMPE811.mod
+	@-mkdir -p doc/src
+	./tools/docgen.py $< -o $@
+
+doc/src/Micro.STM32F4System.mod.rst : src/Micro.STM32F4System.mod
+	@-mkdir -p doc/src
+	./tools/docgen.py $< -o $@
+
+doc/src/Micro.STM32F4Pins.mod.rst : src/Micro.STM32F4Pins.mod
+	@-mkdir -p doc/src
+	./tools/docgen.py $< -o $@
+
+doc/src/Micro.STM32F4I2C.mod.rst : src/Micro.STM32F4I2C.mod
+	@-mkdir -p doc/src
+	./tools/docgen.py $< -o $@
+
+doc/src/Micro.STM32F4SPI.mod.rst : src/Micro.STM32F4SPI.mod
+	@-mkdir -p doc/src
+	./tools/docgen.py $< -o $@
+
+doc/src/Micro.STM32F4Uart.mod.rst : src/Micro.STM32F4Uart.mod
+	@-mkdir -p doc/src
+	./tools/docgen.py $< -o $@
+
+doc/src/Micro.STM32F4OneWire.mod.rst : src/Micro.STM32F4OneWire.mod
+	@-mkdir -p doc/src
+	./tools/docgen.py $< -o $@
+
+doc/src/Micro.STM32L4System.mod.rst : src/Micro.STM32L4System.mod
+	@-mkdir -p doc/src
+	./tools/docgen.py $< -o $@
+
+doc/src/Micro.STM32L4Pins.mod.rst : src/Micro.STM32L4Pins.mod
+	@-mkdir -p doc/src
+	./tools/docgen.py $< -o $@
+
+doc/src/Micro.STM32L4Uart.mod.rst : src/Micro.STM32L4Uart.mod
+	@-mkdir -p doc/src
+	./tools/docgen.py $< -o $@
+
+doc/src/Micro.STM32L4OneWire.mod.rst : src/Micro.STM32L4OneWire.mod
+	@-mkdir -p doc/src
+	./tools/docgen.py $< -o $@
+
+.PHONY: doc
+doc: $(DRST)
+	@echo Building doc
+	@make -C doc html
+	@start "" build/doc/html/index.html &
+	
 .PHONY: install
 install: micro.lib
 	@echo Install

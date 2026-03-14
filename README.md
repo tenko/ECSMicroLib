@@ -1,7 +1,7 @@
 # ECSMicroLib
 ECS Oberon-2 Compiler framework for ARM32 MCUs
 
-Most of the code is ported from Alexander V. Shiryaev's O7 Micro framework for Oberon-07
+Some of the code is ported from Alexander V. Shiryaev's O7 Micro framework for Oberon-07
 based on the Black Box compiler.
 
 Original project [Link](https://github.com/aixp/O7)
@@ -32,12 +32,11 @@ Test.mod:
 
 ```modula-2
 MODULE Test;
-IMPORT BoardConfig, SYSTEM;
+IMPORT BoardConfig;
 
-IN Micro IMPORT ARMv7M;
-IN Micro IMPORT SysTick := ARMv7MSTM32SysTick0;
-
-CONST Pins = BoardConfig.Pins;
+CONST
+    SysTick = BoardConfig.SysTick;
+    Pins = BoardConfig.Pins;
 
 VAR pin : Pins.Pin;
 
@@ -47,15 +46,14 @@ BEGIN
     
     pin.Init(BoardConfig.USER_LED1_PORT, BoardConfig.USER_LED1_PIN, Pins.output,
              Pins.pushPull, Pins.medium, Pins.noPull, Pins.AF0);
-
-    SysTick.Init(BoardConfig.HCLK, 1000);
+    
     REPEAT
         pin.On;
         TRACE("ON0");
-        WHILE ~SysTick.OnTimer() DO ARMv7M.WFI END;
+        SysTick.Delay(100);
         pin.Off;
         TRACE("OFF0");
-        WHILE ~SysTick.OnTimer() DO ARMv7M.WFI END;
+        SysTick.Delay(100);
     UNTIL FALSE
 END Test.
 ```

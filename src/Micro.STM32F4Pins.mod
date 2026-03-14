@@ -114,22 +114,26 @@ MODULE STM32F4Pins IN Micro;
 			SYSTEM.PUT(r, SYSTEM.VAL(SIGNED32, x - {y..y+3}) + SYSTEM.LSH(af, y))
 		END
 	END Init;
-
+    
+    (** Set pin value to 1 *)
     PROCEDURE (VAR p : Pin) On*;
     BEGIN SYSTEM.PUT(p.BASE + 18H, {p.pin}); (* BSRR *)
     END On;
-
+    
+    (** Set pin value to 0 *)
     PROCEDURE (VAR p : Pin) Off*;
     BEGIN SYSTEM.PUT(p.BASE + 18H, {p.pin + 16}); (* BSRR *)
     END Off;
-
+    
+    (** Return current pin value *)
     PROCEDURE (VAR p : Pin) Value*(): BOOLEAN;
     VAR s : SET32;
     BEGIN
         SYSTEM.GET(p.BASE + 10H, s); (* IDR *)
         RETURN (s * {p.pin}) # {}
     END Value;
-
+    
+    (** Toggle pin value *)
     PROCEDURE (VAR p : Pin) Toggle*;
     BEGIN IF p.Value() THEN p.Off() ELSE p.On() END
     END Toggle;

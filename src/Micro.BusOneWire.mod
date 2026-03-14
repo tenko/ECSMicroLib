@@ -1,5 +1,6 @@
 (**
-OneWire generic bus module
+Base OneWire bus interface to be used by devices.
+Concrete implementations in MCU drivers should be passed to drivers.
 
 Ref.: Maxim's Application Note 187 1-Wire Seach Algorithm
 Ref.: Maxim's Appliaction Note 27 Understanding and using Cyclic Rendundancy Checks
@@ -11,6 +12,7 @@ IMPORT SYSTEM;
 TYPE
     BYTE = SYSTEM.BYTE;
     ADDRESS = SYSTEM.ADDRESS;
+    
     Bus* = RECORD
         ROM_NO*: ARRAY 8 OF CHAR; (* 8-byte ROM addres last found device *)
         LastDiscrepancy*: UNSIGNED8;

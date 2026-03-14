@@ -1,5 +1,9 @@
-(* Alexander Shiryaev, 2016.12
-    Modified by Tenko for use with ECS
+(**
+Base SPI bus interface to be used by devices.
+Concrete implementations in MCU drivers should be passed to drivers.
+
+(c) Alexander Shiryaev, 2016.12
+Modified by Tenko for use with ECS
 *)
 MODULE BusSPI IN Micro;
 

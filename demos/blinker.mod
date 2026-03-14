@@ -9,7 +9,7 @@ CONST
 VAR pin : Pins.Pin;
 
 BEGIN
-	TRACE("START");
+    TRACE("START");
     BoardConfig.Init;
     
     pin.Init(BoardConfig.USER_LED1_PORT, BoardConfig.USER_LED1_PIN, Pins.output,

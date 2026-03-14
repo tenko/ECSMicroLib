@@ -1,5 +1,5 @@
 (**
-OneWire for STM43L4 based on code by Alexander Shiryaev
+OneWire for STM43L4
 
 Ref. notes on : https://we.easyelectronics.ru/STM32/stm32-1-wire-dma-prodolzhenie.html
 *)

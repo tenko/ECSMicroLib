@@ -22,3 +22,4 @@ clean:
 	@echo Clean
 	@-rm micro.lib
 	@-rm -rf build
+	@-rm -rf doc/src

@@ -1,5 +1,6 @@
 (**
-U[S]ART generic module
+U[S]ART interface to be used by devices.
+Concrete implementations in MCU drivers should be passed to drivers.
 
 Alexander Shiryaev, 2016.09, 2017.04, 2019.10, 2020.12
 Modified by Tenko for use with ECS

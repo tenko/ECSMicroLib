@@ -1,3 +1,10 @@
+(**
+Base I2C bus interface to be used by devices.
+Concrete implementations in MCU drivers should be passed to drivers.
+
+(c) Alexander Shiryaev, 2016.12
+Modified by Tenko for use with ECS
+*)
 MODULE BusI2C IN Micro;
 
 IMPORT SYSTEM;
