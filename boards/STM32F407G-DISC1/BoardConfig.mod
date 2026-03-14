@@ -41,8 +41,14 @@ VAR
 
 (* No pullup needed here *)
 PROCEDURE InitOWire*(VAR bus : OWire.Bus);
+VAR par : OWire.InitPar;
 BEGIN
-    bus.Init(OWire.USART2, Pins.A, 2, PCLK1, 1000); (* TX pin A2 *)
+    par.n := OWire.USART2;
+    par.TXRXPinPort := Pins.A;
+    par.TXRXPinN := 2;
+    par.UCLK := PCLK1;
+    par.timeout := 1000;
+    OWire.Init(bus, par);
     bus.Enable;
 END InitOWire;
 

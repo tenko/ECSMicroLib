@@ -15,6 +15,14 @@ IN Micro IMPORT Timing;
 TYPE
     BYTE = SYSTEM.BYTE;
     ADDRESS = SYSTEM.ADDRESS;
+    
+    InitPar* = RECORD
+        n* : INTEGER;
+        TXRXPinPort*, TXRXPinN*: INTEGER;
+        UCLK*: INTEGER;
+        timeout*: INTEGER; (* transfere timeout in ms. 0 or lower disable timeout check *)
+    END;
+      
     Bus* = RECORD (BusOneWire.Bus)
         n, UCLK, UEN: INTEGER;
         SR, DR, CR1, CR3, BRR: ADDRESS;
@@ -62,9 +70,9 @@ CONST
     RXNE = 5; TC = 6; TXE = 7;
 
 VAR ^ Crc8Data ["CRC8ONEWIRE"]: ARRAY 256 OF CHAR;
-
+    
 (** Initialize 1-Wire bus *)
-PROCEDURE (VAR bus : Bus) Init* (n, TXRXPinPort, TXRXPinN, UCLK, timeout: INTEGER);
+PROCEDURE Init* (VAR bus : Bus; par-: InitPar);
 VAR 
     pin : Pins.Pin;
     x : SET;
@@ -72,63 +80,64 @@ VAR
     base, CR1, CR2, CR3, BRR, SR, DR, GTPR: ADDRESS;
     URCCENR, URCCLPENR: ADDRESS;
 BEGIN
-    ASSERT(UCLK > 0);
-    IF n = USART1 THEN
+    ASSERT((par.n > 0) & (par.n < 8));
+    ASSERT(par.UCLK > 0);
+    
+    IF par.n = USART1 THEN
         URCCENR := MCU.RCC_APB2ENR;
         URCCLPENR := MCU.RCC_APB2LPENR;
         AF := Pins.AF7;
         UEN := 4;
         base := MCU.USART1
-    ELSIF n = USART2 THEN
+    ELSIF par.n = USART2 THEN
         URCCENR := MCU.RCC_APB1ENR;
         URCCLPENR := MCU.RCC_APB1LPENR;
         AF := Pins.AF7;
         UEN := 17;
         base := MCU.USART2
-    ELSIF n = USART3 THEN
+    ELSIF par.n = USART3 THEN
         URCCENR := MCU.RCC_APB1ENR;
         URCCLPENR := MCU.RCC_APB1LPENR;
         AF := Pins.AF7;
         UEN := 18;
         base := MCU.USART3
-    ELSIF n = UART4 THEN
+    ELSIF par.n = UART4 THEN
         URCCENR := MCU.RCC_APB1ENR;
         URCCLPENR := MCU.RCC_APB1LPENR;
         AF := Pins.AF8;
         UEN := 19;
         base := MCU.UART4
-    ELSIF n = UART5 THEN
+    ELSIF par.n = UART5 THEN
         URCCENR := MCU.RCC_APB1ENR;
         URCCLPENR := MCU.RCC_APB1LPENR;
         AF := Pins.AF8;
         UEN := 20;
         base := MCU.UART5
-    ELSIF n = USART6 THEN
+    ELSIF par.n = USART6 THEN
         URCCENR := MCU.RCC_APB2ENR;
         URCCLPENR := MCU.RCC_APB2LPENR;
         AF := Pins.AF8;
         UEN := 5;
         base := MCU.USART6
-    ELSIF n = UART7 THEN
+    ELSIF par.n = UART7 THEN
         URCCENR := MCU.RCC_APB1ENR;
         URCCLPENR := MCU.RCC_APB1LPENR;
         AF := Pins.AF8;
         UEN := 30;
         base := MCU.UART7
-    ELSIF n = UART8 THEN
+    ELSIF par.n = UART8 THEN
         URCCENR := MCU.RCC_APB1ENR;
         URCCLPENR := MCU.RCC_APB1LPENR;
         AF := Pins.AF8;
         UEN := 31;
         base := MCU.UART8
-    ELSE HALT(1)
     END;
 
-    bus.n := n; bus.UCLK := UCLK; bus.UEN := UEN;
+    bus.n := par.n; bus.UCLK := par.UCLK; bus.UEN := UEN;
     bus.LastDiscrepancy := 0;
     bus.LastFamilyDiscrepancy := 0;
     bus.LastDeviceFlag := FALSE;
-    bus.timeout := timeout;
+    bus.timeout := par.timeout;
     bus.error := NoError;
     
     FOR i := 0 TO LEN(bus.ROM_NO) - 1 DO bus.ROM_NO[i] := 00X END;
@@ -148,7 +157,7 @@ BEGIN
     SYSTEM.PUT(URCCENR, x + {UEN});
 
     (* configure USART TXRX pin *)
-	pin.Init(TXRXPinPort, TXRXPinN,
+	pin.Init(par.TXRXPinPort, par.TXRXPinN,
              Pins.alt, Pins.pushPull, Pins.fast, Pins.pullUp, AF);
 
     (* defaults *)

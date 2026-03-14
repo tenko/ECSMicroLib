@@ -34,8 +34,14 @@ VAR
 
 (* OWire on USART1. Note it needs external pull-up resistor, typical 10K *)
 PROCEDURE InitOWire*(VAR bus : OWire.Bus);
+VAR par : OWire.InitPar;
 BEGIN
-    bus.Init(OWire.USART1, Pins.A, 9, PCLK2,  1000); (* TX pin A9 *)
+    par.n := OWire.USART1;
+    par.TXRXPinPort := Pins.A;
+    par.TXRXPinN := 9;
+    par.UCLK := PCLK2;
+    par.timeout := 1000;
+    OWire.Init(bus, par);
     bus.Enable;
 END InitOWire;
 

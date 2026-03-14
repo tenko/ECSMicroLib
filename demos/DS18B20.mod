@@ -22,11 +22,10 @@ BEGIN
     DeviceDS18B20.Init(dev, bus);
     dev.bus := PTR(bus); (* probably bug in ECS *)
     
-    TRACE(bus.Reset()); (* Return TRUE if device on owbus *)
+    TRACE(bus.Reset()); (* Return TRUE if device on bus *)
     
     (* Search for ROM ID *)
     ID := 0;
-    
     bus.ResetSearch();
     WHILE bus.Next() DO
         bus.GetROM(ID);

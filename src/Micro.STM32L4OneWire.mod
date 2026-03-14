@@ -16,6 +16,14 @@ IN Micro IMPORT Timing;
 TYPE
     BYTE = SYSTEM.BYTE;
     ADDRESS = SYSTEM.ADDRESS;
+    
+    InitPar* = RECORD
+        n* : INTEGER;
+        TXRXPinPort*, TXRXPinN*: INTEGER;
+        UCLK*: INTEGER;
+        timeout*: INTEGER; (* transfere timeout in ms. 0 or lower disable timeout check *)
+    END;
+    
     Bus* = RECORD (BusOneWire.Bus)
         n, UCLK, UEN: INTEGER;
         CR1, CR2, CR3, BRR: ADDRESS;
@@ -65,7 +73,7 @@ CONST
 VAR ^ Crc8Data ["CRC8ONEWIRE"]: ARRAY 256 OF CHAR;
 
 (** Initialize 1-Wire bus *)
-PROCEDURE (VAR bus : Bus) Init* (n, TXRXPinPort, TXRXPinN, UCLK: INTEGER; timeout: INTEGER);
+PROCEDURE Init* (VAR bus : Bus; par-: InitPar);
 VAR 
     pin : Pins.Pin;
     x : SET;
@@ -73,20 +81,20 @@ VAR
     base, CR1, CR2, CR3, BRR, GTPR: ADDRESS;
     URCCENR: ADDRESS;
 BEGIN
-    ASSERT((n > 0) & (n < 5));
-    ASSERT(UCLK > 0);
+    ASSERT((par.n > 0) & (par.n < 5));
+    ASSERT(par.UCLK > 0);
     
-    IF n = 1 THEN
+    IF par.n = 1 THEN
         URCCENR := MCU.RCC_APB2ENR;
         AF := Pins.AF7;
         UEN := 14;
         base := MCU.USART1
-    ELSIF n = 2 THEN
+    ELSIF par.n = 2 THEN
         URCCENR := MCU.RCC_APB1ENR1;
         AF := Pins.AF7;
         UEN := 17;
         base := MCU.USART2
-    ELSIF n = 3 THEN
+    ELSIF par.n = 3 THEN
         URCCENR := MCU.RCC_APB1ENR1;
         AF := Pins.AF7;
         UEN := 18;
@@ -98,11 +106,11 @@ BEGIN
         base := MCU.UART4
     END;
     
-    bus.n := n; bus.UCLK := UCLK; bus.UEN := UEN;
+    bus.n := par.n; bus.UCLK := par.UCLK; bus.UEN := UEN;
     bus.LastDiscrepancy := 0;
     bus.LastFamilyDiscrepancy := 0;
     bus.LastDeviceFlag := FALSE;
-    bus.timeout := timeout;
+    bus.timeout := par.timeout;
     bus.error := NoError;
     
     FOR i := 0 TO LEN(bus.ROM_NO) - 1 DO bus.ROM_NO[i] := 00X END;
@@ -129,7 +137,7 @@ BEGIN
     SYSTEM.PUT(URCCENR, x + {UEN});
     
     (* configure USART TXRX pin *)
-	pin.Init(TXRXPinPort, TXRXPinN, Pins.alt, Pins.openDrain, Pins.fast, Pins.noPull, AF);
+	pin.Init(par.TXRXPinPort, par.TXRXPinN, Pins.alt, Pins.openDrain, Pins.fast, Pins.noPull, AF);
     
     (* defaults *)
     SYSTEM.PUT(CR1, {});
@@ -145,7 +153,7 @@ BEGIN
     SYSTEM.PUT(CR1, x + {RE,TE});
     
     (* default baud rate *)
-    SYSTEM.PUT(bus.BRR, UCLK DIV 115200);
+    SYSTEM.PUT(bus.BRR, par.UCLK DIV 115200);
  END Init;
 
 PROCEDURE (VAR bus- : Bus) SetBaud(baud : INTEGER);
