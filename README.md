@@ -24,7 +24,7 @@ Also the **[ECS](https://ecs.openbrace.org/)** compiler support more targets lik
 ## Installation
 
 Build instructions here are for a current **ArchLinux** version, but should
-be possible to adapt to other **Linux** distribuitions.
+be possible to adapt to other **Linux** distributions.
 
 Windows **MSYS2** (CLANG64) also can follow these instructions and
 is known to work well, but is much slower than on **Linux**.
