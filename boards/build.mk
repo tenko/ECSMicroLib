@@ -1,4 +1,5 @@
 # General board demo makefile
+# This Makefile expects the ECSBASE environment variable set to ECS installation folder
 OB := ecsd
 AS := armt32asm
 DAS := armt32dism
@@ -6,20 +7,11 @@ DB := dbgdwarf
 LKM := linkmem
 LKH := linkhex
 QEMU := qemu-system-gnuarmeclipse
+STFLASH := st-flash
+STUTIL := st-util
+GDB := arm-none-eabi-gdb
 
-ifdef MSYSTEM
-	ECS := /c/EigenCompilerSuite
-	STFLASH := st-flash.exe
-	STUTIL := st-util.exe
-	GDB := arm-none-eabi-gdb.exe
-else
-	ECS := ~/.local/lib/ecs
-	STFLASH := st-flash
-	STUTIL := st-util
-	GDB := arm-none-eabi-gdb
-endif
-
-RTS = ../micro.lib $(ECS)/runtime/stdarmt32.lib $(ECS)/runtime/gfxarmt32.lib $(ECS)/runtime/armt32run.obf $(ECS)/runtime/obarmt32run.lib
+RTS = ../micro.lib $(ECSBASE)/runtime/stdarmt32.lib $(ECSBASE)/runtime/gfxarmt32.lib $(ECSBASE)/runtime/armt32run.obf $(ECSBASE)/runtime/obarmt32run.lib
 
 .PHONY: all
 all : build/test.rom

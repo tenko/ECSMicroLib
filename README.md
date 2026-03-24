@@ -29,6 +29,9 @@ be possible to adapt to other **Linux** distributions.
 **Windows MSYS2** (CLANG64) also can follow these instructions and
 is known to work well, but is much slower than on **Linux**.
 
+Note that your Windows systems anti-virus software might indentify the resulting .exe file as a threath
+and in that case this check automatic must exemt these files. 
+
 ```shell
 # Build and install patched version of ECS
 pacman -S git make clang sdl2-compat
@@ -39,7 +42,8 @@ make toolchain=clang all # takes some time to finish
 make toolchain=clang prefix=~/.local install
 make clean
 # add to PATH variable (adapt to your shell and setup)
-echo "export PATH=~/.local/bin/:~/.local/lib/ecs/tools/:$PATH" >> ~/.bashrc
+echo 'export PATH=~/.local/bin/:~/.local/lib/ecs/tools/:$PATH' >> ~/.bashrc
+echo 'export ECSBASE=~/.local/lib/ecs/' >> ~/.bashrc
 cd ..
 
 # Build and install ECSStdLib
@@ -48,12 +52,12 @@ git clone https://github.com/tenko/ECSStdLib.git
 cd ECSStdLib
 # Build native library
 make 
-make install # install to ~/.local/lib
+make PREFIX=~/.local install # install to ~/.local/lib
 make TestMain # run library tests
 make clean
 # Build arm32 library
 make -f Makefile.arm32t
-make -f Makefile.arm32t install  # install to ~/.local/lib
+make -f Makefile.arm32t PREFIX=~/.local install  # install to ~/.local/lib
 # Run arm32 emulated tests. Needs xpack-qemu-arm 7.2.5
 make -f Makefile.arm32t TestMain
 cd ..
@@ -63,12 +67,12 @@ git clone https://github.com/tenko/ECSGfxLib.git
 cd ECSGfxLib
 # Build native library
 make
-make install # install to ~/.local/lib
+make PREFIX=~/.local install # install to ~/.local/lib
 make Tests # run library tests
 make clean
 # Build arm32 library
 make -f Makefile.arm32t
-make -f Makefile.arm32t install  # install to ~/.local/lib
+make -f Makefile.arm32t PREFIX=~/.local install  # install to ~/.local/lib
 cd ..
 
 # Build and install ECSMicroLib
@@ -77,7 +81,7 @@ git clone https://github.com/tenko/ECSMicroLib.git
 cd ECSMicroLib
 # Build arm32 library
 make 
-make install  # install to ~/.local/lib
+make PREFIX=~/.local install  # install to ~/.local/lib
 make help # Shows help message
 # Run simulated board test if xpack-qemu-arm is installed
 make BOARD=STM32F407G-DISC1 DEMO=blinker sim

@@ -2,11 +2,8 @@
 OB := ecsd
 AS := armt32asm
 
-ifdef MSYSTEM
-	ECS := /c/EigenCompilerSuite/
-else
-	ECS := ~/.local/lib/ecs/
-endif
+# Installation prefix
+PREFIX = /usr/local
 
 OLS += ARMv7M ARMv7MTraps ARMv7MSTM32SysTick0 ARMv7MInterrupt ARMv7MSTM32CycleCount
 OLS += Debug Pin BusI2C BusSPI BusUart BusOneWire Timing
@@ -157,5 +154,5 @@ doc: $(DRST)
 .PHONY: install
 install: micro.lib
 	@echo Install
-	@cp -f micro.lib $(ECS)/runtime/
-	@cp -f build/micro.*.sym $(ECS)/libraries/oberon/
+	@cp -f micro.lib $(PREFIX)/lib/ecs/runtime/
+	@cp -f build/micro.*.sym $(PREFIX)/lib/ecs/libraries/oberon/
