@@ -5,11 +5,22 @@ AS := armt32asm
 # Installation prefix
 PREFIX = /usr/local
 
+# Achitecture
+ARCH = ARMv7M
+
+ifeq ($(ARCH), ARMv7M)
 OLS += ARMv7M ARMv7MTraps ARMv7MSTM32SysTick0 ARMv7MInterrupt ARMv7MSTM32CycleCount
+else
+OLS += ARMv8M ARMv8MSTM32SysTick0
+endif
 OLS += Debug Pin BusI2C BusSPI BusUart BusOneWire Timing
+ifeq ($(ARCH), ARMv7M)
 OLS += STM32F4 STM32F4Pins STM32F4PinsExtInt STM32F4I2C STM32F4System STM32F4IWDG
 OLS += ARMv7MSTM32F4WWDG STM32F4SPI STM32F4Uart STM32F4OneWire
 OLS += STM32L4 STM32L4System STM32L4Pins STM32L4Uart STM32L4OneWire
+else
+OLS += STM32C5 STM32C5Pins
+endif
 OLS += DeviceDS18B20 DeviceILI9341 DeviceSTMPE811
 
 MOD += $(addprefix src/, $(addprefix Micro., $(addsuffix .mod, $(OLS))))

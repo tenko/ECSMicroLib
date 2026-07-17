@@ -1,4 +1,4 @@
-(** Config for+++ the STM32 board STM32F407G-DISC1
+(** Config for the STM32 board STM32F407G-DISC1
 
 		RM0090, Reference manual,
 			STM32F405xx/07xx, STM32F415xx/17xx,

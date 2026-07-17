@@ -1,22 +1,19 @@
-MODULE STM32L4Pins IN Micro;
+MODULE STM32C5Pins IN Micro;
 
 	(*
 		Alexander Shiryaev, 2016.04
         Modified by Tenko for use with ECS
 
-        RM0394, Reference manual,
-            STM32L41xxx/42xxx/43xxx/44xxx/45xxx/46xxx
+        RM0522, Reference manual STM32C5xxxx
 
-        RM0351, Reference manual,
-            STM32L47xxx, STM32L48xxx, STM32L49xxx and STM32L4Axxx
 	*)
 
 	IMPORT SYSTEM;
-    IN Micro IMPORT MCU := STM32L4, BasePin := Pin;
+    IN Micro IMPORT MCU := STM32C5, BasePin := Pin;
 
 	CONST
 		(* ports *)
-			A* = 0; B* = 1; C* = 2; D* = 3; E* = 4; F = 5; G = 6; H* = 7;
+			A* = 0; B* = 1; C* = 2; D* = 3; E* = 4; F* = 5; G* = 6; H* = 7;
 
 		(* modes *)
 			input* = 0; output* = 1; alt* = 2; analog* = 3;
@@ -51,7 +48,6 @@ MODULE STM32L4Pins IN Micro;
 	BEGIN
 		ASSERT(port >= A);
 		ASSERT(port <= H);
-        ASSERT((port # F) & (port # G));
 		ASSERT(pin DIV 16 = 0);
 		ASSERT(mode DIV 4 = 0);
 		ASSERT(oSpeed DIV 4 = 0);
@@ -68,8 +64,8 @@ MODULE STM32L4Pins IN Micro;
 		SYSTEM.GET(MCU.RCC_AHB2ENR, x);
 		SYSTEM.PUT(MCU.RCC_AHB2ENR, x + {port});
 
-		SYSTEM.GET(MCU.RCC_AHB2SMENR, x);
-		SYSTEM.PUT(MCU.RCC_AHB2SMENR, x + {port});
+		SYSTEM.GET(MCU.RCC_AHB2LPENR, x);
+		SYSTEM.PUT(MCU.RCC_AHB2LPENR, x + {port});
 
 		r := MCU.GPIOA_MODER + port * portSpacing;
 		SYSTEM.GET(r, x);
@@ -123,4 +119,4 @@ MODULE STM32L4Pins IN Micro;
     BEGIN IF p.Value() THEN p.Off() ELSE p.On() END
     END Toggle;
     
-END STM32L4Pins.
+END STM32C5Pins.
