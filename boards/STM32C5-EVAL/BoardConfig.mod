@@ -6,6 +6,7 @@ MODULE BoardConfig;
 IN Micro IMPORT ARMv8MSTM32SysTick0;
 IN Micro IMPORT STM32C5Pins;
 IN Micro IMPORT STM32C5ExtInt8 := STM32C5PinsExtInt(8);
+IN Micro IMPORT STM32C5Uart := STM32C5Uart(1);
 
 CONST
     Board* = "NUCLEO-L432KC";
@@ -22,6 +23,7 @@ CONST
     SysTick* = ARMv8MSTM32SysTick0;
     Pins* = STM32C5Pins;
     ExtIntButton1* = STM32C5ExtInt8;
+    Uart* = STM32C5Uart;
 
     (* Default clock *)
     fHSIDIV3 = 48000000;  (* Hz internal oscillator *)
@@ -31,6 +33,19 @@ VAR
     HCLK*,
 	PCLK1*,
 	PCLK2*: INTEGER; (* Hz *)
+
+PROCEDURE InitUart*(VAR bus : Uart.Bus; baud, parity, stopBits : INTEGER);
+VAR par : Uart.InitPar;
+BEGIN
+    par.RXPinPort := Pins.A; par.RXPinN := 7; par.RXPinAF := Pins.AF7;
+    par.TXPinPort := Pins.A; par.TXPinN := 6;  par.TXPinAF := Pins.AF7;
+    par.UCLK := PCLK1;
+    par.baud := baud;
+    par.parity := parity;
+    par.stopBits := stopBits;
+    par.disableReceiver := FALSE;
+    Uart.Init(bus, par);
+END InitUart;
 
 PROCEDURE Init*;
 BEGIN

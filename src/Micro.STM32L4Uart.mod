@@ -8,7 +8,6 @@
     RM0351, Reference manual,
         STM32L47xxx, STM32L48xxx, STM32L49xxx and STM32L4Axxx
 *)
-(* TODO : Add LPUART? *)
 MODULE STM32L4Uart (n*) IN Micro;
 
 IMPORT SYSTEM;
