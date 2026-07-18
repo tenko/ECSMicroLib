@@ -5,6 +5,7 @@ MODULE BoardConfig;
 
 IN Micro IMPORT ARMv8MSTM32SysTick0;
 IN Micro IMPORT STM32C5Pins;
+IN Micro IMPORT STM32C5ExtInt8 := STM32C5PinsExtInt(8);
 
 CONST
     Board* = "NUCLEO-L432KC";
@@ -20,7 +21,8 @@ CONST
     
     SysTick* = ARMv8MSTM32SysTick0;
     Pins* = STM32C5Pins;
-    
+    ExtIntButton1* = STM32C5ExtInt8;
+
     (* Default clock *)
     fHSIDIV3 = 48000000;  (* Hz internal oscillator *)
 	

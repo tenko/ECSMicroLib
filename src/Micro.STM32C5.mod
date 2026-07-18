@@ -101,6 +101,27 @@ CONST
             GPIOH_AFRL*      = ADDRESS(GPIOH + 20H);
             GPIOH_AFRH*      = ADDRESS(GPIOH + 24H);
     (* AHB3 *)
+        EXTI* = ADDRESS(44022000H);
+            EXTI_RTSR1*     = ADDRESS(EXTI + 0);
+            EXTI_FTSR1*     = ADDRESS(EXTI + 4);
+            EXTI_SWIER1*    = ADDRESS(EXTI + 8);
+            EXTI_RPR1*      = ADDRESS(EXTI + 0CH);
+            EXTI_FPR1*      = ADDRESS(EXTI + 010H);
+            EXTI_PRIVCFGR1* = ADDRESS(EXTI + 018H);
+            EXTI_RTSR2*     = ADDRESS(EXTI + 020H);
+            EXTI_FTSR2*     = ADDRESS(EXTI + 024H);
+            EXTI_SWIER2*    = ADDRESS(EXTI + 028H);
+            EXTI_RPR2*      = ADDRESS(EXTI + 02CH);
+            EXTI_FPR2*      = ADDRESS(EXTI + 030H);
+            EXTI_PRIVCFGR2* = ADDRESS(EXTI + 038H);
+            EXTI_EXTICR1*   = ADDRESS(EXTI + 060H);
+            EXTI_EXTICR2*   = ADDRESS(EXTI + 064H);
+            EXTI_EXTICR3*   = ADDRESS(EXTI + 068H);
+            EXTI_EXTICR4*   = ADDRESS(EXTI + 06CH);
+            EXTI_IMR1*      = ADDRESS(EXTI + 080H);
+            EXTI_EMR1*      = ADDRESS(EXTI + 084H);
+            EXTI_IMR2*      = ADDRESS(EXTI + 090H);
+            EXTI_EMR2*      = ADDRESS(EXTI + 094H);
         RCC* = ADDRESS(44020C00H);
             RCC_CR1*          = ADDRESS(RCC + 0);
             RCC_CR2*          = ADDRESS(RCC + 4);
@@ -136,4 +157,22 @@ CONST
             RCC_RTCCR*        = ADDRESS(RCC + 0F0H);
             RCC_RSR*          = ADDRESS(RCC + 0F4H);
             RCC_PRIVCFGR*     = ADDRESS(RCC + 0114H);
+    (* interrupt sources *)
+        EXTI0Int* = 7;
+        EXTI1Int* = 8;
+        EXTI2Int* = 9;
+        EXTI3Int* = 10;
+        EXTI4Int* = 11;
+        EXTI5Int* = 12;
+        EXTI6Int* = 13;
+        EXTI7Int* = 14;
+        EXTI8Int* = 15;
+        EXTI9Int* = 16;
+        EXTI10Int* = 17;
+        EXTI11Int* = 18;
+        EXTI12Int* = 19;
+        EXTI13Int* = 20;
+        EXTI14Int* = 21;
+        EXTI15Int* = 22;
+
 END STM32C5.

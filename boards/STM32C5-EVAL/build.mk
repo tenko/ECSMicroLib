@@ -11,7 +11,7 @@ mxflash: build/test.rom
 
 .PHONY: mxserver
 mxserver:
-	@$(MXSTLINK) --semihost-console-port 8080 --semihosting all -m 1 --swd -e -g -cp $(MXPROGDIR)
+	@$(MXSTLINK) --semihost-console-port 2333 --semihosting terminal -m 1 --swd -e -g -cp $(MXPROGDIR)
 
 .PHONY: mxgdb
 mxgdb:
