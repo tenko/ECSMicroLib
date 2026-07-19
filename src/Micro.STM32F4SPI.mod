@@ -14,7 +14,7 @@ RM0390, Reference manual,
 MODULE STM32F4SPI(n*) IN Micro;
 
 IMPORT SYSTEM;
-IN Micro IMPORT Timing;
+IN Micro IMPORT Machine;
 IN Micro IMPORT ARMv7M;
 IN Micro IMPORT MCU := STM32F4;
 IN Micro IMPORT Pins := STM32F4Pins;
@@ -483,7 +483,7 @@ BEGIN
     END;
     
     (* Wait for transfere complete or possible timeout *)
-    t0 := Timing.TicksMS();
+    t0 := Machine.TicksMS();
     LOOP
         SYSTEM.GET(this.DMATXISR, x);
         IF this.DMATXISRTCIF IN x THEN
@@ -492,7 +492,7 @@ BEGIN
         END;
         this.Idle;
         IF (this.timeout > 0) THEN
-            IF (Timing.TicksMS() - t0 > this.timeout) THEN
+            IF (Machine.TicksMS() - t0 > this.timeout) THEN
                 this.error := ErrorTimeout;
                 EXIT
             END;

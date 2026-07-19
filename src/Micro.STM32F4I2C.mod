@@ -14,7 +14,7 @@ RM0390, Reference manual,
 MODULE STM32F4I2C IN Micro;
 
 IMPORT SYSTEM;
-IN Micro IMPORT Timing;
+IN Micro IMPORT Machine;
 IN Micro IMPORT ARMv7M;
 IN Micro IMPORT BusI2C;
 IN Micro IMPORT Pins := STM32F4Pins;
@@ -193,10 +193,10 @@ VAR
     VAR t0 : UNSIGNED32;
     BEGIN
         IF this.timeout > 0 THEN
-            t0 := Timing.TicksMS();
+            t0 := Machine.TicksMS();
             SYSTEM.GET(adr, s);
             WHILE (s * mask = {}) DO
-                IF Timing.TicksMS() - t0 > this.timeout THEN
+                IF Machine.TicksMS() - t0 > this.timeout THEN
                     RETURN ErrorTimeout
                 END;
                 SYSTEM.GET(adr, s);
@@ -215,10 +215,10 @@ VAR
     VAR t0 : UNSIGNED32;
     BEGIN
         IF this.timeout > 0 THEN
-            t0 := Timing.TicksMS();
+            t0 := Machine.TicksMS();
             SYSTEM.GET(adr, s);
             WHILE (s * mask # {}) DO
-                IF Timing.TicksMS() - t0 > this.timeout THEN
+                IF Machine.TicksMS() - t0 > this.timeout THEN
                     RETURN ErrorTimeout
                 END;
                 SYSTEM.GET(adr, s);

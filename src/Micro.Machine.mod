@@ -1,18 +1,27 @@
 (**
-Timing module
+Machine module
 
 Procedures and variables here must be implemented in other
 MCU dependent module. This module exists to disconnect from
 MCU depenedent import in general drivers.
 *)
-MODULE Timing IN Micro;
+MODULE Machine IN Micro;
 
 IMPORT SYSTEM;
 
 (** CPU frequency value *)
 VAR ^ cpuFreq- ["cpu_freq"]: INTEGER;
 
-(** Idle procedure executed during delay_s and delay_ms bussy loop *)
+(** System reset *)
+PROCEDURE ^ Reset* ["reset"] ();
+
+(** Enter light sleep *)
+PROCEDURE ^ SleepLight* ["sleep_light"] ();
+
+(** Enter deep sleep *)
+PROCEDURE ^ SleepDeep* ["sleep_deep"] ();
+
+(** Idle procedure executed during delay_s and delay_ms busy loop *)
 PROCEDURE ^ DelayIdle* ["delay_idle"] ();
 
 (** Delay delta seconds *)
@@ -30,4 +39,4 @@ PROCEDURE ^ TicksMS* ["ticks_ms"] (): UNSIGNED32;
 (** CPU ticker value *)
 PROCEDURE ^ TicksCPU* ["ticks_cpu"] (): UNSIGNED32;
 
-END Timing.
+END Machine.

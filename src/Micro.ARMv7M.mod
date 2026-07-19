@@ -359,7 +359,7 @@ MODULE ARMv7M IN Micro;
     BEGIN SYSTEM.ASM("cpsid if")
     END CPSIDif;
     
-    PROCEDURE Reset*();
+    PROCEDURE Reset* ["reset"]();
     BEGIN
         SYSTEM.ASM("dsb");
     	SYSTEM.PUT(AIRCR, SIGNED32(05FA0004H)); (* SYSRESETREQ *)

@@ -1,9 +1,9 @@
 (** Simple demo of using an external interrupt to detect button edge event *)
 MODULE Test;
 IMPORT BoardConfig;
+IMPORT Machine IN Micro;
 
 CONST
-    SysTick = BoardConfig.SysTick;
     Pins = BoardConfig.Pins;
     ExtInt = BoardConfig.ExtIntButton1;
 
@@ -23,9 +23,9 @@ BEGIN
     ExtInt.Enable;
     
     REPEAT
+        Machine.SleepLight;
         IF ExtInt.OnTrigger() THEN
             led.Toggle;
         END;
-        SysTick.Delay(5);
     UNTIL FALSE
 END Test.

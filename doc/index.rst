@@ -28,7 +28,7 @@ boards are tested:
     :caption: Generic:
     :hidden:
     
-    src/Micro.Timing.mod
+    src/Micro.Machine.mod
     src/Micro.Pin.mod
     src/Micro.Debug.mod
     src/Micro.BusI2C.mod

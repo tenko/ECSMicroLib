@@ -2,7 +2,7 @@
 MODULE Test;
 IMPORT BoardConfig;
 
-IN Micro IMPORT ARMv7M;
+IMPORT Machine IN Micro;
 
 CONST
     Uart = BoardConfig.Uart;
@@ -17,7 +17,7 @@ BEGIN
     BoardConfig.InitUart(bus, 19200, Uart.parityNone, Uart.stopBits1);
     TRACE("Start");
     REPEAT
-        ARMv7M.WFI;
+        Machine.SleepLight;
         IF (bus.Any() > 0) & bus.TXDone() THEN
             IF bus.ReadChar(x) THEN
                 IGNORE(bus.WriteChar(x));
