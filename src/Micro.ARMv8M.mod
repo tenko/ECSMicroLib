@@ -225,12 +225,39 @@ CONST
             NVICIPR118* = ADDRESS(0E000E5D8H);
             NVICIPR119* = ADDRESS(0E000E5DCH);
     (* D1.1.11 System Control Block *)
-    AIRCR*  = ADDRESS(0E000ED0CH); (* Application Interrupt and Reset Control Register *)
+    AIRCR* = ADDRESS(0E000ED0CH);   (* Application Interrupt and Reset Control Register *)
+    SCR*    = ADDRESS(0E000ED10H);  (* System Control Register *)
+    CPACR* = ADDRESS(0E000ED88H);   (* Coprocessor Access Control Register *)
 
-PROCEDURE WFI*();
-BEGIN SYSTEM.ASM("wfi")
-END WFI;
+(** Data Synchronization Barrier *)
+PROCEDURE DSB*();
+BEGIN SYSTEM.ASM("dsb")
+END DSB;
 
+(** Instruction Synchronization Barrier assembly instruction *)
+PROCEDURE ISB*();
+BEGIN SYSTEM.ASM("isb")
+END ISB;
+
+(** Enable FPU *)
+PROCEDURE FPUEnable*();
+CONST FPU0 = 20;
+VAR x: SET32;
+BEGIN
+    SYSTEM.GET(CPACR, x);
+    SYSTEM.PUT(CPACR, x + {FPU0 + 1, FPU0});
+END FPUEnable;
+
+(** Disable FPU *)
+PROCEDURE FPUDisable*();
+CONST FPU0 = 20;
+VAR x: SET32;
+BEGIN
+    SYSTEM.GET(CPACR, x);
+    SYSTEM.PUT(CPACR, x - {FPU0 + 1, FPU0});
+END FPUDisable;
+
+(** System reset *)
 PROCEDURE Reset* ["reset"]();
 BEGIN
     SYSTEM.ASM("dsb");
@@ -238,5 +265,33 @@ BEGIN
     SYSTEM.ASM("dsb");
     REPEAT UNTIL FALSE
 END Reset;
+
+(** Enter light sleep *)
+PROCEDURE SleepLight* ["sleep_light"]();
+CONST
+    (* SCR bits: *)
+    SLEEPDEEP = 2;
+VAR x: SET32;
+BEGIN
+    SYSTEM.GET(SCR, x);
+    SYSTEM.PUT(SCR, x - {SLEEPDEEP}); (* disable deep sleep *)
+    SYSTEM.ASM("wfi");
+END SleepLight;
+
+(** Enter deep sleep *)
+PROCEDURE SleepDeep* ["sleep_deep"]();
+CONST
+    (* SCR bits: *)
+    SLEEPDEEP = 2;
+    (* SYSTCSR bits: *)
+    ENABLE = 0;
+VAR x: SET32;
+BEGIN
+    SYSTEM.GET(SYST_CSR, x);
+    SYSTEM.PUT(SYST_CSR, x - {ENABLE}); (* disable SYSTICK *)
+    SYSTEM.GET(SCR, x);
+    SYSTEM.PUT(SCR, x + {SLEEPDEEP}); (* enalbe deep sleep *)
+    SYSTEM.ASM("wfi");
+END SleepDeep;
 
 END ARMv8M.

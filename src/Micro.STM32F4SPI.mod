@@ -206,19 +206,23 @@ BEGIN
 	
 	(* disable DMA RX interrupts *)
     SYSTEM.PUT(ARMv7M.NVICICER0 + (DMARXInt DIV 32) * 4,
-               SET32({DMARXInt MOD 32})); ARMv7M.ISB;
+               SET32({DMARXInt MOD 32})); 
+    ARMv7M.ISB;
 
     (* disable DMA TX interrupts *)
     SYSTEM.PUT(ARMv7M.NVICICER0 + (DMATXInt DIV 32) * 4,
-               SET32({DMATXInt MOD 32})); ARMv7M.ISB;
+               SET32({DMATXInt MOD 32}));
+    ARMv7M.ISB;
 
     (* enable clock for SPI *)
     SYSTEM.GET(RCC_SPICLK, x);
-    SYSTEM.PUT(RCC_SPICLK, x + {SPICLKEN}); ARMv7M.DSB;
+    SYSTEM.PUT(RCC_SPICLK, x + {SPICLKEN});
+    ARMv7M.DSB;
 
     (* enable clock for DMA *)
     SYSTEM.GET(MCU.RCC_AHB1ENR, x);
-    SYSTEM.PUT(MCU.RCC_AHB1ENR, x + {DMACLKEN}); ARMv7M.DSB;
+    SYSTEM.PUT(MCU.RCC_AHB1ENR, x + {DMACLKEN});
+    ARMv7M.DSB;
     FOR i := 0 TO 100 DO END;
     
     SYSTEM.PUT(bus.CR1, {});

@@ -319,52 +319,69 @@ MODULE ARMv7M IN Micro;
 				IDISAR4*    = ADDRESS(0E000ED70H); (* Instruction Set Attribute Register 4 *)
 				IDISAR5*    = ADDRESS(0E000ED74H);
 
-    PROCEDURE WFI*();
-    BEGIN SYSTEM.ASM("wfi")
-    END WFI;
+(** Data Synchronization Barrier *)
+PROCEDURE DSB*();
+BEGIN SYSTEM.ASM("dsb")
+END DSB;
 
-    PROCEDURE DMB*();
-    BEGIN SYSTEM.ASM("dmb")
-    END DMB;
+(** Instruction Synchronization Barrier assembly instruction *)
+PROCEDURE ISB*();
+BEGIN SYSTEM.ASM("isb")
+END ISB;
 
-    PROCEDURE DSB*();
-    BEGIN SYSTEM.ASM("dsb")
-    END DSB;
+(** Enable FPU *)
+PROCEDURE FPUEnable*();
+CONST FPU0 = 20;
+VAR x: SET32;
+BEGIN
+    SYSTEM.GET(CPACR, x);
+    SYSTEM.PUT(CPACR, x + {FPU0 + 1, FPU0});
+END FPUEnable;
 
-    PROCEDURE ISB*();
-    BEGIN SYSTEM.ASM("isb")
-    END ISB;
+(** Disable FPU *)
+PROCEDURE FPUDisable*();
+CONST FPU0 = 20;
+VAR x: SET32;
+BEGIN
+    SYSTEM.GET(CPACR, x);
+    SYSTEM.PUT(CPACR, x - {FPU0 + 1, FPU0});
+END FPUDisable;
 
-    PROCEDURE CPSIEi*();
-    BEGIN SYSTEM.ASM("cpsie i")
-    END CPSIEi;
+(** System reset *)
+PROCEDURE Reset* ["reset"]();
+BEGIN
+    SYSTEM.ASM("dsb");
+    SYSTEM.PUT(AIRCR, SIGNED32(05FA0004H)); (* SYSRESETREQ *)
+    SYSTEM.ASM("dsb");
+    REPEAT UNTIL FALSE
+END Reset;
 
-    PROCEDURE CPSIDi*();
-    BEGIN SYSTEM.ASM("cpsid i")
-    END CPSIDi;
+(** Enter light sleep *)
+PROCEDURE SleepLight* ["sleep_light"]();
+CONST
+    (* SCR bits: *)
+    SLEEPDEEP = 2;
+VAR x: SET32;
+BEGIN
+    SYSTEM.GET(SCR, x);
+    SYSTEM.PUT(SCR, x - {SLEEPDEEP}); (* disable deep sleep *)
+    SYSTEM.ASM("wfi");
+END SleepLight;
 
-    PROCEDURE CPSIEf*();
-    BEGIN SYSTEM.ASM("cpsie f")
-    END CPSIEf;
-
-    PROCEDURE CPSIDf*();
-    BEGIN SYSTEM.ASM("cpsid f")
-    END CPSIDf;
-
-    PROCEDURE CPSIEif*();
-    BEGIN SYSTEM.ASM("cpsie if")
-    END CPSIEif;
-
-    PROCEDURE CPSIDif*();
-    BEGIN SYSTEM.ASM("cpsid if")
-    END CPSIDif;
-    
-    PROCEDURE Reset* ["reset"]();
-    BEGIN
-        SYSTEM.ASM("dsb");
-    	SYSTEM.PUT(AIRCR, SIGNED32(05FA0004H)); (* SYSRESETREQ *)
-    	SYSTEM.ASM("dsb");
-    	REPEAT UNTIL FALSE
-	END Reset;
+(** Enter deep sleep *)
+PROCEDURE SleepDeep* ["sleep_deep"]();
+CONST
+    (* SCR bits: *)
+    SLEEPDEEP = 2;
+    (* SYSTCSR bits: *)
+    ENABLE = 0;
+VAR x: SET32;
+BEGIN
+    SYSTEM.GET(SYSTCSR, x);
+    SYSTEM.PUT(SYSTCSR, x - {ENABLE}); (* disable SYSTICK *)
+    SYSTEM.GET(SCR, x);
+    SYSTEM.PUT(SCR, x + {SLEEPDEEP}); (* enable deep sleep *)
+    SYSTEM.ASM("wfi");
+END SleepDeep;
 	
 END ARMv7M.

@@ -104,6 +104,9 @@ CONST
             USART1_RDR*   = ADDRESS(USART1 + 24H);
             USART1_TDR*   = ADDRESS(USART1 + 28H);
             USART1_PRESC* = ADDRESS(USART1 + 2CH);
+    (* AHB1 *)
+        FlashInterface*     = ADDRESS(40022000H); (* Flash interface register *)
+			FLASH_ACR*      = ADDRESS(FlashInterface + 0);
     (* AHB2 *)
         GPIOA* = ADDRESS(42020000H);
             GPIOA_MODER*     = ADDRESS(GPIOA + 0);

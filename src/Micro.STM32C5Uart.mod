@@ -124,9 +124,13 @@ BEGIN
     
 	(* disable interrupts *)
 	SYSTEM.PUT(ARMv8M.NVICICER0 + (Int DIV 32) * 4, SET32({Int MOD 32})); (* ICER *)
-	SYSTEM.ASM("isb");
+	ARMv8M.ISB;
 
-    (* enable clock for U[S]ART *)
+    (* select clock source to PCLK1 *)
+    SYSTEM.GET(MCU.RCC_CCIPR1, x);
+    SYSTEM.PUT(MCU.RCC_CCIPR1, x - {2*n, 2*n + 1});
+
+    (* enable clock *)
     SYSTEM.GET(URCCENR, x);
     SYSTEM.PUT(URCCENR, x + {UEN});
 

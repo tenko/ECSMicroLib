@@ -12,6 +12,12 @@ IMPORT SYSTEM;
 (** CPU frequency value *)
 VAR ^ cpuFreq- ["cpu_freq"]: INTEGER;
 
+(** Enable interrupts *)
+PROCEDURE ^ IRQEnable* ["irq_enable"]();
+
+(** Disable interrupts *)
+PROCEDURE ^ IRQDisable*["irq_disable"] ();
+
 (** System reset *)
 PROCEDURE ^ Reset* ["reset"] ();
 

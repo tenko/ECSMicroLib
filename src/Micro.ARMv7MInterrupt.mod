@@ -21,7 +21,7 @@ END SetHandle;
 PROCEDURE Disable*;
 BEGIN
 	SYSTEM.PUT(ARMv7M.NVICICER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
-	ARMv7M.ISB;
+	SYSTEM.ASM("isb");
 END Disable;
 
 (** Enable interrupt *)

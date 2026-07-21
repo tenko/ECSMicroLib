@@ -102,7 +102,7 @@ BEGIN
     b.timeout := par.timeout;
     b.error := NoError;
     
-    ARMv7M.CPSIDif; (* disable interrupts *)
+    Machine.IRQDisable; (* disable interrupts *)
     
 	(* prevent endless BUSY state *)
     sclpin.Init(par.SCLPinPort, par.SCLPinN, Pins.output, Pins.pushPull, Pins.medium, Pins.noPull, 0);
@@ -175,7 +175,7 @@ BEGIN
 	SYSTEM.PUT(TRISE, trise);
 	SYSTEM.PUT(FLTR, 0); (* disable noise filters *)
     
-	ARMv7M.CPSIEif;  (* enable interrupts *)
+	Machine.IRQEnable;  (* enable interrupts *)
 	
 	(* configure I2C pins *)
     sclpin.Init(par.SCLPinPort, par.SCLPinN, Pins.alt, Pins.openDrain, Pins.medium, Pins.noPull, par.SCLPinAF);

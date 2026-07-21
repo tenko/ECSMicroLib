@@ -3,6 +3,7 @@
 *)
 MODULE BoardConfig;
 
+IN Micro IMPORT STM32C5System;
 IN Micro IMPORT ARMv8MSTM32SysTick0;
 IN Micro IMPORT STM32C5Pins;
 IN Micro IMPORT STM32C5ExtInt8 := STM32C5PinsExtInt(8);
@@ -49,6 +50,13 @@ END InitUart;
 
 PROCEDURE Init*;
 BEGIN
+    (* Switch to HSE 24MHz crystal *)
+    STM32C5System.SetClock(STM32C5System.HSE, 24'000'000);
+    HCLK := STM32C5System.HCLK;
+    SYSCLK := HCLK;
+    PCLK1 := HCLK;
+	PCLK2 := HCLK;
+    ARMv8MSTM32SysTick0.Init(SYSCLK, 1000);
 END Init;
 
 BEGIN

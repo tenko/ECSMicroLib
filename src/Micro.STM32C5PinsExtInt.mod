@@ -72,7 +72,7 @@ END Trigger;
 PROCEDURE Disable*;
 BEGIN
 	SYSTEM.PUT(ARMv8M.NVICICER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
-	SYSTEM.ASM("isb")
+	ARMv8M.ISB;
 END Disable;
 
 (** Enable interrupt *)

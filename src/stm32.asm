@@ -1,4 +1,5 @@
 ; default functions to avoid linker error
+; these functions are replaced by MCU dependent code
 
 ; standard free function, defaults to nop
 .code free
@@ -94,17 +95,30 @@ loop:
 ; cpu frequency
 cpu_freq: .qbyte  0
 
+; enable interrupts
+.code irq_enable
+    .replaceable
+    .alignment    4
+    cpsie i
+    bx.n   lr
+
+; disable interrupts
+.code irq_disable
+    .replaceable
+    .alignment    4
+    cpsid i
+    bx.n   lr
+
 ; reset, defaults to nop
 .code reset
     .replaceable
     .alignment    4
     bx.n   lr
 
-; light sleep (use wfi instruction)
+; light sleep, defaults to nop
 .code sleep_light
     .replaceable
     .alignment    4
-    wfi
     bx.n   lr
 
 ; deep sleep, defaults to nop

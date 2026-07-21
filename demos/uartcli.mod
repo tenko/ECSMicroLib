@@ -2,7 +2,7 @@
 MODULE Test;
 IMPORT BoardConfig;
 
-IN Micro IMPORT ARMv7M;
+IN Micro IMPORT Machine;
 IN Micro IMPORT Debug;
 
 IN Std IMPORT ArrayOfChar;
@@ -114,7 +114,7 @@ BEGIN
     Debug.Init(cli);
     TRACE("Start");
     REPEAT
-        ARMv7M.WFI;
+        Machine.SleepLight;
         IF blink & (SysTick.GetTicks() - t0 > BLINK) THEN
             pin.Toggle;
             t0 := SysTick.GetTicks();
