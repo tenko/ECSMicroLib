@@ -361,10 +361,14 @@ PROCEDURE SleepLight* ["sleep_light"]();
 CONST
     (* SCR bits: *)
     SLEEPDEEP = 2;
+    (* SYSTCSR bits: *)
+    ENABLE = 0;
 VAR x: SET32;
 BEGIN
+    SYSTEM.GET(SYSTCSR, x);
+    SYSTEM.PUT(SYSTCSR, x - {ENABLE}); (* disable SYSTICK *)
     SYSTEM.GET(SCR, x);
-    SYSTEM.PUT(SCR, x - {SLEEPDEEP}); (* disable deep sleep *)
+    SYSTEM.PUT(SCR, x + {SLEEPDEEP}); (* enable deep sleep *)
     SYSTEM.ASM("wfi");
 END SleepLight;
 

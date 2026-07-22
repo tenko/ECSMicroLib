@@ -9,8 +9,19 @@ MODULE Machine IN Micro;
 
 IMPORT SYSTEM;
 
+CONST
+    RESET_UNKNOWN* = 0;
+    RESET_PWRON* = 1;
+    RESET_HARD* = 2;
+    RESET_WDT* = 3;
+    RESET_DEEPSLEEP* = 4;
+    RESET_SOFT* = 5;
+
 (** CPU frequency value *)
-VAR ^ cpuFreq- ["cpu_freq"]: INTEGER;
+VAR ^ cpuFreq- ["_cpu_freq"]: INTEGER;
+
+(** Reset cause *)
+VAR ^ resetCause- ["_reset_cause"]: INTEGER;
 
 (** Enable interrupts *)
 PROCEDURE ^ IRQEnable* ["irq_enable"]();
@@ -21,14 +32,14 @@ PROCEDURE ^ IRQDisable*["irq_disable"] ();
 (** System reset *)
 PROCEDURE ^ Reset* ["reset"] ();
 
+(** Idle until interrupt is triggered *)
+PROCEDURE ^ Idle* ["idle"] ();
+
 (** Enter light sleep *)
 PROCEDURE ^ SleepLight* ["sleep_light"] ();
 
 (** Enter deep sleep *)
 PROCEDURE ^ SleepDeep* ["sleep_deep"] ();
-
-(** Idle procedure executed during delay_s and delay_ms busy loop *)
-PROCEDURE ^ DelayIdle* ["delay_idle"] ();
 
 (** Delay delta seconds *)
 PROCEDURE ^ DelayS* ["delay_s"] (delta : UNSIGNED32);

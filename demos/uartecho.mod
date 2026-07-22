@@ -17,7 +17,7 @@ BEGIN
     BoardConfig.InitUart(bus, 19200, Uart.parityNone, Uart.stopBits1);
     TRACE("Start");
     REPEAT
-        Machine.SleepLight;
+        Machine.Idle;
         IF (bus.Any() > 0) & bus.TXDone() THEN
             IF bus.ReadChar(x) THEN
                 IGNORE(bus.WriteChar(x));

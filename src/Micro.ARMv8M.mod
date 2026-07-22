@@ -266,32 +266,4 @@ BEGIN
     REPEAT UNTIL FALSE
 END Reset;
 
-(** Enter light sleep *)
-PROCEDURE SleepLight* ["sleep_light"]();
-CONST
-    (* SCR bits: *)
-    SLEEPDEEP = 2;
-VAR x: SET32;
-BEGIN
-    SYSTEM.GET(SCR, x);
-    SYSTEM.PUT(SCR, x - {SLEEPDEEP}); (* disable deep sleep *)
-    SYSTEM.ASM("wfi");
-END SleepLight;
-
-(** Enter deep sleep *)
-PROCEDURE SleepDeep* ["sleep_deep"]();
-CONST
-    (* SCR bits: *)
-    SLEEPDEEP = 2;
-    (* SYSTCSR bits: *)
-    ENABLE = 0;
-VAR x: SET32;
-BEGIN
-    SYSTEM.GET(SYST_CSR, x);
-    SYSTEM.PUT(SYST_CSR, x - {ENABLE}); (* disable SYSTICK *)
-    SYSTEM.GET(SCR, x);
-    SYSTEM.PUT(SCR, x + {SLEEPDEEP}); (* enalbe deep sleep *)
-    SYSTEM.ASM("wfi");
-END SleepDeep;
-
 END ARMv8M.

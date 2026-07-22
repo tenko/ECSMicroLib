@@ -23,7 +23,7 @@ BEGIN
     ExtInt.Enable;
     
     REPEAT
-        Machine.SleepLight;
+        Machine.Idle;
         IF ExtInt.OnTrigger() THEN
             led.Toggle;
         END;

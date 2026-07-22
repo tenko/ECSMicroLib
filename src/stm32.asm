@@ -91,9 +91,11 @@ loop:
     .alignment    4
     mov r0, 0
     bx.n   lr
-    
+
 ; cpu frequency
-cpu_freq: .qbyte  0
+.data _cpu_freq
+  .alignment  4
+  .reserve  4
 
 ; enable interrupts
 .code irq_enable
@@ -109,10 +111,22 @@ cpu_freq: .qbyte  0
     cpsid i
     bx.n   lr
 
+; reset cause flag
+.data _reset_cause
+  .alignment  4
+  .reserve  4
+
 ; reset, defaults to nop
 .code reset
     .replaceable
     .alignment    4
+    bx.n   lr
+
+; idle function, defaults to wfi
+.code idle
+    .replaceable
+    .alignment    4
+    wfi
     bx.n   lr
 
 ; light sleep, defaults to nop

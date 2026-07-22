@@ -3,6 +3,7 @@ MODULE STM32C5 IN Micro;
     RM0522, Reference manual STM32C5xxxx
 *)
 IMPORT SYSTEM;
+IN Micro IMPORT ARMv8M;
 
 TYPE ADDRESS = SYSTEM.ADDRESS;
 
@@ -197,6 +198,10 @@ CONST
             GPIOH_AFRL*      = ADDRESS(GPIOH + 20H);
             GPIOH_AFRH*      = ADDRESS(GPIOH + 24H);
     (* AHB3 *)
+        PWR* = ADDRESS(44020800H);
+			PWR_PMCR*  = ADDRESS(PWR + 0);
+            PWR_PMSR*  = ADDRESS(PWR + 4);
+            PWR_WUSR*  = ADDRESS(PWR + 44H);
         EXTI* = ADDRESS(44022000H);
             EXTI_RTSR1*     = ADDRESS(EXTI + 0);
             EXTI_FTSR1*     = ADDRESS(EXTI + 4);
@@ -278,5 +283,82 @@ CONST
         UART5Int* = 55;
         USART6Int* = 96;
         UART7Int* = 97;
+
+VAR ^ cpuFreq ["_cpu_freq"]: INTEGER;
+VAR ^ resetCause ["_reset_cause"]: INTEGER;
+
+(** Enter light sleep *)
+PROCEDURE SleepLight* ["sleep_light"]();
+CONST
+    (* SCR bits: *)
+    SLEEPDEEP = 2;
+    (* SYSTCSR bits: *)
+    ENABLE = 0;
+    (* PWR_PMCR bits: *)
+    LPMS0 = 0;
+VAR x: SET32;
+BEGIN
+    (* TODO : Clear pending interrupts *)
+    SYSTEM.GET(ARMv8M.SYST_CSR, x);
+    SYSTEM.PUT(ARMv8M.SYST_CSR, x - {ENABLE}); (* disable SYSTICK *)
+    SYSTEM.GET(ARMv8M.SCR, x);
+    SYSTEM.PUT(ARMv8M.SCR, x + {SLEEPDEEP}); (* enable deep sleep *)
+    SYSTEM.GET(PWR_PMCR, x);
+    SYSTEM.PUT(PWR_PMCR, x - {LPMS0 + 1, LPMS0}); (* stop 0 *)
+    SYSTEM.ASM("wfi");
+END SleepLight;
+
+(** Enter deep sleep *)
+PROCEDURE SleepDeep* ["sleep_deep"]();
+CONST
+    (* SCR bits: *)
+    SLEEPDEEP = 2;
+    (* SYSTCSR bits: *)
+    ENABLE = 0;
+    (* PWR_PMCR bits: *)
+    LPMS0 = 0;
+VAR x: SET32;
+BEGIN
+    (* TODO : Clear pending interrupts *)
+    SYSTEM.GET(ARMv8M.SYST_CSR, x);
+    SYSTEM.PUT(ARMv8M.SYST_CSR, x - {ENABLE}); (* disable SYSTICK *)
+    SYSTEM.GET(ARMv8M.SCR, x);
+    SYSTEM.PUT(ARMv8M.SCR, x + {SLEEPDEEP}); (* enable deep sleep *)
+    SYSTEM.GET(PWR_PMCR, x);
+    SYSTEM.PUT(PWR_PMCR, x + {LPMS0 + 1} - {LPMS0}); (* standby *)
+    SYSTEM.GET(PWR_WUSR, x);
+    SYSTEM.PUT(PWR_WUSR, x - {0 .. 6});
+    SYSTEM.ASM("wfi");
+END SleepDeep;
+
+PROCEDURE Init*;
+CONST
+    (* PWR_PMCR bits: *)
+    CSSF = 7;
+    (* PWR_PMSR bits: *)
+    SBF = 6; STOPF = 5;
+    (* RCC_RSR bits: *)
+    RMVF = 23; PINRSTF = 26; BORRSTF = 27; SFTRSTF = 28; IWDGRSTF = 29;
+    WWDGRSTF = 30; LPWRRSTF = 31;
+VAR x: SET32;
+BEGIN
+    (* default cpu frequency HSIDIV3 *)
+    cpuFreq := 48000000;
+
+    (* Set reset cause *)
+    IF SYSTEM.BIT(PWR_PMSR, SBF) OR SYSTEM.BIT(PWR_PMSR, SBF) THEN
+        resetCause := 4; (* RESET_DEEPSLEEP *)
+        SYSTEM.GET(PWR_PMCR, x);
+        SYSTEM.PUT(PWR_PMCR, x + {CSSF});
+    ELSE
+        SYSTEM.GET(RCC_RSR, x);
+        IF PINRSTF IN x THEN resetCause := 2 (* RESET_HARD *)
+        ELSIF SFTRSTF IN x THEN resetCause := 5 (* RESET_SOFT *)
+        ELSIF BORRSTF IN x THEN resetCause := 1 (* RESET_PWRON *)
+        ELSIF (IWDGRSTF IN x) OR (IWDGRSTF IN x) THEN resetCause := 3 (* RESET_WDT *)
+        ELSE resetCause := 0 (* RESET_UNKNOWN *) END;
+        SYSTEM.PUT(RCC_RSR, x + {RMVF});
+    END;
+END Init;
 
 END STM32C5.

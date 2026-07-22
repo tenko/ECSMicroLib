@@ -9,7 +9,7 @@ MODULE DeviceILI9341 IN Micro;
 
 IMPORT SYSTEM;
 IN Micro IMPORT BusSPI;
-IN Micro IMPORT Pin;
+IN Micro IMPORT MachinePin;
 IN Micro IMPORT Machine;
 
 TYPE
@@ -17,7 +17,7 @@ TYPE
     ADDRESS = SYSTEM.ADDRESS;
     
     PtrBus = POINTER TO VAR BusSPI.Bus;
-    PtrPin = POINTER TO VAR Pin.Pin;
+    PtrPin = POINTER TO VAR MachinePin.Pin;
     
     ILI9341* = RECORD
         rotation : INTEGER;
@@ -91,7 +91,7 @@ BEGIN FOR i := 0 TO 9 DO SYSTEM.ASM("nop") END
 END Delay;
 
 (** Initialize driver *)
-PROCEDURE Init* (VAR dev : ILI9341; VAR bus: BusSPI.Bus; VAR rst, cs, dc : Pin.Pin);
+PROCEDURE Init* (VAR dev : ILI9341; VAR bus: BusSPI.Bus; VAR rst, cs, dc : MachinePin.Pin);
 BEGIN
     dev.bus := PTR(bus);
     dev.rst := PTR(rst);

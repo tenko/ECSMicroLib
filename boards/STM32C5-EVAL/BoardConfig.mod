@@ -3,6 +3,7 @@
 *)
 MODULE BoardConfig;
 
+IN Micro IMPORT STM32C5;
 IN Micro IMPORT STM32C5System;
 IN Micro IMPORT ARMv8MSTM32SysTick0;
 IN Micro IMPORT STM32C5Pins;
@@ -56,14 +57,15 @@ BEGIN
     SYSCLK := HCLK;
     PCLK1 := HCLK;
 	PCLK2 := HCLK;
-    ARMv8MSTM32SysTick0.Init(SYSCLK, 1000);
+    ARMv8MSTM32SysTick0.Init(SYSCLK, 1000); (* ms timer *)
 END Init;
 
 BEGIN
     (* System startup defaults *)
+    STM32C5.Init;
     SYSCLK := fHSIDIV3;
     HCLK := fHSIDIV3;
     PCLK1 := fHSIDIV3;
 	PCLK2 := fHSIDIV3;
-	ARMv8MSTM32SysTick0.Init(SYSCLK, 1000);
+	ARMv8MSTM32SysTick0.Init(SYSCLK, 1000); (* ms timer *)
 END BoardConfig.

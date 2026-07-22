@@ -114,7 +114,7 @@ BEGIN
     Debug.Init(cli);
     TRACE("Start");
     REPEAT
-        Machine.SleepLight;
+        Machine.Idle;
         IF blink & (SysTick.GetTicks() - t0 > BLINK) THEN
             pin.Toggle;
             t0 := SysTick.GetTicks();

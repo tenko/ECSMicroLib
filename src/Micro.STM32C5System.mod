@@ -10,6 +10,8 @@ CONST
 	HSI* = 1; HSE* = 2; PSI = 3;
 	flashLatency = 4; hFreq = 2;
 
+VAR ^ cpuFreq ["_cpu_freq"]: INTEGER;
+
 (** Set CPU clock to 144MHz with either HSI or HSE *)
 PROCEDURE SetClock* (src, fHSE: INTEGER);
 CONST
@@ -94,6 +96,8 @@ BEGIN
 	SYSTEM.GET(MCU.RCC_CFGR1, x);
     SYSTEM.PUT(MCU.RCC_CFGR1, x - {0 .. 1} + SET32(PSI));
 	REPEAT SYSTEM.GET(MCU.RCC_CFGR1, x) UNTIL x * {3,4} = SET32(PSI * 8);
+
+	cpuFreq := 144'000'000;
 END SetClock;
 
 END STM32C5System.

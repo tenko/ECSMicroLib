@@ -29,7 +29,7 @@ boards are tested:
     :hidden:
     
     src/Micro.Machine.mod
-    src/Micro.Pin.mod
+    src/Micro.MachinePin.mod
     src/Micro.Debug.mod
     src/Micro.BusI2C.mod
     src/Micro.BusSPI.mod

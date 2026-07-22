@@ -24,7 +24,7 @@ MODULE STM32F4Pins IN Micro;
 	*)
 
 	IMPORT SYSTEM;
-    IN Micro IMPORT MCU := STM32F4, BasePin := Pin;
+    IN Micro IMPORT MCU := STM32F4, MachinePin;
     
 	CONST
 		(* ports *)
@@ -56,7 +56,7 @@ MODULE STM32F4Pins IN Micro;
 
     TYPE
         ADDRESS = SYSTEM.ADDRESS;
-        Pin* = RECORD (BasePin.Pin)
+        Pin* = RECORD (MachinePin.Pin)
             BASE- : ADDRESS;
             port-, pin- : INTEGER;
         END;

@@ -9,7 +9,7 @@ MODULE STM32C5Pins IN Micro;
 	*)
 
 	IMPORT SYSTEM;
-    IN Micro IMPORT MCU := STM32C5, BasePin := Pin;
+    IN Micro IMPORT MCU := STM32C5, MachinePin;
 
 	CONST
 		(* ports *)
@@ -37,7 +37,7 @@ MODULE STM32C5Pins IN Micro;
 
     TYPE
         ADDRESS = SYSTEM.ADDRESS;
-        Pin* = RECORD (BasePin.Pin)
+        Pin* = RECORD (MachinePin.Pin)
             BASE : ADDRESS;
             port-, pin- : INTEGER;
         END;
