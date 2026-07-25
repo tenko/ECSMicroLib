@@ -1,6 +1,6 @@
 (**
 External pin interrupt. N parameter is pin number and must match
-pin number in Init procedure,
+pin number in Init procedure.
 *)
 MODULE STM32C5PinsExtInt (N*) IN Micro;
 

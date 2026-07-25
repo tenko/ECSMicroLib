@@ -4,15 +4,26 @@ IMPORT SYSTEM;
 IN Micro IMPORT ARMv8M, MCU := STM32C5;
 
 CONST
+	(* CPU clock *)
 	HCLK* = 144000000;
-
-	(* OSCSRC *)
 	HSI* = 1; HSE* = 2; PSI = 3;
 	flashLatency = 4; hFreq = 2;
 
+	(* RTC clock *)
+	LSI* = 2; LSE* = 1;
+	DriveLow* = 0; DriveMedLow* = 1;
+	DriveMedHigh* = 2; DriveHighest* = 3;
+
 VAR ^ cpuFreq ["_cpu_freq"]: INTEGER;
 
-(** Set CPU clock to 144MHz with either HSI or HSE *)
+(**
+	Set CPU clock to 144MHz with PSI clock.
+	src: HSI | HSE
+	fHSE is ignored if src is HSI.
+	NOTE:
+		should be called only once the RCC clock configuration
+		is reset to the default reset state (done in Init)
+*)
 PROCEDURE SetClock* (src, fHSE: INTEGER);
 CONST
 	(* RCC_CR1 bits: *)
@@ -99,5 +110,47 @@ BEGIN
 
 	cpuFreq := 144'000'000;
 END SetClock;
+
+(**
+	Set RTC clock
+	src: LSI | LSE
+	drive is ignored if src is LSI.
+*)
+PROCEDURE SetRTCClock*(src, drive: INTEGER);
+CONST
+	(* RCC_APB3ENR bits: *)
+	RTCAPBEN = 21;
+	(* PWR_RTCCR bits: *)
+	DRTCP = 0;
+	(* RCC_RTCCR bits: *)
+	LSEON = 0; LSERDY = 1; LSEDRV0 = 3; RTCSEL0 = 8;
+	RTCEN = 15; RTCDRST = 16; LSION = 26; LSIRDY = 27;
+VAR
+    x: SET32;
+BEGIN
+	ASSERT((src = LSI) OR (src = LSE));
+	ASSERT((src # LSE) OR (drive >= DriveLow));
+	ASSERT((src # LSE) OR (drive <= DriveHighest));
+	IF src = LSE THEN
+		(* Disable LSE and wait for the oscillator to be stopped *)
+		SYSTEM.GET(MCU.RCC_RTCCR, x);
+		SYSTEM.PUT(MCU.RCC_RTCCR, x - {LSEON});
+		REPEAT UNTIL ~SYSTEM.BIT(MCU.RCC_RTCCR, LSERDY);
+		(* Set LSE oscillator drive strength *)
+		SYSTEM.GET(MCU.RCC_RTCCR, x);
+		SYSTEM.PUT(MCU.RCC_RTCCR, x - {LSEDRV0+1, LSEDRV0} + SET32(drive * 8));
+		(* Enable LSE and wait for the oscillator to be ready *)
+		SYSTEM.GET(MCU.RCC_RTCCR, x);
+		SYSTEM.PUT(MCU.RCC_RTCCR, x + {LSEON});
+		REPEAT UNTIL SYSTEM.BIT(MCU.RCC_RTCCR, LSERDY);
+	ELSE
+		IF ~SYSTEM.BIT(MCU.RCC_RTCCR, LSIRDY) THEN
+			(* Enable LSI and wait for the oscillator to be ready *)
+			SYSTEM.GET(MCU.RCC_RTCCR, x);
+			SYSTEM.PUT(MCU.RCC_RTCCR, x + {LSION});
+			REPEAT UNTIL SYSTEM.BIT(MCU.RCC_RTCCR, LSIRDY);
+		END;
+	END;
+END SetRTCClock;
 
 END STM32C5System.

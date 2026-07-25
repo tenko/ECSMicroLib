@@ -7,6 +7,7 @@ IN Micro IMPORT STM32C5;
 IN Micro IMPORT STM32C5System;
 IN Micro IMPORT ARMv8MSTM32SysTick0;
 IN Micro IMPORT STM32C5Pins;
+IN Micro IMPORT STM32C5RTC;
 IN Micro IMPORT STM32C5ExtInt8 := STM32C5PinsExtInt(8);
 IN Micro IMPORT STM32C5Uart := STM32C5Uart(1);
 
@@ -24,6 +25,7 @@ CONST
     
     SysTick* = ARMv8MSTM32SysTick0;
     Pins* = STM32C5Pins;
+    RTC* = STM32C5RTC;
     ExtIntButton1* = STM32C5ExtInt8;
     Uart* = STM32C5Uart;
 
@@ -49,6 +51,10 @@ BEGIN
     Uart.Init(bus, par);
 END InitUart;
 
+PROCEDURE InitSysTick*;
+BEGIN ARMv8MSTM32SysTick0.Init(SYSCLK, 1000); (* ms timer *)
+END InitSysTick;
+
 PROCEDURE Init*;
 BEGIN
     (* Switch to HSE 24MHz crystal *)
@@ -57,15 +63,25 @@ BEGIN
     SYSCLK := HCLK;
     PCLK1 := HCLK;
 	PCLK2 := HCLK;
-    ARMv8MSTM32SysTick0.Init(SYSCLK, 1000); (* ms timer *)
+    InitSysTick;
 END Init;
 
+PROCEDURE InitRTC*;
 BEGIN
-    (* System startup defaults *)
+    STM32C5System.SetRTCClock(STM32C5System.LSE, STM32C5System.DriveHighest);
+END InitRTC;
+
+PROCEDURE InitDefault*;
+BEGIN
+    (* System startup default clock is HSIDIV3 *)
     STM32C5.Init;
     SYSCLK := fHSIDIV3;
     HCLK := fHSIDIV3;
     PCLK1 := fHSIDIV3;
 	PCLK2 := fHSIDIV3;
-	ARMv8MSTM32SysTick0.Init(SYSCLK, 1000); (* ms timer *)
+	InitSysTick;
+END InitDefault;
+
+BEGIN
+    InitDefault;
 END BoardConfig.

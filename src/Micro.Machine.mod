@@ -10,6 +10,7 @@ MODULE Machine IN Micro;
 IMPORT SYSTEM;
 
 CONST
+    (* resetCause constants *)
     RESET_UNKNOWN* = 0;
     RESET_PWRON* = 1;
     RESET_HARD* = 2;

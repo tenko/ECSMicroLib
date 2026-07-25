@@ -13,13 +13,13 @@ OLS += ARMv7M ARMv7MTraps ARMv7MSTM32SysTick0 ARMv7MInterrupt ARMv7MSTM32CycleCo
 else
 OLS += ARMv8M ARMv8MSTM32SysTick0 ARMv8MInterrupt
 endif
-OLS += Debug BusI2C BusSPI BusUart BusOneWire Machine MachinePin
+OLS += Debug BusI2C BusSPI BusUart BusOneWire Machine MachinePin MachineRTC
 ifeq ($(ARCH), ARMv7M)
 OLS += STM32F4 STM32F4Pins STM32F4PinsExtInt STM32F4I2C STM32F4System STM32F4IWDG
 OLS += ARMv7MSTM32F4WWDG STM32F4SPI STM32F4Uart STM32F4OneWire
 OLS += STM32L4 STM32L4System STM32L4Pins STM32L4Uart STM32L4OneWire
 else
-OLS += STM32C5 STM32C5System STM32C5Pins STM32C5PinsExtInt STM32C5Uart
+OLS += STM32C5 STM32C5System STM32C5Pins STM32C5PinsExtInt STM32C5Uart STM32C5RTC
 endif
 OLS += DeviceDS18B20 DeviceILI9341 DeviceSTMPE811
 
@@ -85,6 +85,10 @@ doc/src/Micro.MachinePin.mod.rst : src/Micro.MachinePin.mod
 	@-mkdir -p doc/src
 	./tools/docgen.py $< -o $@
 
+doc/src/Micro.MachineRTC.mod.rst : src/Micro.MachineRTC.mod
+	@-mkdir -p doc/src
+	./tools/docgen.py $< -o $@
+
 doc/src/Micro.Debug.mod.rst : src/Micro.Debug.mod
 	@-mkdir -p doc/src
 	./tools/docgen.py $< -o $@
@@ -114,46 +118,6 @@ doc/src/Micro.DeviceILI9341.mod.rst : src/Micro.DeviceILI9341.mod
 	./tools/docgen.py $< -o $@
 
 doc/src/Micro.DeviceSTMPE811.mod.rst : src/Micro.DeviceSTMPE811.mod
-	@-mkdir -p doc/src
-	./tools/docgen.py $< -o $@
-
-doc/src/Micro.STM32F4System.mod.rst : src/Micro.STM32F4System.mod
-	@-mkdir -p doc/src
-	./tools/docgen.py $< -o $@
-
-doc/src/Micro.STM32F4Pins.mod.rst : src/Micro.STM32F4Pins.mod
-	@-mkdir -p doc/src
-	./tools/docgen.py $< -o $@
-
-doc/src/Micro.STM32F4I2C.mod.rst : src/Micro.STM32F4I2C.mod
-	@-mkdir -p doc/src
-	./tools/docgen.py $< -o $@
-
-doc/src/Micro.STM32F4SPI.mod.rst : src/Micro.STM32F4SPI.mod
-	@-mkdir -p doc/src
-	./tools/docgen.py $< -o $@
-
-doc/src/Micro.STM32F4Uart.mod.rst : src/Micro.STM32F4Uart.mod
-	@-mkdir -p doc/src
-	./tools/docgen.py $< -o $@
-
-doc/src/Micro.STM32F4OneWire.mod.rst : src/Micro.STM32F4OneWire.mod
-	@-mkdir -p doc/src
-	./tools/docgen.py $< -o $@
-
-doc/src/Micro.STM32L4System.mod.rst : src/Micro.STM32L4System.mod
-	@-mkdir -p doc/src
-	./tools/docgen.py $< -o $@
-
-doc/src/Micro.STM32L4Pins.mod.rst : src/Micro.STM32L4Pins.mod
-	@-mkdir -p doc/src
-	./tools/docgen.py $< -o $@
-
-doc/src/Micro.STM32L4Uart.mod.rst : src/Micro.STM32L4Uart.mod
-	@-mkdir -p doc/src
-	./tools/docgen.py $< -o $@
-
-doc/src/Micro.STM32L4OneWire.mod.rst : src/Micro.STM32L4OneWire.mod
 	@-mkdir -p doc/src
 	./tools/docgen.py $< -o $@
 
