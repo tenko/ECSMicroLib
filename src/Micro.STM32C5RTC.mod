@@ -107,9 +107,12 @@ BEGIN
     SYSTEM.GET(MCU.RTC_WPR, x);
     SYSTEM.PUT(MCU.RTC_WPR, x + SET8(0FFH));
 	IF delay = 0 THEN
-		(* Enable wakeup interrupt *)
+		(* Disable wakeup interrupt *)
 		SYSTEM.GET(MCU.EXTI_IMR1, x);
 		SYSTEM.PUT(MCU.EXTI_IMR1, x - {IM17});
+		(* Event mask register *)
+		SYSTEM.GET(MCU.EXTI_EMR1, x);
+		SYSTEM.PUT(MCU.EXTI_EMR1, x - {IM17});
 		RETURN;
 	END;
     (* Enable wakeup interrupt *)

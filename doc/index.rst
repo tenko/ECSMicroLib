@@ -30,6 +30,7 @@ boards are tested:
     
     src/Micro.Machine.mod
     src/Micro.MachinePin.mod
+    src/Micro.MachinePinExtInt.mod
     src/Micro.MachineRTC.mod
     src/Micro.Debug.mod
     src/Micro.BusI2C.mod

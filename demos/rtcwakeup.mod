@@ -8,6 +8,7 @@ CONST
     Pins = BoardConfig.Pins;
     RTC = BoardConfig.RTC;
     SysTick = BoardConfig.SysTick;
+    Sleep = 1; (* 0, 1 or 2 *)
 
 VAR
     pin : Pins.Pin;
@@ -28,6 +29,7 @@ END DelayMS;
 BEGIN
     IF Machine.resetCause = Machine.RESET_DEEPSLEEP THEN
         (* TRACE("WAKEUP"); *)
+        BoardConfig.InitDefault;
     ELSE
          (* TRACE("START"); *)
         BoardConfig.InitRTC;
@@ -44,11 +46,16 @@ BEGIN
         DelayMS(500);
         pin.Off;
         (* TRACE("OFF0"); *)
-        Machine.SleepLight;
-        (*
-        SysTick.Disable;
-        Machine.Idle;
-        SysTick.Enable;
-        *)
+        IF Sleep = 0 THEN
+            SysTick.Disable;
+            Machine.Idle;
+            SysTick.Enable;
+        ELSIF Sleep = 1 THEN
+            Machine.SleepLight;
+            BoardConfig.InitDefault;
+        ELSE
+            Machine.SleepDeep;
+            (* Wakeup triggers reset *)
+        END;
     UNTIL FALSE
 END Test.

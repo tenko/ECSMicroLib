@@ -8,6 +8,7 @@ IMPORT SYSTEM;
 IN Micro IMPORT ARMv8M;
 IN Micro IMPORT MCU := STM32C5;
 IN Micro IMPORT Pins := STM32C5Pins;
+IN Micro IMPORT MachinePinExtInt;
 
 CONST
     Isr = SEL(N = 0, "isr_exti0", SEL(N = 1, "isr_exti1", SEL(N = 2, "isr_exti2", SEL(N = 3, "isr_exti3",
@@ -22,46 +23,34 @@ CONST
 
 TYPE
     ADDRESS = SYSTEM.ADDRESS;
+    PinExtInt* = RECORD (MachinePinExtInt.PinExtInt) END;
+    PtrPinExtInt = POINTER TO VAR PinExtInt;
 
-VAR
-    count- : UNSIGNED32;
-    flag : BOOLEAN;
-    isrHandle : PROCEDURE;
+(** Pointer for access to PinExtInt in ISR *)
+VAR pinExtInt : PtrPinExtInt;
 
 PROCEDURE InterruptHandler [Isr] ();
 VAR x: SET32;
 BEGIN
+    IF pinExtInt = NIL THEN RETURN END;
 	SYSTEM.GET(MCU.EXTI_RPR1, x);
 	IF N IN x THEN (* Rising edge *)
-        INC(count);
-        flag := TRUE;
-        IF isrHandle # NIL THEN isrHandle() END;
+        INC(pinExtInt.count);
+        pinExtInt.flag := TRUE;
+        IF pinExtInt.isrHandle # NIL THEN pinExtInt.isrHandle() END;
         SYSTEM.PUT(MCU.EXTI_RPR1, x + {N});
     END;
     SYSTEM.GET(MCU.EXTI_FPR1, x);
 	IF N IN x THEN (* Falling edge *)
-        INC(count);
-        flag := TRUE;
-        IF isrHandle # NIL THEN isrHandle() END;
+        INC(pinExtInt.count);
+        pinExtInt.flag := TRUE;
+        IF pinExtInt.isrHandle # NIL THEN pinExtInt.isrHandle() END;
         SYSTEM.PUT(MCU.EXTI_FPR1, x + {N});
     END;
 END InterruptHandler;
 
-(** Set ISR handle *)
-PROCEDURE SetHandle*(handle : PROCEDURE);
-BEGIN isrHandle := handle
-END SetHandle;
-
-(** Check if interrupt is triggered. Clear flag if set. *)
-PROCEDURE OnTrigger* (): BOOLEAN;
-VAR res: BOOLEAN;
-BEGIN
-	res := flag; IF res THEN flag := FALSE END;
-    RETURN res
-END OnTrigger;
-
 (** Software trigger of interrupt *)
-PROCEDURE Trigger*;
+PROCEDURE (VAR ext : PinExtInt) Trigger*;
 VAR x: SET32;
 BEGIN
 	SYSTEM.GET(MCU.EXTI_SWIER1, x);
@@ -69,31 +58,31 @@ BEGIN
 END Trigger;
 
 (** Disable interrupt *)
-PROCEDURE Disable*;
+PROCEDURE (VAR ext : PinExtInt) Disable*;
 BEGIN
 	SYSTEM.PUT(ARMv8M.NVICICER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
 	ARMv8M.ISB;
 END Disable;
 
 (** Enable interrupt *)
-PROCEDURE Enable*;
+PROCEDURE (VAR ext : PinExtInt) Enable*;
 BEGIN
 	SYSTEM.PUT(ARMv8M.NVICISER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
 END Enable;
 
 (** Initialize interrupt on pin. Interrups is disabled. *)
-PROCEDURE Init* (pin- : Pins.Pin; risingEdge, fallingEdge: BOOLEAN);
+PROCEDURE (VAR ext : PinExtInt) Init* (pin- : Pins.Pin; risingEdge, fallingEdge: BOOLEAN);
 VAR
     x: SET32;
     reg : ADDRESS;
     ofs : INTEGER;
 BEGIN
     ASSERT(pin.pin = N);
-	count := 0;
-	flag := FALSE;
-	isrHandle := NIL;
+    pinExtInt := PTR(ext);
+	ext.count := 0;
+	ext.flag := FALSE;
 	(* Disable interrupt *)
-    Disable();
+    ext.Disable();
     (* Interrupt selection register *)
     IF N < 4 THEN
         reg := MCU.EXTI_EXTICR1;

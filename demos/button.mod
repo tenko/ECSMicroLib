@@ -7,7 +7,9 @@ CONST
     Pins = BoardConfig.Pins;
     ExtInt = BoardConfig.ExtIntButton1;
 
-VAR led, btn : Pins.Pin;
+VAR 
+    led, btn : Pins.Pin;
+    ext : ExtInt.PinExtInt;
 
 BEGIN
 	TRACE("START");
@@ -19,12 +21,12 @@ BEGIN
     btn.Init(BoardConfig.USER_BUTTON1_PORT, BoardConfig.USER_BUTTON1_PIN, Pins.input,
              FALSE, 0, Pins.noPull, Pins.AF0);
 
-    ExtInt.Init(btn, TRUE, FALSE);
-    ExtInt.Enable;
+    ext.Init(btn, TRUE, FALSE);
+    ext.Enable;
     
     REPEAT
         Machine.Idle;
-        IF ExtInt.OnTrigger() THEN
+        IF ext.OnTrigger() THEN
             led.Toggle;
         END;
     UNTIL FALSE
