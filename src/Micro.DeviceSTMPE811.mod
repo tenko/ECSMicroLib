@@ -8,7 +8,7 @@ MODULE DeviceSTMPE811 IN Micro;
 
 IMPORT SYSTEM;
 IN Micro IMPORT BusI2C;
-IN Micro IMPORT Timing;
+IN Micro IMPORT Machine;
 
 TYPE
     BYTE = SYSTEM.BYTE;
@@ -232,9 +232,9 @@ END ReadDeviceId;
 PROCEDURE (VAR this : Device) Reset* ();
 BEGIN
     this.WriteRegister(REG_SYS_CTRL1, {SOFT_RESET});
-    Timing.DelayMS(10);
+    Machine.DelayMS(10);
     this.WriteRegister(REG_SYS_CTRL1, {});
-    Timing.DelayMS(2);
+    Machine.DelayMS(2);
 END Reset;
 
 (** Enable touch interrupt on INT pin. *)
@@ -280,7 +280,7 @@ BEGIN
     this.WriteRegister(REG_SYS_CTRL2, s);
     (* Config ADC : 12-bit, 80 clock ticks *)
     this.WriteRegister(REG_ADC_CTRL1, {MOD_12B,SAMPLE_TIME2});
-    Timing.DelayMS(2);
+    Machine.DelayMS(2);
     (* Config ADC clock to 3.25MHz *)
     this.WriteRegister(REG_ADC_CTRL2, {ADC_FREQ0});
     (* touch screen config : 4 avg samples, detect delay 500us, settling time 500us *)
@@ -298,7 +298,7 @@ BEGIN
     this.WriteRegister(REG_TSC_CTRL, {TSC_EN});
     (* Clear all the status pending bits if any *)
     this.ClearInterrupts();
-    Timing.DelayMS(5);
+    Machine.DelayMS(5);
 END Config;
 
 (** Return TRUE if we have touch data *)

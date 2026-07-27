@@ -14,7 +14,7 @@ RM0390, Reference manual,
 MODULE STM32F4SPI(n*) IN Micro;
 
 IMPORT SYSTEM;
-IN Micro IMPORT Timing;
+IN Micro IMPORT Machine;
 IN Micro IMPORT ARMv7M;
 IN Micro IMPORT MCU := STM32F4;
 IN Micro IMPORT Pins := STM32F4Pins;
@@ -206,19 +206,23 @@ BEGIN
 	
 	(* disable DMA RX interrupts *)
     SYSTEM.PUT(ARMv7M.NVICICER0 + (DMARXInt DIV 32) * 4,
-               SET32({DMARXInt MOD 32})); ARMv7M.ISB;
+               SET32({DMARXInt MOD 32})); 
+    ARMv7M.ISB;
 
     (* disable DMA TX interrupts *)
     SYSTEM.PUT(ARMv7M.NVICICER0 + (DMATXInt DIV 32) * 4,
-               SET32({DMATXInt MOD 32})); ARMv7M.ISB;
+               SET32({DMATXInt MOD 32}));
+    ARMv7M.ISB;
 
     (* enable clock for SPI *)
     SYSTEM.GET(RCC_SPICLK, x);
-    SYSTEM.PUT(RCC_SPICLK, x + {SPICLKEN}); ARMv7M.DSB;
+    SYSTEM.PUT(RCC_SPICLK, x + {SPICLKEN});
+    ARMv7M.DSB;
 
     (* enable clock for DMA *)
     SYSTEM.GET(MCU.RCC_AHB1ENR, x);
-    SYSTEM.PUT(MCU.RCC_AHB1ENR, x + {DMACLKEN}); ARMv7M.DSB;
+    SYSTEM.PUT(MCU.RCC_AHB1ENR, x + {DMACLKEN});
+    ARMv7M.DSB;
     FOR i := 0 TO 100 DO END;
     
     SYSTEM.PUT(bus.CR1, {});
@@ -483,7 +487,7 @@ BEGIN
     END;
     
     (* Wait for transfere complete or possible timeout *)
-    t0 := Timing.TicksMS();
+    t0 := Machine.TicksMS();
     LOOP
         SYSTEM.GET(this.DMATXISR, x);
         IF this.DMATXISRTCIF IN x THEN
@@ -492,7 +496,7 @@ BEGIN
         END;
         this.Idle;
         IF (this.timeout > 0) THEN
-            IF (Timing.TicksMS() - t0 > this.timeout) THEN
+            IF (Machine.TicksMS() - t0 > this.timeout) THEN
                 this.error := ErrorTimeout;
                 EXIT
             END;

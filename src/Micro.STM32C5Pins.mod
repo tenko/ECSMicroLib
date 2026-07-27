@@ -1,35 +1,19 @@
-MODULE STM32F4Pins IN Micro;
+MODULE STM32C5Pins IN Micro;
 
 	(*
 		Alexander Shiryaev, 2016.04
         Modified by Tenko for use with ECS
-        
-		RM0090, Reference manual,
-			STM32F4{0,1}{5,7}xx, STM32F4{2,3}{7,9}xx (PA..PK)
 
-		RM0368, Reference manual,
-			STM32F401x{B,C,D,E} (PA..PE, PH)
+        RM0522, Reference manual STM32C5xxxx
 
-		RM0383, Reference manual,
-			STM32F411x{C,E} (PA..PE, PH)
-
-		RM0386, Reference manual,
-			STM32F4{6,7}9xx (PA..PK)
-
-		RM0390, Reference manual,
-			STM32F446xx (PA..PH)
-
-		RM0401, Reference manual,
-			STM32F410 (PA..PC, PH)
 	*)
 
 	IMPORT SYSTEM;
-    IN Micro IMPORT MCU := STM32F4, MachinePin;
-    
+    IN Micro IMPORT MCU := STM32C5, MachinePin;
+
 	CONST
 		(* ports *)
 			A* = 0; B* = 1; C* = 2; D* = 3; E* = 4; F* = 5; G* = 6; H* = 7;
-			I* = 8; J* = 9; K* = 10;
 
 		(* modes *)
 			input* = 0; output* = 1; alt* = 2; analog* = 3;
@@ -39,9 +23,6 @@ MODULE STM32F4Pins IN Micro;
 
 		(* output speeds *)
 			low* = 0; medium* = 1; fast* = 2; veryHigh* = 3;
-				(* STM32F4{0,1}1, STM32F446: low, medium, fast, high *)
-				(* STM32F4{0,1}{5,7}, STM32F4{2,3}{7,9},
-					STM32F410, STM32F4{6,7}9: low, medium, high, very high *)
 
 		(* pull resistors *)
 			noPull* = 0; pullUp* = 1; pullDown* = 2;
@@ -57,7 +38,7 @@ MODULE STM32F4Pins IN Micro;
     TYPE
         ADDRESS = SYSTEM.ADDRESS;
         Pin* = RECORD (MachinePin.Pin)
-            BASE- : ADDRESS;
+            BASE : ADDRESS;
             port-, pin- : INTEGER;
         END;
 
@@ -66,7 +47,7 @@ MODULE STM32F4Pins IN Micro;
 			r, y: ADDRESS;
 	BEGIN
 		ASSERT(port >= A);
-		ASSERT(port <= K);
+		ASSERT(port <= H);
 		ASSERT(pin DIV 16 = 0);
 		ASSERT(mode DIV 4 = 0);
 		ASSERT(oSpeed DIV 4 = 0);
@@ -80,11 +61,11 @@ MODULE STM32F4Pins IN Micro;
 		y := pin * 2;
 
 		(* enable clock for pin port *)
-			SYSTEM.GET(MCU.RCC_AHB1ENR, x);
-			SYSTEM.PUT(MCU.RCC_AHB1ENR, x + {port});
+		SYSTEM.GET(MCU.RCC_AHB2ENR, x);
+		SYSTEM.PUT(MCU.RCC_AHB2ENR, x + {port});
 
-			SYSTEM.GET(MCU.RCC_AHB1LPENR, x);
-			SYSTEM.PUT(MCU.RCC_AHB1LPENR, x + {port});
+		SYSTEM.GET(MCU.RCC_AHB2LPENR, x);
+		SYSTEM.PUT(MCU.RCC_AHB2LPENR, x + {port});
 
 		r := MCU.GPIOA_MODER + port * portSpacing;
 		SYSTEM.GET(r, x);
@@ -138,4 +119,4 @@ MODULE STM32F4Pins IN Micro;
     BEGIN IF p.Value() THEN p.Off() ELSE p.On() END
     END Toggle;
     
-END STM32F4Pins.
+END STM32C5Pins.

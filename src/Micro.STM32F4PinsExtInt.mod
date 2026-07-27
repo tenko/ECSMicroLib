@@ -1,6 +1,6 @@
 (**
 External pin interrupt. N parameter is pin number and must match
-pin number in Init procedure,
+pin number in Init procedure.
 *)
 MODULE STM32F4PinsExtInt (N*) IN Micro;
 
@@ -121,7 +121,7 @@ BEGIN
         SYSTEM.PUT(MCU.EXTI_RTSR, x - {N});
     END;
     (* fallingEdge *)
-    SYSTEM.GET(MCU.EXTI_RTSR, x);
+    SYSTEM.GET(MCU.EXTI_FTSR, x);
     IF fallingEdge THEN
         SYSTEM.PUT(MCU.EXTI_FTSR, x + {N});
     ELSE

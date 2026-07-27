@@ -28,8 +28,10 @@ boards are tested:
     :caption: Generic:
     :hidden:
     
-    src/Micro.Timing.mod
-    src/Micro.Pin.mod
+    src/Micro.Machine.mod
+    src/Micro.MachinePin.mod
+    src/Micro.MachinePinExtInt.mod
+    src/Micro.MachineRTC.mod
     src/Micro.Debug.mod
     src/Micro.BusI2C.mod
     src/Micro.BusSPI.mod
@@ -38,28 +40,6 @@ boards are tested:
     src/Micro.DeviceDS18B20.mod
     src/Micro.DeviceILI9341.mod
     src/Micro.DeviceSTMPE811.mod
-
-.. toctree::
-    :maxdepth: 1
-    :caption: STM32F4:
-    :hidden:
-
-    src/Micro.STM32F4System.mod
-    src/Micro.STM32F4Pins.mod
-    src/Micro.STM32F4I2C.mod
-    src/Micro.STM32F4SPI.mod
-    src/Micro.STM32F4Uart.mod
-    src/Micro.STM32F4OneWire.mod
- 
-.. toctree::
-    :maxdepth: 1
-    :caption: STM32L4:
-    :hidden:
-    
-    src/Micro.STM32L4System.mod
-    src/Micro.STM32L4Pins.mod
-    src/Micro.STM32L4Uart.mod
-    src/Micro.STM32L4OneWire.mod
     
 #######
 Example

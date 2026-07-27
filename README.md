@@ -1,13 +1,10 @@
 # ECSMicroLib
-ECS Oberon-2 Compiler framework for ARM32 MCUs
+**[ECS](https://ecs.openbrace.org/)** Oberon-2 Compiler framework for ARM32 MCUs
 
 Some of the code is ported from Alexander V. Shiryaev's O7 Micro framework for Oberon-07
 based on the Black Box compiler.
 
 Original project [Link](https://github.com/aixp/O7)
-
-Recent updates added support for coroutines (ref. the **tasks** demo) and
-added a reusable CLI interface module (ref. the **uartcli** demo).
 
 ## Boards
 
@@ -17,16 +14,83 @@ Currently supported boards:
 * [STM32F407G-DISC1](https://www.st.com/en/evaluation-tools/stm32f4discovery.html) STM32F407VG MCU
 * [STM32F429I-DISC1](https://www.st.com/en/evaluation-tools/32f429idiscovery.html) STM32F429ZI MCU
 
-These are the boards I have on hand and are able to test. Most STM32F4, STM32L4 boards would work
+These are the boards I have on hand and are able to test. Most **STM32F4**, **STM32L4** boards would work
 if the RAM is correctly adjusted for in the config.
 
 The original framework support further MCUs, but these are removed until it is possible to test these.
 
-Also the ECS compiler support more targets like AVR, AVR32, Xtensa: [Link](https://ecs.openbrace.org/manual/manualpa3.html#x53-496000III)  
+Also the **[ECS](https://ecs.openbrace.org/)** compiler support more targets like **AVR**, **AVR32**, **Xtensa**: [Link](https://ecs.openbrace.org/manual/manualpa3.html#x53-496000III) 
+
+## Installation
+
+Build instructions here are for a current **ArchLinux** version, but should
+be possible to adapt to other **Linux** distributions.
+
+**Windows MSYS2** (CLANG64) also can follow these instructions and
+is known to work well, but is much slower than on **Linux**.
+
+Note that your Windows systems anti-virus software might indentify the resulting .exe file as a threath
+and in that case this check automatic must exemt these files. 
+
+```shell
+# Build and install patched version of ECS
+pacman -S git make clang sdl2-compat
+git clone https://github.com/tenko/ECS.git
+cd ECS
+make toolchain=clang all # takes some time to finish
+# install to ~/.local/[bin|lib|share] or other setup of choice
+make toolchain=clang prefix=~/.local install
+make clean
+# add to PATH variable (adapt to your shell and setup)
+echo 'export PATH=~/.local/bin/:~/.local/lib/ecs/tools/:$PATH' >> ~/.bashrc
+echo 'export ECSBASE=~/.local/lib/ecs/' >> ~/.bashrc
+cd ..
+
+# Build and install ECSStdLib
+pacman -S dos2unix
+git clone https://github.com/tenko/ECSStdLib.git
+cd ECSStdLib
+# Build native library
+make 
+make PREFIX=~/.local install # install to ~/.local/lib
+make TestMain # run library tests
+make clean
+# Build arm32 library
+make -f Makefile.arm32t
+make -f Makefile.arm32t PREFIX=~/.local install  # install to ~/.local/lib
+# Run arm32 emulated tests. Needs xpack-qemu-arm 7.2.5
+make -f Makefile.arm32t TestMain
+cd ..
+
+# Build and install ECSGfxLib
+git clone https://github.com/tenko/ECSGfxLib.git
+cd ECSGfxLib
+# Build native library
+make
+make PREFIX=~/.local install # install to ~/.local/lib
+make Tests # run library tests
+make clean
+# Build arm32 library
+make -f Makefile.arm32t
+make -f Makefile.arm32t PREFIX=~/.local install  # install to ~/.local/lib
+cd ..
+
+# Build and install ECSMicroLib
+pacman -S arm-none-eabi-gdb stlink
+git clone https://github.com/tenko/ECSMicroLib.git
+cd ECSMicroLib
+# Build arm32 library
+make 
+make PREFIX=~/.local install  # install to ~/.local/lib
+make help # Shows help message
+# Run simulated board test if xpack-qemu-arm is installed
+make BOARD=STM32F407G-DISC1 DEMO=blinker sim
+
+```
 
 ## Example
 
-Hello world for STM32 MCU with LED blinking.
+Hello world for **STM32** MCU with LED blinking.
 
 Test.mod:
 
@@ -61,10 +125,10 @@ END Test.
 Building & Running
 
 ```
-make BOARD=STM32F429I-DISC1 DEMO=blinker
-make BOARD=STM32F429I-DISC1 DEMO=blinker flash
-make BOARD=STM32F429I-DISC1 DEMO=blinker server # start stlink server
-make BOARD=STM32F429I-DISC1 DEMO=blinker gdb # run in other shell
+make BOARD=STM32F429I-DISC1 DEMO=test # saved as 'demos/test.mod'
+make BOARD=STM32F429I-DISC1 DEMO=test flash
+make BOARD=STM32F429I-DISC1 DEMO=test server # start stlink server
+make BOARD=STM32F429I-DISC1 DEMO=test gdb # run in other shell
 ```
 
 The Makefile uses the stlink utility to flash the firmware and uses the
@@ -72,16 +136,11 @@ GDB to start and monitor the example.
 
 ## TODO
 
-* Documentation
 * Update I2C, OneWire and SPI drivers to polling for efficient use in coroutines.
 * Add more drivers to more MCU peripherals as needed.
 * Add support for embedded filesystem (Squashfs and FAT16)
 
 ## Note
 
-Currently a patched version of the **ECS** compiler is needed [Link](https://github.com/tenko/ECS)  
-With the next release of the **ECS** compiler these patches should be included.
+Complete API Documentation: [Link](https://tenko.github.io/ECSMicroLib/)  
 
-The **ECSStdLib** is needed to build the library [Link](https://github.com/tenko/ECSStdLib)
-
-The **ECSGfxLib** is needed to build some examples [Link](https://github.com/tenko/ECSGfxLib)

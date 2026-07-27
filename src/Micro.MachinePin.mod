@@ -2,7 +2,7 @@
 Pin base interface to be used by devices.
 Concrete implementations in MCU drivers should be passed to drivers.
 *)
-MODULE Pin IN Micro;
+MODULE MachinePin IN Micro;
 
 TYPE
     Pin* = RECORD END;
@@ -24,4 +24,4 @@ END Value;
 PROCEDURE (VAR p : Pin) Toggle*;
 BEGIN END Toggle;
 
-END Pin.
+END MachinePin.

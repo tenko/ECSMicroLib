@@ -14,7 +14,7 @@ RM0390, Reference manual,
 MODULE STM32F4I2C IN Micro;
 
 IMPORT SYSTEM;
-IN Micro IMPORT Timing;
+IN Micro IMPORT Machine;
 IN Micro IMPORT ARMv7M;
 IN Micro IMPORT BusI2C;
 IN Micro IMPORT Pins := STM32F4Pins;
@@ -102,7 +102,7 @@ BEGIN
     b.timeout := par.timeout;
     b.error := NoError;
     
-    ARMv7M.CPSIDif; (* disable interrupts *)
+    Machine.IRQDisable; (* disable interrupts *)
     
 	(* prevent endless BUSY state *)
     sclpin.Init(par.SCLPinPort, par.SCLPinN, Pins.output, Pins.pushPull, Pins.medium, Pins.noPull, 0);
@@ -175,7 +175,7 @@ BEGIN
 	SYSTEM.PUT(TRISE, trise);
 	SYSTEM.PUT(FLTR, 0); (* disable noise filters *)
     
-	ARMv7M.CPSIEif;  (* enable interrupts *)
+	Machine.IRQEnable;  (* enable interrupts *)
 	
 	(* configure I2C pins *)
     sclpin.Init(par.SCLPinPort, par.SCLPinN, Pins.alt, Pins.openDrain, Pins.medium, Pins.noPull, par.SCLPinAF);
@@ -193,10 +193,10 @@ VAR
     VAR t0 : UNSIGNED32;
     BEGIN
         IF this.timeout > 0 THEN
-            t0 := Timing.TicksMS();
+            t0 := Machine.TicksMS();
             SYSTEM.GET(adr, s);
             WHILE (s * mask = {}) DO
-                IF Timing.TicksMS() - t0 > this.timeout THEN
+                IF Machine.TicksMS() - t0 > this.timeout THEN
                     RETURN ErrorTimeout
                 END;
                 SYSTEM.GET(adr, s);
@@ -215,10 +215,10 @@ VAR
     VAR t0 : UNSIGNED32;
     BEGIN
         IF this.timeout > 0 THEN
-            t0 := Timing.TicksMS();
+            t0 := Machine.TicksMS();
             SYSTEM.GET(adr, s);
             WHILE (s * mask # {}) DO
-                IF Timing.TicksMS() - t0 > this.timeout THEN
+                IF Machine.TicksMS() - t0 > this.timeout THEN
                     RETURN ErrorTimeout
                 END;
                 SYSTEM.GET(adr, s);

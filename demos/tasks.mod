@@ -2,11 +2,10 @@
 MODULE Test;
 IMPORT BoardConfig;
 
+IN Std IMPORT Machine;
 IN Std IMPORT Coroutine(256, UNSIGNED32);
 IN Std IMPORT UInt := ADTBasicType(UNSIGNED32);
 IN Std IMPORT TaskQueue := ADTVector(Coroutine.TaskEntry);
-
-IN Micro IMPORT ARMv7M;
 
 CONST
     SysTick = BoardConfig.SysTick;
@@ -86,7 +85,7 @@ BEGIN
                 END;
                 EXIT; (* Get next task *)
             END;
-            ARMv7M.WFI; (* Idle *)
+            Machine.Idle; (* Idle *)
         END;
     END;
     TRACE("Loop finished");

@@ -10,7 +10,7 @@ IMPORT SYSTEM;
 IN Micro IMPORT MCU := STM32F4;
 IN Micro IMPORT Pins := STM32F4Pins;
 IN Micro IMPORT BusOneWire;
-IN Micro IMPORT Timing;
+IN Micro IMPORT Machine;
 
 TYPE
     BYTE = SYSTEM.BYTE;
@@ -206,8 +206,8 @@ VAR
 BEGIN
     ASSERT(bits # {});
     IF bus.timeout > 0 THEN
-        t0 := Timing.TicksMS();
-        WHILE Timing.TicksMS() - t0 < bus.timeout DO
+        t0 := Machine.TicksMS();
+        WHILE Machine.TicksMS() - t0 < bus.timeout DO
             SYSTEM.GET(adr, x);
             IF x * bits # {} THEN
                 RETURN FALSE

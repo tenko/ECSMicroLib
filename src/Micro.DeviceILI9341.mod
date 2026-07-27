@@ -9,15 +9,15 @@ MODULE DeviceILI9341 IN Micro;
 
 IMPORT SYSTEM;
 IN Micro IMPORT BusSPI;
-IN Micro IMPORT Pin;
-IN Micro IMPORT Timing;
+IN Micro IMPORT MachinePin;
+IN Micro IMPORT Machine;
 
 TYPE
     BYTE = SYSTEM.BYTE;
     ADDRESS = SYSTEM.ADDRESS;
     
     PtrBus = POINTER TO VAR BusSPI.Bus;
-    PtrPin = POINTER TO VAR Pin.Pin;
+    PtrPin = POINTER TO VAR MachinePin.Pin;
     
     ILI9341* = RECORD
         rotation : INTEGER;
@@ -91,7 +91,7 @@ BEGIN FOR i := 0 TO 9 DO SYSTEM.ASM("nop") END
 END Delay;
 
 (** Initialize driver *)
-PROCEDURE Init* (VAR dev : ILI9341; VAR bus: BusSPI.Bus; VAR rst, cs, dc : Pin.Pin);
+PROCEDURE Init* (VAR dev : ILI9341; VAR bus: BusSPI.Bus; VAR rst, cs, dc : MachinePin.Pin);
 BEGIN
     dev.bus := PTR(bus);
     dev.rst := PTR(rst);
@@ -107,9 +107,9 @@ END Init;
 PROCEDURE (VAR this : ILI9341) Reset*;
 BEGIN
     this.rst.Off;
-    Timing.DelayMS(50);
+    Machine.DelayMS(50);
     this.rst.On;
-    Timing.DelayMS(20);
+    Machine.DelayMS(20);
 END Reset;
 
 PROCEDURE (VAR this : ILI9341) WriteCmd(cmd : BYTE);
@@ -194,11 +194,11 @@ BEGIN
 	this.WriteData   (027X);
 	this.WriteData   (00X);              (* clock divisor  *)
 	this.WriteCmd    (CMD_SLEEP_OUT);    (* sleep out *)
-	Timing.DelayMS   (100);
+	Machine.DelayMS   (100);
 	this.WriteCmd    (CMD_DISPLAY_ON);   (* display on *)
-	Timing.DelayMS   (100);
+	Machine.DelayMS   (100);
 	this.WriteCmd    (CMD_GRAM);         (* memory write *)
-	Timing.DelayMS   (1);
+	Machine.DelayMS   (1);
 END Config;
 
 PROCEDURE (VAR this : ILI9341) SetCursorPosition(x1, y1, x2, y2 : UNSIGNED16);
@@ -261,7 +261,7 @@ BEGIN
     this.bus.Transfer(0, SYSTEM.ADR(data[0]), TRUE, 16, 1);
     Delay;
 	this.cs.On;
-	Timing.DelayMS(1);
+	Machine.DelayMS(1);
 END SetPixel;
 
 (** Fill canvas with color *)
@@ -292,7 +292,7 @@ BEGIN
     this.dc.Off;
     Delay;
     this.cs.On;
-    Timing.DelayMS(1);
+    Machine.DelayMS(1);
 END Fill;
 
 (** Draw a filled rectangle at the given location, size and color. *)
@@ -325,7 +325,7 @@ BEGIN
     this.dc.Off;
     Delay;
     this.cs.On;
-    Timing.DelayMS(1);
+    Machine.DelayMS(1);
 END FilledRect;
 
 (** Draw into framebuffer with raw data at the given location, size. *)
@@ -350,7 +350,7 @@ BEGIN
     this.dc.Off;
     Delay;
     this.cs.On;
-    Timing.DelayMS(1);
+    Machine.DelayMS(1);
 END BlitRaw;
 
 END DeviceILI9341.
