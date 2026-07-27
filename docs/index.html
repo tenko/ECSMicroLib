@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
@@ -6,22 +8,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Intro &mdash; ECSMicroLib 0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=2709fde1"></script>
-        <script src="_static/doctools.js?v=fd6eb6e6"></script>
-        <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=2709fde1"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Timing" href="src/Micro.Timing.mod.html" /> 
+    <link rel="next" title="Machine" href="src/Micro.Machine.mod.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -45,14 +43,53 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Generic:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="src/Micro.Timing.mod.html">Timing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="src/Micro.Pin.mod.html">Pin</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.Pin.mod.html#types">Types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.Pin.mod.html#procedures">Procedures</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.Pin.mod.html#pin-on">Pin.On</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.Pin.mod.html#pin-off">Pin.Off</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.Pin.mod.html#pin-value">Pin.Value</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.Pin.mod.html#pin-toggle">Pin.Toggle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="src/Micro.Machine.mod.html">Machine</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src/Micro.Machine.mod.html#const">Const</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src/Micro.Machine.mod.html#vars">Vars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src/Micro.Machine.mod.html#procedures">Procedures</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.Machine.mod.html#irqenable">IRQEnable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.Machine.mod.html#irqdisable">IRQDisable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.Machine.mod.html#reset">Reset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.Machine.mod.html#machine-idle">Idle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.Machine.mod.html#sleeplight">SleepLight</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.Machine.mod.html#sleepdeep">SleepDeep</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.Machine.mod.html#delays">DelayS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.Machine.mod.html#delayms">DelayMS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.Machine.mod.html#delayus">DelayUS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.Machine.mod.html#ticksms">TicksMS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.Machine.mod.html#tickscpu">TicksCPU</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src/Micro.MachinePin.mod.html">MachinePin</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src/Micro.MachinePin.mod.html#types">Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src/Micro.MachinePin.mod.html#procedures">Procedures</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.MachinePin.mod.html#pin-on">Pin.On</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.MachinePin.mod.html#pin-off">Pin.Off</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.MachinePin.mod.html#pin-value">Pin.Value</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.MachinePin.mod.html#pin-toggle">Pin.Toggle</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src/Micro.MachinePinExtInt.mod.html">MachinePinExtInt</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src/Micro.MachinePinExtInt.mod.html#types">Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src/Micro.MachinePinExtInt.mod.html#procedures">Procedures</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.MachinePinExtInt.mod.html#pinextint-on">PinExtInt.On</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.MachinePinExtInt.mod.html#pinextint-sethandle">PinExtInt.SetHandle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.MachinePinExtInt.mod.html#pinextint-ontrigger">PinExtInt.OnTrigger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.MachinePinExtInt.mod.html#pinextint-trigger">PinExtInt.Trigger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.MachinePinExtInt.mod.html#pinextint-disable">PinExtInt.Disable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.MachinePinExtInt.mod.html#pinextint-enable">PinExtInt.Enable</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src/Micro.MachineRTC.mod.html">MachineRTC</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src/Micro.MachineRTC.mod.html#types">Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src/Micro.MachineRTC.mod.html#procedures">Procedures</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.MachineRTC.mod.html#rtc-wakeups">RTC.WakeupS</a></li>
 </ul>
 </li>
 </ul>
@@ -100,7 +137,15 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="src/Micro.BusUart.mod.html">BusUart</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="src/Micro.BusUart.mod.html#types">Types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.BusUart.mod.html#vars">Vars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src/Micro.BusUart.mod.html#procedures">Procedures</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.BusUart.mod.html#bus-any">Bus.Any</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.BusUart.mod.html#bus-txdone">Bus.TXDone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.BusUart.mod.html#bus-readbytes">Bus.ReadBytes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.BusUart.mod.html#bus-readchar">Bus.ReadChar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.BusUart.mod.html#bus-writebytes">Bus.WriteBytes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src/Micro.BusUart.mod.html#bus-writechar">Bus.WriteChar</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="src/Micro.BusOneWire.mod.html">BusOneWire</a><ul>
@@ -176,147 +221,6 @@
 </ul>
 </li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">STM32F4:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="src/Micro.STM32F4System.mod.html">STM32F4System</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32F4System.mod.html#const">Const</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32F4System.mod.html#vars">Vars</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32F4System.mod.html#procedures">Procedures</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4System.mod.html#setpllsysclock">SetPLLSysClock</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4System.mod.html#init">Init</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="src/Micro.STM32F4Pins.mod.html">STM32F4Pins</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32F4Pins.mod.html#const">Const</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32F4Pins.mod.html#types">Types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32F4Pins.mod.html#procedures">Procedures</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4Pins.mod.html#pin-init">Pin.Init</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4Pins.mod.html#pin-on">Pin.On</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4Pins.mod.html#pin-off">Pin.Off</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4Pins.mod.html#pin-value">Pin.Value</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4Pins.mod.html#pin-toggle">Pin.Toggle</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="src/Micro.STM32F4I2C.mod.html">STM32F4I2C</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32F4I2C.mod.html#const">Const</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32F4I2C.mod.html#types">Types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32F4I2C.mod.html#procedures">Procedures</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4I2C.mod.html#init">Init</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4I2C.mod.html#bus-transfer">Bus.Transfer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4I2C.mod.html#bus-probe">Bus.Probe</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4I2C.mod.html#bus-read">Bus.Read</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4I2C.mod.html#bus-write">Bus.Write</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="src/Micro.STM32F4SPI.mod.html">STM32F4SPI</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32F4SPI.mod.html#const">Const</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32F4SPI.mod.html#types">Types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32F4SPI.mod.html#procedures">Procedures</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4SPI.mod.html#init">Init</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4SPI.mod.html#bus-idle">Bus.Idle</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4SPI.mod.html#bus-enable">Bus.Enable</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4SPI.mod.html#bus-disable">Bus.Disable</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4SPI.mod.html#bus-transfer">Bus.Transfer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4SPI.mod.html#bus-read">Bus.Read</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4SPI.mod.html#bus-write">Bus.Write</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4SPI.mod.html#bus-readwrite">Bus.ReadWrite</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="src/Micro.STM32F4Uart.mod.html">STM32F4Uart</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32F4Uart.mod.html#const">Const</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32F4Uart.mod.html#types">Types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32F4Uart.mod.html#procedures">Procedures</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4Uart.mod.html#init">Init</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4Uart.mod.html#bus-any">Bus.Any</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4Uart.mod.html#bus-txdone">Bus.TXDone</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4Uart.mod.html#bus-readbytes">Bus.ReadBytes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4Uart.mod.html#bus-readchar">Bus.ReadChar</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4Uart.mod.html#bus-writebytes">Bus.WriteBytes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4Uart.mod.html#bus-writechar">Bus.WriteChar</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="src/Micro.STM32F4OneWire.mod.html">STM32F4OneWire</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32F4OneWire.mod.html#const">Const</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32F4OneWire.mod.html#types">Types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32F4OneWire.mod.html#procedures">Procedures</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4OneWire.mod.html#init">Init</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4OneWire.mod.html#bus-enable">Bus.Enable</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4OneWire.mod.html#bus-disable">Bus.Disable</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4OneWire.mod.html#bus-reset">Bus.Reset</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4OneWire.mod.html#bus-writebit">Bus.WriteBit</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4OneWire.mod.html#bus-readbit">Bus.ReadBit</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32F4OneWire.mod.html#bus-sendreceive">Bus.SendReceive</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">STM32L4:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="src/Micro.STM32L4System.mod.html">STM32L4System</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32L4System.mod.html#const">Const</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32L4System.mod.html#vars">Vars</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32L4System.mod.html#procedures">Procedures</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32L4System.mod.html#setpllsysclock">SetPLLSysClock</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32L4System.mod.html#init">Init</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="src/Micro.STM32L4Pins.mod.html">STM32L4Pins</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32L4Pins.mod.html#const">Const</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32L4Pins.mod.html#types">Types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32L4Pins.mod.html#procedures">Procedures</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32L4Pins.mod.html#pin-init">Pin.Init</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32L4Pins.mod.html#pin-on">Pin.On</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32L4Pins.mod.html#pin-off">Pin.Off</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32L4Pins.mod.html#pin-value">Pin.Value</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32L4Pins.mod.html#pin-toggle">Pin.Toggle</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="src/Micro.STM32L4Uart.mod.html">STM32L4Uart</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32L4Uart.mod.html#const">Const</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32L4Uart.mod.html#types">Types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32L4Uart.mod.html#procedures">Procedures</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32L4Uart.mod.html#init">Init</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32L4Uart.mod.html#bus-any">Bus.Any</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32L4Uart.mod.html#bus-txdone">Bus.TXDone</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32L4Uart.mod.html#bus-readbytes">Bus.ReadBytes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32L4Uart.mod.html#bus-readchar">Bus.ReadChar</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32L4Uart.mod.html#bus-writebytes">Bus.WriteBytes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32L4Uart.mod.html#bus-writechar">Bus.WriteChar</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="src/Micro.STM32L4OneWire.mod.html">STM32L4OneWire</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32L4OneWire.mod.html#const">Const</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32L4OneWire.mod.html#types">Types</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.STM32L4OneWire.mod.html#procedures">Procedures</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32L4OneWire.mod.html#init">Init</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32L4OneWire.mod.html#bus-enable">Bus.Enable</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32L4OneWire.mod.html#bus-disable">Bus.Disable</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32L4OneWire.mod.html#bus-reset">Bus.Reset</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32L4OneWire.mod.html#bus-writebit">Bus.WriteBit</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32L4OneWire.mod.html#bus-readbit">Bus.ReadBit</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.STM32L4OneWire.mod.html#bus-sendreceive">Bus.SendReceive</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
 
         </div>
       </div>
@@ -349,17 +253,14 @@ to work with MCUs.</p>
 <p>The <a class="reference external" href="https://ecs.openbrace.org/manual/manualch7.html">ECS Oberon</a> compiler is implemented according to the original
 Oberon-2 <a class="reference external" href="https://www.ssw.uni-linz.ac.at/Research/Papers/Oberon2.pdf">report</a> with modernizing extensions. The language is
 particular suited to embedded development due to it’s simplicity.</p>
-<p>Currently the <em>STM32F4</em>, <em>STM32L4</em> MCUs are supported and the following
+<p>Currently the <em>STM32F4</em>, <em>STM32L4</em> and <em>STM32C5</em> MCUs are supported and the following
 boards are tested:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://www.st.com/en/evaluation-tools/nucleo-l432kc.html">NUCLEO-L432KC</a> STM32L432KC MCU</p></li>
 <li><p><a class="reference external" href="https://www.st.com/en/evaluation-tools/stm32f4discovery.html">STM32F407G-DISC1</a> STM32F407VG MCU</p></li>
 <li><p><a class="reference external" href="https://www.st.com/en/evaluation-tools/32f429idiscovery.html">STM32F429I-DISC1</a> STM32F429ZI MCU</p></li>
+<li><p><a class="reference external" href="https://github.com/tenko/STM32C5-eval-board">STM32C5-EVAL</a> STM32C551CET MCU</p></li>
 </ul>
-<div class="toctree-wrapper compound">
-</div>
-<div class="toctree-wrapper compound">
-</div>
 <div class="toctree-wrapper compound">
 </div>
 </section>
@@ -368,10 +269,9 @@ boards are tested:</p>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="cm">(** Simple led blinker demo using the SysTick millisecond timer *)</span>
 <span class="kr">MODULE</span> <span class="n">Test</span><span class="p">;</span>
 <span class="kr">IMPORT</span> <span class="n">BoardConfig</span><span class="p">;</span>
+<span class="kr">IMPORT</span> <span class="n">Machine</span> <span class="kr">IN</span> <span class="n">Micro</span><span class="p">;</span>
 
-<span class="kr">CONST</span>
-    <span class="n">SysTick</span> <span class="o">=</span> <span class="n">BoardConfig</span><span class="p">.</span><span class="n">SysTick</span><span class="p">;</span>
-    <span class="n">Pins</span> <span class="o">=</span> <span class="n">BoardConfig</span><span class="p">.</span><span class="n">Pins</span><span class="p">;</span>
+<span class="kr">CONST</span> <span class="n">Pins</span> <span class="o">=</span> <span class="n">BoardConfig</span><span class="p">.</span><span class="n">Pins</span><span class="p">;</span>
 
 <span class="kr">VAR</span> <span class="n">pin</span> <span class="p">:</span> <span class="n">Pins</span><span class="p">.</span><span class="n">Pin</span><span class="p">;</span>
 
@@ -385,10 +285,10 @@ boards are tested:</p>
     <span class="kr">REPEAT</span>
         <span class="n">pin</span><span class="p">.</span><span class="n">On</span><span class="p">;</span>
         <span class="n">TRACE</span><span class="p">(</span><span class="s2">&quot;ON0&quot;</span><span class="p">);</span>
-        <span class="n">SysTick</span><span class="p">.</span><span class="n">Delay</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
+        <span class="n">Machine</span><span class="p">.</span><span class="n">DelayMS</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
         <span class="n">pin</span><span class="p">.</span><span class="n">Off</span><span class="p">;</span>
         <span class="n">TRACE</span><span class="p">(</span><span class="s2">&quot;OFF0&quot;</span><span class="p">);</span>
-        <span class="n">SysTick</span><span class="p">.</span><span class="n">Delay</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
+        <span class="n">Machine</span><span class="p">.</span><span class="n">DelayMS</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
     <span class="kr">UNTIL</span> <span class="nb">FALSE</span>
 <span class="kr">END</span> <span class="n">Test</span><span class="p">.</span>
 </pre></div>
@@ -406,7 +306,7 @@ boards are tested:</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="src/Micro.Timing.mod.html" class="btn btn-neutral float-right" title="Timing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="src/Micro.Machine.mod.html" class="btn btn-neutral float-right" title="Machine" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
