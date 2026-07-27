@@ -2,9 +2,9 @@
 
 ifdef MSYSTEM
 	MXPROGDIR = ${USERPROFILE}/AppData/Local/stm32cube/bundles/programmer/2.22.0+st.1/bin
-	MXPROG = ${MXPROGDIR}/STM32_Programmer_CLI.exe
+	MXPROG = ${USERPROFILE}/AppData/Local/stm32cube/bundles/programmer/2.22.0+st.1/bin/STM32_Programmer_CLI.exe
 	MXSTLINK = ${USERPROFILE}/AppData/Local/stm32cube/bundles/stlink-gdbserver/7.13.0+st.3/bin/ST-LINK_gdbserver.exe
-	MXGDB = /c/Users/rute/AppData/Local/stm32cube/bundles/gnu-gdb-for-stm32/14.3.1+st.2/bin/arm-none-eabi-gdb.exe
+	MXGDB = gdb-multiarch.exe
 else
 	MXPROGDIR = /opt/stm32cubeprog/bin/
 	MXPROG = ${MXPROGDIR}/STM32_Programmer_CLI
@@ -23,4 +23,4 @@ mxserver:
 
 .PHONY: mxgdb
 mxgdb:
-	@$(MXGDB) -ex "target extended-remote localhost:61234"
+	@$(MXGDB) -ex "target extended-remote localhost:61234" -ex "continue"
