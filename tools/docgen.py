@@ -232,6 +232,8 @@ def parse(st):
                         current = next(iter)
                         while True:
                             current, comment = skip(current)
+                            if current.value == '^': # Fwd declaration
+                                current = next(iter)
                             if current.type != Type.IDENTIFIER:
                                 break
                             names = []
@@ -243,17 +245,23 @@ def parse(st):
                                 
                                 current = next(iter)
                                 export = False
-                                if current.value == '*':
+                                if current.value == '*' or current.value == '-':
                                     names.append(name)
                                 
                                 current = next(iter)
+                                if current.value == '[':
+                                    while True:
+                                        if current.type == Type.RBRA:
+                                            break
+                                        current = next(iter)
+                                    current = next(iter)
+                                    
                                 if current.value == ',':
                                     current = next(iter)
-
+                            
                             current = next(iter)
-                            if current.type != Type.IDENTIFIER:
+                            if (current.type != Type.IDENTIFIER) and (current.type != Type.TYPE):
                                 break
-
                             while True:
                                 if current.type == Type.SEMI:
                                     break
@@ -270,15 +278,16 @@ def parse(st):
                         start = current.span.start
                         current = next(iter)
                         
-                        # Skip language definition
-                        if current.type == Type.LBRA:
-                            current = next(iter)
-                            while True:
-                                if current.type == Type.RBRA:
-                                    break
-                                current = next(iter)
+                        fwd = False
+                        if current.value == '*': # Fwd declaration
+                            fwd = True
                             current = next(iter)
                         
+                        abstract = False
+                        if current.value == '^': # abstract type
+                            abstract = True
+                            current = next(iter)
+                            
                         # Receiver
                         ref = None
                         if current.type == Type.LPAR:
@@ -305,7 +314,7 @@ def parse(st):
                             if current.type != Type.RPAR:
                                 continue
                             current = next(iter)
-
+                        
                         # Expect identifier
                         if current.type != Type.IDENTIFIER:
                             continue
@@ -317,13 +326,22 @@ def parse(st):
                             export = True
                             current = next(iter)
                         
+                        # Skip language definition
+                        if current.type == Type.LBRA:
+                            current = next(iter)
+                            while True:
+                                if current.type == Type.RBRA:
+                                    break
+                                current = next(iter)
+                            current = next(iter)
+                            
                         # Skip argument definition if exists
                         if current.type == Type.LPAR:
                             while True:
                                 if current.type == Type.RPAR:
                                     break;
                                 current = next(iter)
-
+                        
                         # Procedure end with semicolon
                         while True:
                             if current.type == Type.SEMI:
@@ -332,6 +350,14 @@ def parse(st):
                         current = next(iter)
                         
                         end = current.span.end
+                        
+                        if fwd or abstract:
+                            if export:
+                                module.entries.append(Entry(EntryType.PROCEDURE, name, Span(start, end), comment, ref))
+                                comment = None
+                            current = next(iter)
+                            continue
+                            
                         while True:
                             # Search for matching end
                             if current.type == Type.KEYWORD and current.value == 'END':
@@ -346,6 +372,7 @@ def parse(st):
                                     current = next(iter)
                                     break
                             current = next(iter)
+                                    
             current = next(iter)
     except StopIteration:
         pass
