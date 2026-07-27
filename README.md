@@ -13,9 +13,10 @@ Currently supported boards:
 * [NUCLEO-L432KC](https://www.st.com/en/evaluation-tools/nucleo-l432kc.html) STM32L432KC MCU 
 * [STM32F407G-DISC1](https://www.st.com/en/evaluation-tools/stm32f4discovery.html) STM32F407VG MCU
 * [STM32F429I-DISC1](https://www.st.com/en/evaluation-tools/32f429idiscovery.html) STM32F429ZI MCU
+* [STM32C5-EVAL](https://github.com/tenko/STM32C5-eval-board) STM32C551CET MCU
 
-These are the boards I have on hand and are able to test. Most **STM32F4**, **STM32L4** boards would work
-if the RAM is correctly adjusted for in the config.
+These are the boards I have on hand and are able to test. Most **STM32F4**, **STM32L4**, **STM32C5
+boards would work if the RAM is correctly adjusted for in the config.
 
 The original framework support further MCUs, but these are removed until it is possible to test these.
 
@@ -97,15 +98,14 @@ Test.mod:
 ```modula-2
 MODULE Test;
 IMPORT BoardConfig;
+IMPORT Machine IN Micro;
 
-CONST
-    SysTick = BoardConfig.SysTick;
-    Pins = BoardConfig.Pins;
+CONST Pins = BoardConfig.Pins;
 
 VAR pin : Pins.Pin;
 
 BEGIN
-	TRACE("START");
+    TRACE("START");
     BoardConfig.Init;
     
     pin.Init(BoardConfig.USER_LED1_PORT, BoardConfig.USER_LED1_PIN, Pins.output,
@@ -114,10 +114,10 @@ BEGIN
     REPEAT
         pin.On;
         TRACE("ON0");
-        SysTick.Delay(100);
+        Machine.DelayMS(100);
         pin.Off;
         TRACE("OFF0");
-        SysTick.Delay(100);
+        Machine.DelayMS(100);
     UNTIL FALSE
 END Test.
 ```

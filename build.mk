@@ -32,8 +32,6 @@ OBF += build/stm32.obf
 DOC = Debug BusI2C BusSPI BusUart BusOneWire
 DOC += Machine MachinePin MachinePinExtInt MachineRTC
 DOC += DeviceDS18B20 DeviceILI9341 DeviceSTMPE811
-DOC += STM32F4System STM32F4Pins STM32F4I2C STM32F4SPI STM32F4Uart STM32F4OneWire
-DOC += STM32L4System STM32L4Pins STM32L4Uart STM32L4OneWire
 
 DRST = $(addprefix doc/src/Micro., $(addsuffix .mod.rst, $(DOC)))
 
