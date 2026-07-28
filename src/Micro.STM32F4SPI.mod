@@ -15,7 +15,7 @@ MODULE STM32F4SPI(n*) IN Micro;
 
 IMPORT SYSTEM;
 IN Micro IMPORT Machine;
-IN Micro IMPORT ARMv7M;
+IN Micro IMPORT ArchArm;
 IN Micro IMPORT MCU := STM32F4;
 IN Micro IMPORT Pins := STM32F4Pins;
 IN Micro IMPORT BusSPI;
@@ -201,28 +201,28 @@ BEGIN
     bus.DR  := base + 0CH;
     
 	(* disable interrupts *)
-	SYSTEM.PUT(ARMv7M.NVICICER0 + (Int DIV 32) * 4, SET32({Int MOD 32})); (* ICER *)
-	ARMv7M.ISB;
+	SYSTEM.PUT(ArchArm.NVICICER0 + (Int DIV 32) * 4, SET32({Int MOD 32})); (* ICER *)
+	ArchArm.ISB;
 	
 	(* disable DMA RX interrupts *)
-    SYSTEM.PUT(ARMv7M.NVICICER0 + (DMARXInt DIV 32) * 4,
+    SYSTEM.PUT(ArchArm.NVICICER0 + (DMARXInt DIV 32) * 4,
                SET32({DMARXInt MOD 32})); 
-    ARMv7M.ISB;
+    ArchArm.ISB;
 
     (* disable DMA TX interrupts *)
-    SYSTEM.PUT(ARMv7M.NVICICER0 + (DMATXInt DIV 32) * 4,
+    SYSTEM.PUT(ArchArm.NVICICER0 + (DMATXInt DIV 32) * 4,
                SET32({DMATXInt MOD 32}));
-    ARMv7M.ISB;
+    ArchArm.ISB;
 
     (* enable clock for SPI *)
     SYSTEM.GET(RCC_SPICLK, x);
     SYSTEM.PUT(RCC_SPICLK, x + {SPICLKEN});
-    ARMv7M.DSB;
+    ArchArm.DSB;
 
     (* enable clock for DMA *)
     SYSTEM.GET(MCU.RCC_AHB1ENR, x);
     SYSTEM.PUT(MCU.RCC_AHB1ENR, x + {DMACLKEN});
-    ARMv7M.DSB;
+    ArchArm.DSB;
     FOR i := 0 TO 100 DO END;
     
     SYSTEM.PUT(bus.CR1, {});

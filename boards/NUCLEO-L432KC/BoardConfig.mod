@@ -3,7 +3,7 @@
 *)
 MODULE BoardConfig;
 
-IN Micro IMPORT ARMv7MSTM32SysTick0;
+IN Micro IMPORT ArchArmSysTick;
 IN Micro IMPORT STM32L4Pins;
 IN Micro IMPORT STM32L4Uart := STM32L4Uart(2);
 IN Micro IMPORT STM32L4OneWire;
@@ -16,7 +16,7 @@ CONST
     USER_LED1_PORT* = 1; (* Port B *)
     USER_LED1_PIN* = 3;
     
-    SysTick* = ARMv7MSTM32SysTick0;
+    SysTick* = ArchArmSysTick;
     Pins* = STM32L4Pins;
     Uart* = STM32L4Uart;
     OWire* = STM32L4OneWire;
@@ -69,7 +69,7 @@ BEGIN
 	PCLK := STM32L4System.PCLK;
 	QCLK := STM32L4System.QCLK;
 	RCLK := STM32L4System.RCLK;
-	ARMv7MSTM32SysTick0.Init(HCLK, 1000);
+	ArchArmSysTick.Init(HCLK, 1000);
 END Init;
 
 BEGIN
@@ -80,5 +80,5 @@ BEGIN
 	PCLK := fMSI;
 	QCLK := fMSI;
 	RCLK := fMSI;
-	ARMv7MSTM32SysTick0.Init(HCLK, 1000);
+	ArchArmSysTick.Init(HCLK, 1000);
 END BoardConfig.

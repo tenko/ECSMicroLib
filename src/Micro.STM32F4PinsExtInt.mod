@@ -5,7 +5,7 @@ pin number in Init procedure.
 MODULE STM32F4PinsExtInt (N*) IN Micro;
 
 IMPORT SYSTEM;
-IN Micro IMPORT ARMv7M;
+IN Micro IMPORT ArchArm;
 IN Micro IMPORT MCU := STM32F4;
 IN Micro IMPORT Pins := STM32F4Pins;
 
@@ -61,14 +61,14 @@ END Trigger;
 (** Disable interrupt *)
 PROCEDURE Disable*;
 BEGIN
-	SYSTEM.PUT(ARMv7M.NVICICER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
-	ARMv7M.ISB;
+	SYSTEM.PUT(ArchArm.NVICICER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
+	ArchArm.ISB;
 END Disable;
 
 (** Enable interrupt *)
 PROCEDURE Enable*;
 BEGIN
-	SYSTEM.PUT(ARMv7M.NVICISER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
+	SYSTEM.PUT(ArchArm.NVICISER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
 END Enable;
 
 (** Initialize interrupt on pin. Interrups is disabled. *)

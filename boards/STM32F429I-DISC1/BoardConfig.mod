@@ -5,7 +5,7 @@
 *)
 MODULE BoardConfig;
 
-IN Micro IMPORT ARMv7MSTM32SysTick0;
+IN Micro IMPORT ArchArmSysTick;
 IN Micro IMPORT STM32F4Pins;
 IN Micro IMPORT STM32F4ExtInt0 := STM32F4PinsExtInt(0);
 IN Micro IMPORT STM32F4ExtInt15 := STM32F4PinsExtInt(15);
@@ -27,7 +27,7 @@ CONST
     TOUCH_INT_PORT* = 0; (* Port A *)
     TOUCH_INT_PIN* = 15; (* INT STMPE811 *)
     
-    SysTick* = ARMv7MSTM32SysTick0;
+    SysTick* = ArchArmSysTick;
     Pins* = STM32F4Pins;
     ExtIntButton1* = STM32F4ExtInt0;
     ExtIntTouch* = STM32F4ExtInt15;
@@ -141,7 +141,7 @@ BEGIN
 	TIMCLK2 := STM32F4System.TIMCLK2;
 	QCLK := STM32F4System.QCLK;
 	RCLK := STM32F4System.RCLK;
-	ARMv7MSTM32SysTick0.Init(HCLK, 1000);
+	ArchArmSysTick.Init(HCLK, 1000);
 END Init;
 
 BEGIN
@@ -153,5 +153,5 @@ BEGIN
 	TIMCLK2 := STM32F4System.fHSI;
 	QCLK := STM32F4System.fHSI;
 	RCLK := STM32F4System.fHSI;
-	ARMv7MSTM32SysTick0.Init(HCLK, 1000);
+	ArchArmSysTick.Init(HCLK, 1000);
 END BoardConfig.

@@ -3,7 +3,7 @@ MODULE STM32C5 IN Micro;
     RM0522, Reference manual STM32C5xxxx
 *)
 IMPORT SYSTEM;
-IN Micro IMPORT ARMv8M;
+IN Micro IMPORT ArchArm;
 
 TYPE ADDRESS = SYSTEM.ADDRESS;
 
@@ -315,10 +315,10 @@ CONST
 VAR x: SET32;
 BEGIN
     (* TODO : Clear pending interrupts *)
-    SYSTEM.GET(ARMv8M.SYST_CSR, x);
-    SYSTEM.PUT(ARMv8M.SYST_CSR, x - {ENABLE}); (* disable SYSTICK *)
-    SYSTEM.GET(ARMv8M.SCR, x);
-    SYSTEM.PUT(ARMv8M.SCR, x + {SLEEPDEEP}); (* enable deep sleep *)
+    SYSTEM.GET(ArchArm.SYST_CSR, x);
+    SYSTEM.PUT(ArchArm.SYST_CSR, x - {ENABLE}); (* disable SYSTICK *)
+    SYSTEM.GET(ArchArm.SCR, x);
+    SYSTEM.PUT(ArchArm.SCR, x + {SLEEPDEEP}); (* enable deep sleep *)
     SYSTEM.GET(PWR_PMCR, x);
     SYSTEM.PUT(PWR_PMCR, x - {LPMS0 + 1, LPMS0}); (* stop 0 *)
     SYSTEM.ASM("wfi");
@@ -336,10 +336,10 @@ CONST
 VAR x: SET32;
 BEGIN
     (* TODO : Clear pending interrupts *)
-    SYSTEM.GET(ARMv8M.SYST_CSR, x);
-    SYSTEM.PUT(ARMv8M.SYST_CSR, x - {ENABLE}); (* disable SYSTICK *)
-    SYSTEM.GET(ARMv8M.SCR, x);
-    SYSTEM.PUT(ARMv8M.SCR, x + {SLEEPDEEP}); (* enable deep sleep *)
+    SYSTEM.GET(ArchArm.SYST_CSR, x);
+    SYSTEM.PUT(ArchArm.SYST_CSR, x - {ENABLE}); (* disable SYSTICK *)
+    SYSTEM.GET(ArchArm.SCR, x);
+    SYSTEM.PUT(ArchArm.SCR, x + {SLEEPDEEP}); (* enable deep sleep *)
     SYSTEM.GET(PWR_PMCR, x);
     SYSTEM.PUT(PWR_PMCR, x + {LPMS0 + 1} - {LPMS0}); (* standby *)
     SYSTEM.GET(PWR_WUSR, x);

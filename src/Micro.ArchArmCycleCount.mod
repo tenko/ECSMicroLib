@@ -2,9 +2,9 @@
 	Cycle count for accurate delays and accurate timing
 *)
 
-MODULE ARMv7MSTM32CycleCount IN Micro;
+MODULE ArchArmCycleCount IN Micro;
 
-IMPORT SYSTEM, ARMv7M IN Micro;
+IMPORT SYSTEM, ArchArm IN Micro;
 
 VAR ^ cpuFreq- ["cpu_freq"]: INTEGER;
     
@@ -16,18 +16,18 @@ VAR
 	x: SET32;
 BEGIN
     cpuFreq := CPUCLK;
-    SYSTEM.GET(ARMv7M.SCB_DEMCR, x);
-    SYSTEM.PUT(ARMv7M.SCB_DEMCR, x + {TRCENA});
-    SYSTEM.PUT(ARMv7M.DWT_CYCCNT, UNSIGNED32(0));
-    SYSTEM.GET(ARMv7M.DWT_CONTROL, x);
-    SYSTEM.PUT(ARMv7M.DWT_CONTROL, x + {CYCCNTENA});
+    SYSTEM.GET(ArchArm.SCB_DEMCR, x);
+    SYSTEM.PUT(ArchArm.SCB_DEMCR, x + {TRCENA});
+    SYSTEM.PUT(ArchArm.DWT_CYCCNT, UNSIGNED32(0));
+    SYSTEM.GET(ArchArm.DWT_CONTROL, x);
+    SYSTEM.PUT(ArchArm.DWT_CONTROL, x + {CYCCNTENA});
 END Init;
 
 (** Get current cycle count *)
 PROCEDURE GetCount* ["ticks_cpu"] (): UNSIGNED32;
 VAR x : UNSIGNED32;
 BEGIN
-    SYSTEM.GET(ARMv7M.DWT_CYCCNT, x);
+    SYSTEM.GET(ArchArm.DWT_CYCCNT, x);
     RETURN x
 END GetCount;
 
@@ -40,4 +40,4 @@ BEGIN
     WHILE GetCount() - t0 < ticks DO END;
 END DelayUS;
 
-END ARMv7MSTM32CycleCount.
+END ArchArmCycleCount.

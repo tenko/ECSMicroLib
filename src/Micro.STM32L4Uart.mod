@@ -11,7 +11,7 @@
 MODULE STM32L4Uart (n*) IN Micro;
 
 IMPORT SYSTEM;
-IN Micro IMPORT ARMv7M;
+IN Micro IMPORT ArchArm;
 IN Micro IMPORT BusUart;
 IN Micro IMPORT MCU := STM32L4;
 IN Micro IMPORT Pins := STM32L4Pins;
@@ -110,8 +110,8 @@ BEGIN
     OutBuffer.Init(bus.outBuffer);
     
 	(* disable interrupts *)
-	SYSTEM.PUT(ARMv7M.NVICICER0 + (Int DIV 32) * 4, SET32({Int MOD 32})); (* ICER *)
-	ARMv7M.ISB;
+	SYSTEM.PUT(ArchArm.NVICICER0 + (Int DIV 32) * 4, SET32({Int MOD 32})); (* ICER *)
+	ArchArm.ISB;
 
     (* enable clock for U[S]ART *)
     SYSTEM.GET(URCCENR, x);
@@ -158,7 +158,7 @@ BEGIN
     bus.enableTCI := bus.disableTCI + {TCIE};
     SYSTEM.PUT(bus.CR1, bus.disableTCI);
     
-    SYSTEM.PUT(ARMv7M.NVICISER0 + (Int DIV 32) * 4, SET32({Int MOD 32})); (* ISER *)
+    SYSTEM.PUT(ArchArm.NVICISER0 + (Int DIV 32) * 4, SET32({Int MOD 32})); (* ISER *)
 END Init;
 
 (** Return number of characters available in read buffer *)

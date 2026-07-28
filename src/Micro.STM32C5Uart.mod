@@ -8,7 +8,7 @@
 MODULE STM32C5Uart (n*) IN Micro;
 
 IMPORT SYSTEM;
-IN Micro IMPORT ARMv8M;
+IN Micro IMPORT ArchArm;
 IN Micro IMPORT BusUart;
 IN Micro IMPORT MCU := STM32C5;
 IN Micro IMPORT Pins := STM32C5Pins;
@@ -123,8 +123,8 @@ BEGIN
     OutBuffer.Init(bus.outBuffer);
     
 	(* disable interrupts *)
-	SYSTEM.PUT(ARMv8M.NVICICER0 + (Int DIV 32) * 4, SET32({Int MOD 32})); (* ICER *)
-	ARMv8M.ISB;
+	SYSTEM.PUT(ArchArm.NVICICER0 + (Int DIV 32) * 4, SET32({Int MOD 32})); (* ICER *)
+	ArchArm.ISB;
 
     (* select clock source to PCLK1 *)
     SYSTEM.GET(MCU.RCC_CCIPR1, x);
@@ -175,7 +175,7 @@ BEGIN
     bus.enableTCI := bus.disableTCI + {TCIE};
     SYSTEM.PUT(bus.CR1, bus.disableTCI);
     
-    SYSTEM.PUT(ARMv8M.NVICISER0 + (Int DIV 32) * 4, SET32({Int MOD 32})); (* ISER *)
+    SYSTEM.PUT(ArchArm.NVICISER0 + (Int DIV 32) * 4, SET32({Int MOD 32})); (* ISER *)
 END Init;
 
 (** Return number of characters available in read buffer *)

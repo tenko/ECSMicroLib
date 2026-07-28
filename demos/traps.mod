@@ -3,7 +3,7 @@ MODULE Test;
 IMPORT SYSTEM;
 IMPORT BoardConfig;
 
-IN Micro IMPORT ARMv7M, ARMv7MTraps, Debug;
+IN Micro IMPORT Machine, ArchArmTraps, Debug;
 
 IN Std IMPORT ArrayOfChar, Integer;
 
@@ -120,7 +120,7 @@ BEGIN
         this.OnHelpCommand;
         ret := TRUE;
     ELSIF ArrayOfChar.Equal(this.line, "reset") THEN
-        ARMv7M.Reset;
+        Machine.Reset;
         ret := TRUE;
     ELSIF ArrayOfChar.StartsWith(this.line, "trap ") THEN
         IF Integer.FromSubString(result, this.line, 5, this.len - 5) THEN
@@ -138,14 +138,14 @@ BEGIN
     TRACE("Init");
     BoardConfig.Init;
         
-    ARMv7MTraps.Init;
-    ARMv7MTraps.debug := TRUE;
+    ArchArmTraps.Init;
+    ArchArmTraps.debug := TRUE;
     
     BoardConfig.InitUart(bus, 19200, Uart.parityNone, Uart.stopBits1);
     Debug.Init(cli);
     TRACE("Start");
     REPEAT
-        ARMv7M.WFI;
+        Machine.Idle;
         IF (bus.Any() > 0) & bus.TXDone() THEN
             IF bus.ReadChar(x) THEN
                 cli.ProcessChar(x)

@@ -1,6 +1,6 @@
 MODULE STM32C5RTC IN Micro;
 IMPORT SYSTEM;
-IN Micro IMPORT ARMv8M, MCU := STM32C5, MachineRTC;
+IN Micro IMPORT ArchArm, MCU := STM32C5, MachineRTC;
 
 CONST
     Int = MCU.RTCInt;
@@ -54,14 +54,14 @@ END InterruptHandler;
 (* Disable interrupt *)
 PROCEDURE DisableIRQ;
 BEGIN
-	SYSTEM.PUT(ARMv8M.NVICICER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
-	ARMv8M.ISB;
+	SYSTEM.PUT(ArchArm.NVICICER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
+	ArchArm.ISB;
 END DisableIRQ;
 
 (* Enable interrupt *)
 PROCEDURE EnableIRQ;
 BEGIN
-	SYSTEM.PUT(ARMv8M.NVICISER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
+	SYSTEM.PUT(ArchArm.NVICISER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
 END EnableIRQ;
 
 (** Set RTC Wakeup timer delay in seconds.

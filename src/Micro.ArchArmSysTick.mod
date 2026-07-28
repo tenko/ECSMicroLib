@@ -1,4 +1,4 @@
-MODULE ARMv7MSTM32SysTick0 IN Micro;
+MODULE ArchArmSysTick IN Micro;
 (*
 	Alexander Shiryaev, 2015.03, 2016.04
     Modified by Tenko for use with ECS
@@ -7,7 +7,7 @@ MODULE ARMv7MSTM32SysTick0 IN Micro;
 	Note that some modules expect the frequency to be 1000 (milli seconds)
 *)
 
-IMPORT SYSTEM, ARMv7M IN Micro;
+IMPORT SYSTEM, ArchArm IN Micro;
 
 VAR
     tick-: UNSIGNED32;
@@ -29,7 +29,7 @@ CONST
 VAR
 	x: INTEGER;
 BEGIN
-	SYSTEM.PUT(ARMv7M.SYSTCSR, SET32({})); (* disable SysTick *)
+	SYSTEM.PUT(ArchArm.SYST_CSR, SET32({})); (* disable SysTick *)
 	freq := hz;
 	tick := 0;
 	flag := FALSE;
@@ -37,9 +37,9 @@ BEGIN
 	(* http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0552a/Babieigh.html *)
 	x := HCLK DIV freq - 1;
 	ASSERT(x > 0);
-	SYSTEM.PUT(ARMv7M.SYSTRVR, x);
-	SYSTEM.PUT(ARMv7M.SYSTCVR, SIGNED32(0)); (* any write to current clears it *)
-	SYSTEM.PUT(ARMv7M.SYSTCSR, SET32({ENABLE,TICKINT, CLKSOURCE})) (* enable timer with clock source of SYSCLOCK with interrupts *)
+	SYSTEM.PUT(ArchArm.SYST_RVR, x);
+	SYSTEM.PUT(ArchArm.SYST_CVR, SIGNED32(0)); (* any write to current clears it *)
+	SYSTEM.PUT(ArchArm.SYST_CSR, SET32({ENABLE,TICKINT, CLKSOURCE})) (* enable timer with clock source of SYSCLOCK with interrupts *)
 END Init;
 
 (** Get current ticks *)
@@ -71,4 +71,4 @@ BEGIN
     RETURN res
 END OnTimer;
 
-END ARMv7MSTM32SysTick0.
+END ArchArmSysTick.

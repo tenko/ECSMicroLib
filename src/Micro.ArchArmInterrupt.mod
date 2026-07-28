@@ -1,10 +1,10 @@
 (**
 Interrupt module to redirect ISR to handle.
 *)
-MODULE ARMv7MInterrupt (Name, Int) IN Micro;
+MODULE ArchArmInterrupt (Name, Int) IN Micro;
 
 IMPORT SYSTEM;
-IN Micro IMPORT ARMv7M;
+IN Micro IMPORT ArchArm;
 
 VAR isrHandle : PROCEDURE;
 
@@ -20,14 +20,14 @@ END SetHandle;
 (** Disable interrupt *)
 PROCEDURE Disable*;
 BEGIN
-	SYSTEM.PUT(ARMv7M.NVICICER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
+	SYSTEM.PUT(ArchArm.NVICICER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
 	SYSTEM.ASM("isb");
 END Disable;
 
 (** Enable interrupt *)
 PROCEDURE Enable*;
 BEGIN
-	SYSTEM.PUT(ARMv7M.NVICISER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
+	SYSTEM.PUT(ArchArm.NVICISER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
 END Enable;
 
-END ARMv7MInterrupt.
+END ArchArmInterrupt.

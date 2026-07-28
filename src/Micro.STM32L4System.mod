@@ -6,7 +6,6 @@ MODULE STM32L4System IN Micro;
 	RM0394, Reference manual STM32L41xxx/42xxx/43xxx/44xxx/45xxx/46xxx
 *)
 IMPORT SYSTEM;
-IN Micro IMPORT ARMv7M;
 IN Micro IMPORT MCU := STM32L4;
 
 CONST

@@ -1,4 +1,4 @@
-MODULE ARMv7MTraps IN Micro;
+MODULE ArchArmTraps IN Micro;
 
 	(* Alexander Shiryaev, 2014.09, 2017.03, 2019.10, 2023.06
        Modified by Tenko for use with ECS
@@ -23,7 +23,7 @@ MODULE ARMv7MTraps IN Micro;
 				0D: usage fault
 	*)
 
-    IMPORT SYSTEM, ARMv7M IN Micro;
+    IMPORT SYSTEM, ArchArm IN Micro;
 
     CONST
 		rstCheckKey = 19847C2AH;
@@ -93,7 +93,7 @@ MODULE ARMv7MTraps IN Micro;
 		    trapFlag := TRUE;
             trap.ext := 0;
             IF code = 0DH THEN
-                SYSTEM.GET(ARMv7M.UFSR, u16);
+                SYSTEM.GET(ArchArm.UFSR, u16);
                 IF SET(u16) * {0} # {} THEN
                     SYSTEM.GET(context.PC, u16); (* Fetch UDF *)
                     code := INTEGER(SET(u16) * SET(0FH));
@@ -101,11 +101,11 @@ MODULE ARMv7MTraps IN Micro;
                     trap.ext := u16;
                 END;
             ELSIF code = 0AH THEN
-                SYSTEM.GET(ARMv7M.HFSR, trap.ext);
+                SYSTEM.GET(ArchArm.HFSR, trap.ext);
             ELSIF code = 0BH THEN
-                SYSTEM.GET(ARMv7M.MMFAR, trap.ext);
+                SYSTEM.GET(ArchArm.MMFAR, trap.ext);
             ELSIF code = 0CH THEN
-                SYSTEM.GET(ARMv7M.BFAR, trap.ext);
+                SYSTEM.GET(ArchArm.BFAR, trap.ext);
             END;
 			trap.code := code;
 			trap.context := context;
@@ -143,11 +143,11 @@ MODULE ARMv7MTraps IN Micro;
             END;
 		END;
 		rstCheck := rstCheckKey;
-        IF SYSTEM.BIT(SYSTEM.ADDRESS(ARMv7M.SCB_DHCSR), 0) THEN
+        IF SYSTEM.BIT(SYSTEM.ADDRESS(ArchArm.SCB_DHCSR), 0) THEN
             (* Running under debugger control *)
             SYSTEM.ASM("bkpt 0x01");
         ELSE
-            ARMv7M.Reset;
+            ArchArm.Reset;
     	END;
     	WHILE TRUE DO END;
 	END DefaultTrapHandler;
@@ -242,9 +242,9 @@ MODULE ARMv7MTraps IN Micro;
     CONST USGFAULTENA = 18;
     VAR s : SET32;
 	BEGIN
-        SYSTEM.GET(ARMv7M.SHCSR, s);
+        SYSTEM.GET(ArchArm.SHCSR, s);
         s := s + {USGFAULTENA}; (* Catch UsageFault *)
-        SYSTEM.PUT(ARMv7M.SHCSR, s);
+        SYSTEM.PUT(ArchArm.SHCSR, s);
         debug := FALSE;
 		trapHandler := DefaultTrapHandler;
 		IF rstCheck # rstCheckKey THEN
@@ -256,4 +256,4 @@ MODULE ARMv7MTraps IN Micro;
 		rstCheck := 0; (* # rstCheckKey *)
 	END Init;
 
-END ARMv7MTraps.
+END ArchArmTraps.

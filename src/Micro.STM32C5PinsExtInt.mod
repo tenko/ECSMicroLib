@@ -5,7 +5,7 @@ pin number in Init procedure.
 MODULE STM32C5PinsExtInt (N*) IN Micro;
 
 IMPORT SYSTEM;
-IN Micro IMPORT ARMv8M;
+IN Micro IMPORT ArchArm;
 IN Micro IMPORT MCU := STM32C5;
 IN Micro IMPORT Pins := STM32C5Pins;
 IN Micro IMPORT MachinePinExtInt;
@@ -60,14 +60,14 @@ END Trigger;
 (** Disable interrupt *)
 PROCEDURE (VAR ext : PinExtInt) Disable*;
 BEGIN
-	SYSTEM.PUT(ARMv8M.NVICICER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
-	ARMv8M.ISB;
+	SYSTEM.PUT(ArchArm.NVICICER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
+	ArchArm.ISB;
 END Disable;
 
 (** Enable interrupt *)
 PROCEDURE (VAR ext : PinExtInt) Enable*;
 BEGIN
-	SYSTEM.PUT(ARMv8M.NVICISER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
+	SYSTEM.PUT(ArchArm.NVICISER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
 END Enable;
 
 (** Initialize interrupt on pin. Interrups is disabled. *)

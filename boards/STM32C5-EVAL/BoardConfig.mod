@@ -5,7 +5,7 @@ MODULE BoardConfig;
 
 IN Micro IMPORT STM32C5;
 IN Micro IMPORT STM32C5System;
-IN Micro IMPORT ARMv8MSTM32SysTick0;
+IN Micro IMPORT ArchArmSysTick;
 IN Micro IMPORT STM32C5Pins;
 IN Micro IMPORT STM32C5RTC;
 IN Micro IMPORT STM32C5ExtInt8 := STM32C5PinsExtInt(8);
@@ -23,7 +23,7 @@ CONST
     USER_BUTTON1_PORT* = 1; (* Port B *)
     USER_BUTTON1_PIN* = 8;
     
-    SysTick* = ARMv8MSTM32SysTick0;
+    SysTick* = ArchArmSysTick;
     Pins* = STM32C5Pins;
     RTC* = STM32C5RTC;
     ExtIntButton1* = STM32C5ExtInt8;
@@ -52,7 +52,7 @@ BEGIN
 END InitUart;
 
 PROCEDURE InitSysTick*;
-BEGIN ARMv8MSTM32SysTick0.Init(SYSCLK, 1000); (* ms timer *)
+BEGIN ArchArmSysTick.Init(SYSCLK, 1000); (* ms timer *)
 END InitSysTick;
 
 PROCEDURE Init*;
