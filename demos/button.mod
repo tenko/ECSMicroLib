@@ -4,6 +4,7 @@ IMPORT BoardConfig;
 IMPORT Machine IN Micro;
 
 CONST
+    Debug = TRUE; (* Set Debug = FALSE to allow to run demo without debugger *)
     Pins = BoardConfig.Pins;
     ExtInt = BoardConfig.ExtIntButton1;
 
@@ -12,7 +13,7 @@ VAR
     ext : ExtInt.PinExtInt;
 
 BEGIN
-	TRACE("START");
+	IF Debug THEN TRACE("START") END;
     BoardConfig.Init;
     
     led.Init(BoardConfig.USER_LED1_PORT, BoardConfig.USER_LED1_PIN, Pins.output,

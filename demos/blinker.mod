@@ -3,12 +3,14 @@ MODULE Test;
 IMPORT BoardConfig;
 IMPORT Machine IN Micro;
 
-CONST Pins = BoardConfig.Pins;
+CONST
+    Debug = TRUE; (* Set Debug = FALSE to allow to run demo without debugger *)
+    Pins = BoardConfig.Pins;
 
 VAR pin : Pins.Pin;
 
 BEGIN
-    TRACE("START");
+    IF Debug THEN TRACE("START") END;
     BoardConfig.Init;
     
     pin.Init(BoardConfig.USER_LED1_PORT, BoardConfig.USER_LED1_PIN, Pins.output,
@@ -16,10 +18,10 @@ BEGIN
     
     REPEAT
         pin.On;
-        TRACE("ON0");
+        IF Debug THEN TRACE("ON0") END;
         Machine.DelayMS(100);
         pin.Off;
-        TRACE("OFF0");
+        IF Debug THEN TRACE("OFF0") END;
         Machine.DelayMS(100);
     UNTIL FALSE
 END Test.

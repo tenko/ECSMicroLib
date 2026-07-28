@@ -1,10 +1,16 @@
-(** Simple led blinker demo using the RTC wakeup for accurate longer delays *)
+(**
+    Simple led blinker demo using the RTC wakeup for accurate longer delays.
+    
+    Note that SleepLight and SleepDeep will power down the MCU and the debugger
+    will be disconnected.
+*)
 MODULE Test;
 IMPORT SYSTEM;
 IMPORT BoardConfig;
 IMPORT Machine IN Micro;
 
 CONST
+    Debug = FALSE; (* Set Debug = FALSE to allow to run demo without debugger *)
     Pins = BoardConfig.Pins;
     RTC = BoardConfig.RTC;
     SysTick = BoardConfig.SysTick;
@@ -28,10 +34,10 @@ END DelayMS;
 
 BEGIN
     IF Machine.resetCause = Machine.RESET_DEEPSLEEP THEN
-        (* TRACE("WAKEUP"); *)
+        IF Debug THEN TRACE("WAKEUP") END;
         BoardConfig.InitDefault;
     ELSE
-         (* TRACE("START"); *)
+        IF Debug THEN TRACE("START") END;
         BoardConfig.InitRTC;
         RTC.Init(rtc);
         rtc.WakeupS(3);
@@ -42,10 +48,10 @@ BEGIN
         pin.Init(BoardConfig.USER_LED1_PORT, BoardConfig.USER_LED1_PIN, Pins.output,
              Pins.pushPull, Pins.medium, Pins.noPull, Pins.AF0);
         pin.On;
-        (* TRACE("ON0"); *)
+        IF Debug THEN TRACE("ON0") END;
         DelayMS(500);
         pin.Off;
-        (* TRACE("OFF0"); *)
+        IF Debug THEN TRACE("OFF0") END;
         IF Sleep = 0 THEN
             SysTick.Disable;
             Machine.Idle;
@@ -54,7 +60,7 @@ BEGIN
             Machine.SleepLight;
             BoardConfig.InitDefault;
         ELSE
-            Machine.SleepDeep;
+            Machine.SleepDeep; (* TODO : currently does not work *)
             (* Wakeup triggers reset *)
         END;
     UNTIL FALSE
