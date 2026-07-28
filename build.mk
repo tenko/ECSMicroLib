@@ -26,7 +26,7 @@ DOC = Debug BusI2C BusSPI BusUart BusOneWire
 DOC += Machine MachinePin MachinePinExtInt MachineRTC
 DOC += DeviceDS18B20 DeviceILI9341 DeviceSTMPE811
 
-DRST = $(addprefix doc/src/Micro., $(addsuffix .mod.rst, $(DOC)))
+DRST += $(addprefix doc/src/, $(addprefix Micro., $(addsuffix .mod.rst, $(DOC))))
 
 .PHONY: all
 all : micro.lib
@@ -80,51 +80,8 @@ micro.lib : $(OBF)
 	@touch $@
 	@linklib $@ $^
 
-doc/src/Micro.Machine.mod.rst : src/Micro.Machine.mod
-	@-mkdir -p doc/src
-	./tools/docgen.py $< -o $@
-
-doc/src/Micro.MachinePin.mod.rst : src/Micro.MachinePin.mod
-	@-mkdir -p doc/src
-	./tools/docgen.py $< -o $@
-
-doc/src/Micro.MachinePinExtInt.mod.rst : src/Micro.MachinePinExtInt.mod
-	@-mkdir -p doc/src
-	./tools/docgen.py $< -o $@
-
-doc/src/Micro.MachineRTC.mod.rst : src/Micro.MachineRTC.mod
-	@-mkdir -p doc/src
-	./tools/docgen.py $< -o $@
-
-doc/src/Micro.Debug.mod.rst : src/Micro.Debug.mod
-	@-mkdir -p doc/src
-	./tools/docgen.py $< -o $@
-
-doc/src/Micro.BusI2C.mod.rst : src/Micro.BusI2C.mod
-	@-mkdir -p doc/src
-	./tools/docgen.py $< -o $@
-
-doc/src/Micro.BusSPI.mod.rst : src/Micro.BusSPI.mod
-	@-mkdir -p doc/src
-	./tools/docgen.py $< -o $@
-
-doc/src/Micro.BusUart.mod.rst : src/Micro.BusUart.mod
-	@-mkdir -p doc/src
-	./tools/docgen.py $< -o $@
-
-doc/src/Micro.BusOneWire.mod.rst : src/Micro.BusOneWire.mod
-	@-mkdir -p doc/src
-	./tools/docgen.py $< -o $@
-
-doc/src/Micro.DeviceDS18B20.mod.rst : src/Micro.DeviceDS18B20.mod
-	@-mkdir -p doc/src
-	./tools/docgen.py $< -o $@
-
-doc/src/Micro.DeviceILI9341.mod.rst : src/Micro.DeviceILI9341.mod
-	@-mkdir -p doc/src
-	./tools/docgen.py $< -o $@
-
-doc/src/Micro.DeviceSTMPE811.mod.rst : src/Micro.DeviceSTMPE811.mod
+doc/src/%.mod.rst: src/%.mod
+	@echo compiling $<
 	@-mkdir -p doc/src
 	./tools/docgen.py $< -o $@
 
