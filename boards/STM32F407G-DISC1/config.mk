@@ -1,4 +1,5 @@
 # Board specific configuration
+ARCH 		:= ARM
 RUNTIME 	:= stm32f4run.asm
 BOOTSTART 	:= 0x00000000
 RAMSTART 	:= 0x20000000

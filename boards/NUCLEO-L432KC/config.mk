@@ -1,4 +1,5 @@
 # Board specific configuration
+ARCH 		:= ARM
 RUNTIME 	:= stm32l4run.asm
 EXMODULES   := 
 BOOTSTART 	:= 0x00000000
