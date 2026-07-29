@@ -60,15 +60,12 @@ END Trigger;
 
 (** Disable interrupt *)
 PROCEDURE Disable*;
-BEGIN
-	SYSTEM.PUT(ArchArm.NVICICER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
-	ArchArm.ISB;
+BEGIN ArchArm.DisableIRQ(Int)
 END Disable;
 
 (** Enable interrupt *)
 PROCEDURE Enable*;
-BEGIN
-	SYSTEM.PUT(ArchArm.NVICISER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
+BEGIN ArchArm.EnableIRQ(Int)
 END Enable;
 
 (** Initialize interrupt on pin. Interrups is disabled. *)

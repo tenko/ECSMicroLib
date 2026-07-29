@@ -349,6 +349,19 @@ BEGIN
     SYSTEM.PUT(CPACR, x - {FPU0 + 1, FPU0});
 END FPUDisable;
 
+(** Disable interrupt *)
+PROCEDURE DisableIRQ*(int : INTEGER);
+BEGIN
+	SYSTEM.PUT(NVICICER0 + (int DIV 32) * 4, SET32({int MOD 32}));
+	SYSTEM.ASM("isb");
+END DisableIRQ;
+
+(** Enable interrupt *)
+PROCEDURE EnableIRQ*(int : INTEGER);
+BEGIN
+	SYSTEM.PUT(NVICISER0 + (int DIV 32) * 4, SET32({int MOD 32}));
+END EnableIRQ;
+
 (** System reset *)
 PROCEDURE Reset* ["reset"]();
 BEGIN

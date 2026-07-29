@@ -53,15 +53,12 @@ END InterruptHandler;
 
 (* Disable interrupt *)
 PROCEDURE DisableIRQ;
-BEGIN
-	SYSTEM.PUT(ArchArm.NVICICER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
-	ArchArm.ISB;
+BEGIN ArchArm.DisableIRQ(Int)
 END DisableIRQ;
 
 (* Enable interrupt *)
 PROCEDURE EnableIRQ;
-BEGIN
-	SYSTEM.PUT(ArchArm.NVICISER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
+BEGIN ArchArm.EnableIRQ(Int)
 END EnableIRQ;
 
 (** Set RTC Wakeup timer delay in seconds.

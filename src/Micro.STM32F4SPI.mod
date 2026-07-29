@@ -201,18 +201,13 @@ BEGIN
     bus.DR  := base + 0CH;
     
 	(* disable interrupts *)
-	SYSTEM.PUT(ArchArm.NVICICER0 + (Int DIV 32) * 4, SET32({Int MOD 32})); (* ICER *)
-	ArchArm.ISB;
+    ArchArm.DisableIRQ(Int);
 	
 	(* disable DMA RX interrupts *)
-    SYSTEM.PUT(ArchArm.NVICICER0 + (DMARXInt DIV 32) * 4,
-               SET32({DMARXInt MOD 32})); 
-    ArchArm.ISB;
+    ArchArm.DisableIRQ(DMARXInt);
 
     (* disable DMA TX interrupts *)
-    SYSTEM.PUT(ArchArm.NVICICER0 + (DMATXInt DIV 32) * 4,
-               SET32({DMATXInt MOD 32}));
-    ArchArm.ISB;
+    ArchArm.DisableIRQ(DMATXInt);
 
     (* enable clock for SPI *)
     SYSTEM.GET(RCC_SPICLK, x);

@@ -1,5 +1,5 @@
 (**
-Interrupt module to redirect ISR to handle.
+Templated interrupt module to redirect ISR to handle.
 *)
 MODULE ArchArmInterrupt (Name, Int) IN Micro;
 
@@ -19,15 +19,12 @@ END SetHandle;
 
 (** Disable interrupt *)
 PROCEDURE Disable*;
-BEGIN
-	SYSTEM.PUT(ArchArm.NVICICER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
-	SYSTEM.ASM("isb");
+BEGIN ArchArm.DisableIRQ(Int)
 END Disable;
 
 (** Enable interrupt *)
 PROCEDURE Enable*;
-BEGIN
-	SYSTEM.PUT(ArchArm.NVICISER0 + (Int DIV 32) * 4, SET32({Int MOD 32}));
+BEGIN ArchArm.EnableIRQ(Int)
 END Enable;
 
 END ArchArmInterrupt.

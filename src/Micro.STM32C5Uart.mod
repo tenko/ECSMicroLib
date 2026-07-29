@@ -123,8 +123,7 @@ BEGIN
     OutBuffer.Init(bus.outBuffer);
     
 	(* disable interrupts *)
-	SYSTEM.PUT(ArchArm.NVICICER0 + (Int DIV 32) * 4, SET32({Int MOD 32})); (* ICER *)
-	ArchArm.ISB;
+    ArchArm.DisableIRQ(Int);
 
     (* select clock source to PCLK1 *)
     SYSTEM.GET(MCU.RCC_CCIPR1, x);
@@ -175,7 +174,7 @@ BEGIN
     bus.enableTCI := bus.disableTCI + {TCIE};
     SYSTEM.PUT(bus.CR1, bus.disableTCI);
     
-    SYSTEM.PUT(ArchArm.NVICISER0 + (Int DIV 32) * 4, SET32({Int MOD 32})); (* ISER *)
+    ArchArm.EnableIRQ(Int)
 END Init;
 
 (** Return number of characters available in read buffer *)
