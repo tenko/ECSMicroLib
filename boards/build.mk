@@ -108,4 +108,4 @@ gdb:
 
 .PHONY: mxgdb
 mxgdb:
-	@$(MXGDB) -ex "target extended-remote localhost:61234" -ex "continue"
+	@$(GDB) -ex "target extended-remote localhost:61234" -ex "continue"
