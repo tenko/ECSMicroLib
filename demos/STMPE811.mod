@@ -14,6 +14,7 @@ CONST
 VAR
     bus : I2C.Bus;
     dev : DeviceSTMPE811.Device;
+    ext : ExtInt.PinExtInt;
     int : Pins.Pin;
     rawX, rawY : UNSIGNED16;
     x, y : INTEGER;
@@ -30,12 +31,12 @@ BEGIN
     
     int.Init(BoardConfig.TOUCH_INT_PORT, BoardConfig.TOUCH_INT_PIN, Pins.input,
              FALSE, 0, Pins.noPull, Pins.AF0); (* Floating input pin *)
-    ExtInt.Init(int, FALSE, TRUE); (* trigger on falling edge *)
-    ExtInt.Enable;
+    ext.Init(int, FALSE, TRUE); (* trigger on falling edge *)
+    ext.Enable;
     
     WHILE TRUE DO
         SysTick.Delay(5);
-        IF ExtInt.OnTrigger() THEN
+        IF ext.OnTrigger() THEN
             dev.ClearInterrupts();
             IF dev.HasTouchData() THEN
                 dev.ReadXY(rawX, rawY);

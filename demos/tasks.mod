@@ -2,7 +2,7 @@
 MODULE Test;
 IMPORT BoardConfig;
 
-IN Std IMPORT Machine;
+IN Micro IMPORT Machine;
 IN Std IMPORT Coroutine(256, UNSIGNED32);
 IN Std IMPORT UInt := ADTBasicType(UNSIGNED32);
 IN Std IMPORT TaskQueue := ADTVector(Coroutine.TaskEntry);

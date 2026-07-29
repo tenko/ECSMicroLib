@@ -6,6 +6,7 @@ IN Std IMPORT Cardinal, OSStream;
 IN Micro IMPORT DeviceILI9341;
 
 CONST
+    Debug = TRUE; (* Set Debug = FALSE to allow to run demo without debugger *)
     SysTick = BoardConfig.SysTick;
     Pins = BoardConfig.Pins;
     SPI5 = BoardConfig.SPI5;
@@ -82,16 +83,18 @@ BEGIN
             INC(cnt);
         END;
     END;
-    OSStream.StdOut.FormatInteger(cnt, 0, {});
-    OSStream.StdOut.WriteString(name);
-    OSStream.StdOut.WriteString("drawn in ");
-    OSStream.StdOut.FormatInteger(INTEGER(t1 - t0), 0, {});
-    OSStream.StdOut.WriteString("ms.");
-    OSStream.StdOut.WriteNL;
+    IF Debug THEN 
+        OSStream.StdOut.FormatInteger(cnt, 0, {});
+        OSStream.StdOut.WriteString(name);
+        OSStream.StdOut.WriteString("drawn in ");
+        OSStream.StdOut.FormatInteger(INTEGER(t1 - t0), 0, {});
+        OSStream.StdOut.WriteString("ms.");
+        OSStream.StdOut.WriteNL;
+    END;
 END Draw;
 
 BEGIN
-    TRACE("Init");
+    IF Debug THEN  TRACE("Init") END;
     BoardConfig.Init;
     
     BoardConfig.InitILI9341SPI(bus, rst, cs, dc);
@@ -99,7 +102,7 @@ BEGIN
     dev.Config;
 	SysTick.Delay(1000);
 	
-    TRACE("Start");
+    IF Debug THEN TRACE("Start") END;
     WHILE TRUE DO
         Draw(Points);
         SysTick.Delay(500);
