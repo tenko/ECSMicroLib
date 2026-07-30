@@ -42,7 +42,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Generic:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Common</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="Micro.Machine.mod.html">Machine</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Micro.Machine.mod.html#const">Const</a></li>
@@ -77,7 +77,6 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">MachinePinExtInt</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#types">Types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#procedures">Procedures</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#pinextint-on">PinExtInt.On</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pinextint-sethandle">PinExtInt.SetHandle</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pinextint-ontrigger">PinExtInt.OnTrigger</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pinextint-trigger">PinExtInt.Trigger</a></li>
@@ -111,6 +110,9 @@
 </li>
 </ul>
 </li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Bus Interfaces</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="Micro.BusI2C.mod.html">BusI2C</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Micro.BusI2C.mod.html#const">Const</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Micro.BusI2C.mod.html#types">Types</a></li>
@@ -170,6 +172,9 @@
 </li>
 </ul>
 </li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Device Drivers</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="Micro.DeviceDS18B20.mod.html">DeviceDS18B20</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Micro.DeviceDS18B20.mod.html#const">Const</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Micro.DeviceDS18B20.mod.html#types">Types</a></li>
@@ -200,20 +205,13 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html">DeviceSTMPE811</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#const">Const</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#types">Types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#procedures">Procedures</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#init">Init</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-writedata">Device.WriteData</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-writeregister">Device.WriteRegister</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-readdata">Device.ReadData</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-readregister">Device.ReadRegister</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-readdata16">Device.ReadData16</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-readdeviceid">Device.ReadDeviceId</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-reset">Device.Reset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-enabletouchinterrupt">Device.EnableTouchInterrupt</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-clearinterrupts">Device.ClearInterrupts</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-resetfifo">Device.ResetFIFO</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-config">Device.Config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-hastouchdata">Device.HasTouchData</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-readxy">Device.ReadXY</a></li>
@@ -249,8 +247,8 @@
              
   <section id="machinepinextint">
 <span id="index-0"></span><span id="id1"></span><h1>MachinePinExtInt<a class="headerlink" href="#machinepinextint" title="Link to this heading"></a></h1>
-<p>External pin interrupt base interface to be used by devices.
-Concrete implementations in MCU drivers should be passed to drivers.</p>
+<p>External pin interrupt interface.</p>
+<p>Concrete implementations in MCU drivers should be passed to drivers.</p>
 <section id="types">
 <h2>Types<a class="headerlink" href="#types" title="Link to this heading"></a></h2>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="n">PinExtInt</span><span class="o">*</span> <span class="o">=</span> <span class="kr">RECORD</span>
@@ -263,19 +261,10 @@ Concrete implementations in MCU drivers should be passed to drivers.</p>
 </section>
 <section id="procedures">
 <h2>Procedures<a class="headerlink" href="#procedures" title="Link to this heading"></a></h2>
-<section id="pinextint-on">
-<span id="machinepinextint-pinextint-on"></span><h3>PinExtInt.On<a class="headerlink" href="#pinextint-on" title="Link to this heading"></a></h3>
-<blockquote>
-<div><p>Set pin value to 1</p>
-</div></blockquote>
-<div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="p">(</span><span class="kr">VAR</span> <span class="n">p</span> <span class="p">:</span> <span class="n">PinExtInt</span><span class="p">)</span> <span class="n">On</span><span class="o">*</span><span class="p">;</span>
-</pre></div>
-</div>
-</section>
 <section id="pinextint-sethandle">
 <span id="machinepinextint-pinextint-sethandle"></span><h3>PinExtInt.SetHandle<a class="headerlink" href="#pinextint-sethandle" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Set interrupt callback handle</p>
+<div><p>Set interrupt callback handle.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="p">(</span><span class="kr">VAR</span> <span class="n">ext</span> <span class="p">:</span> <span class="n">PinExtInt</span><span class="p">)</span> <span class="n">SetHandle</span><span class="o">*</span><span class="p">(</span><span class="n">handle</span> <span class="p">:</span> <span class="kr">PROCEDURE</span><span class="p">);</span>
 </pre></div>
@@ -293,7 +282,7 @@ Concrete implementations in MCU drivers should be passed to drivers.</p>
 <section id="pinextint-trigger">
 <span id="machinepinextint-pinextint-trigger"></span><h3>PinExtInt.Trigger<a class="headerlink" href="#pinextint-trigger" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Software trigger of interrupt</p>
+<div><p>Software trigger of interrupt.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="p">(</span><span class="kr">VAR</span> <span class="n">ext</span> <span class="p">:</span> <span class="n">PinExtInt</span><span class="p">)</span> <span class="n">Trigger</span><span class="o">*</span><span class="p">;</span>
 </pre></div>
@@ -302,7 +291,7 @@ Concrete implementations in MCU drivers should be passed to drivers.</p>
 <section id="pinextint-disable">
 <span id="machinepinextint-pinextint-disable"></span><h3>PinExtInt.Disable<a class="headerlink" href="#pinextint-disable" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Disable interrupt</p>
+<div><p>Disable interrupt.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="p">(</span><span class="kr">VAR</span> <span class="n">ext</span> <span class="p">:</span> <span class="n">PinExtInt</span><span class="p">)</span> <span class="n">Disable</span><span class="o">*</span><span class="p">;</span>
 </pre></div>
@@ -311,7 +300,7 @@ Concrete implementations in MCU drivers should be passed to drivers.</p>
 <section id="pinextint-enable">
 <span id="machinepinextint-pinextint-enable"></span><h3>PinExtInt.Enable<a class="headerlink" href="#pinextint-enable" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Enable interrupt</p>
+<div><p>Enable interrupt.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="p">(</span><span class="kr">VAR</span> <span class="n">ext</span> <span class="p">:</span> <span class="n">PinExtInt</span><span class="p">)</span> <span class="n">Enable</span><span class="o">*</span><span class="p">;</span>
 </pre></div>

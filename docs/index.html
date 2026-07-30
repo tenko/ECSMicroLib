@@ -41,7 +41,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Generic:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Common</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="src/Micro.Machine.mod.html">Machine</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="src/Micro.Machine.mod.html#const">Const</a></li>
@@ -76,7 +76,6 @@
 <li class="toctree-l1"><a class="reference internal" href="src/Micro.MachinePinExtInt.mod.html">MachinePinExtInt</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="src/Micro.MachinePinExtInt.mod.html#types">Types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="src/Micro.MachinePinExtInt.mod.html#procedures">Procedures</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.MachinePinExtInt.mod.html#pinextint-on">PinExtInt.On</a></li>
 <li class="toctree-l3"><a class="reference internal" href="src/Micro.MachinePinExtInt.mod.html#pinextint-sethandle">PinExtInt.SetHandle</a></li>
 <li class="toctree-l3"><a class="reference internal" href="src/Micro.MachinePinExtInt.mod.html#pinextint-ontrigger">PinExtInt.OnTrigger</a></li>
 <li class="toctree-l3"><a class="reference internal" href="src/Micro.MachinePinExtInt.mod.html#pinextint-trigger">PinExtInt.Trigger</a></li>
@@ -110,6 +109,9 @@
 </li>
 </ul>
 </li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Bus Interfaces</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="src/Micro.BusI2C.mod.html">BusI2C</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="src/Micro.BusI2C.mod.html#const">Const</a></li>
 <li class="toctree-l2"><a class="reference internal" href="src/Micro.BusI2C.mod.html#types">Types</a></li>
@@ -169,6 +171,9 @@
 </li>
 </ul>
 </li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Device Drivers</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="src/Micro.DeviceDS18B20.mod.html">DeviceDS18B20</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="src/Micro.DeviceDS18B20.mod.html#const">Const</a></li>
 <li class="toctree-l2"><a class="reference internal" href="src/Micro.DeviceDS18B20.mod.html#types">Types</a></li>
@@ -199,20 +204,13 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="src/Micro.DeviceSTMPE811.mod.html">DeviceSTMPE811</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="src/Micro.DeviceSTMPE811.mod.html#const">Const</a></li>
 <li class="toctree-l2"><a class="reference internal" href="src/Micro.DeviceSTMPE811.mod.html#types">Types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="src/Micro.DeviceSTMPE811.mod.html#procedures">Procedures</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="src/Micro.DeviceSTMPE811.mod.html#init">Init</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.DeviceSTMPE811.mod.html#device-writedata">Device.WriteData</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.DeviceSTMPE811.mod.html#device-writeregister">Device.WriteRegister</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.DeviceSTMPE811.mod.html#device-readdata">Device.ReadData</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.DeviceSTMPE811.mod.html#device-readregister">Device.ReadRegister</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.DeviceSTMPE811.mod.html#device-readdata16">Device.ReadData16</a></li>
 <li class="toctree-l3"><a class="reference internal" href="src/Micro.DeviceSTMPE811.mod.html#device-readdeviceid">Device.ReadDeviceId</a></li>
 <li class="toctree-l3"><a class="reference internal" href="src/Micro.DeviceSTMPE811.mod.html#device-reset">Device.Reset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="src/Micro.DeviceSTMPE811.mod.html#device-enabletouchinterrupt">Device.EnableTouchInterrupt</a></li>
 <li class="toctree-l3"><a class="reference internal" href="src/Micro.DeviceSTMPE811.mod.html#device-clearinterrupts">Device.ClearInterrupts</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src/Micro.DeviceSTMPE811.mod.html#device-resetfifo">Device.ResetFIFO</a></li>
 <li class="toctree-l3"><a class="reference internal" href="src/Micro.DeviceSTMPE811.mod.html#device-config">Device.Config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="src/Micro.DeviceSTMPE811.mod.html#device-hastouchdata">Device.HasTouchData</a></li>
 <li class="toctree-l3"><a class="reference internal" href="src/Micro.DeviceSTMPE811.mod.html#device-readxy">Device.ReadXY</a></li>
@@ -251,16 +249,24 @@
 <p>This library is developed for the <em>ECS Oberon-2 Compiler</em> as a framework
 to work with MCUs.</p>
 <p>The <a class="reference external" href="https://ecs.openbrace.org/manual/manualch7.html">ECS Oberon</a> compiler is implemented according to the original
-Oberon-2 <a class="reference external" href="https://www.ssw.uni-linz.ac.at/Research/Papers/Oberon2.pdf">report</a> with modernizing extensions. The language is
+Oberon-2 <a class="reference external" href="https://github.com/OberonSystem3/TheOberonCompanionCD/blob/main/Papers/Oberon2.pdf?raw=true">report</a> with modernizing extensions. The language is
 particular suited to embedded development due to it’s simplicity.</p>
-<p>Currently the <em>STM32F4</em>, <em>STM32L4</em> and <em>STM32C5</em> MCUs are supported and the following
-boards are tested:</p>
+<p>Currently the <em>STM32F4</em>, <em>STM32L4</em> and <em>STM32C5</em> MCUs are supported and the following boards are tested:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://www.st.com/en/evaluation-tools/nucleo-l432kc.html">NUCLEO-L432KC</a> STM32L432KC MCU</p></li>
 <li><p><a class="reference external" href="https://www.st.com/en/evaluation-tools/stm32f4discovery.html">STM32F407G-DISC1</a> STM32F407VG MCU</p></li>
 <li><p><a class="reference external" href="https://www.st.com/en/evaluation-tools/32f429idiscovery.html">STM32F429I-DISC1</a> STM32F429ZI MCU</p></li>
 <li><p><a class="reference external" href="https://github.com/tenko/STM32C5-eval-board">STM32C5-EVAL</a> STM32C551CET MCU</p></li>
 </ul>
+<p>This documentation only cover the MCU independent generic part of the framework.</p>
+<p>These modules needs to be replaced with the concrete implementation  for the selected MCU target
+in the startup of the firmware. Example of this is found in the <em>BoardConfig.mod</em> in the boards folder.</p>
+<p>The MCU dependent modules extend from the generic Interfaces/buses and the code can largely be written
+in a MCU independent way, as is shown in the device drivers code and demos.</p>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
 <div class="toctree-wrapper compound">
 </div>
 </section>
@@ -271,12 +277,14 @@ boards are tested:</p>
 <span class="kr">IMPORT</span> <span class="n">BoardConfig</span><span class="p">;</span>
 <span class="kr">IMPORT</span> <span class="n">Machine</span> <span class="kr">IN</span> <span class="n">Micro</span><span class="p">;</span>
 
-<span class="kr">CONST</span> <span class="n">Pins</span> <span class="o">=</span> <span class="n">BoardConfig</span><span class="p">.</span><span class="n">Pins</span><span class="p">;</span>
+<span class="kr">CONST</span>
+    <span class="n">Debug</span> <span class="o">=</span> <span class="nb">TRUE</span><span class="p">;</span> <span class="cm">(* Set Debug = FALSE to allow to run demo without debugger *)</span>
+    <span class="n">Pins</span> <span class="o">=</span> <span class="n">BoardConfig</span><span class="p">.</span><span class="n">Pins</span><span class="p">;</span>
 
 <span class="kr">VAR</span> <span class="n">pin</span> <span class="p">:</span> <span class="n">Pins</span><span class="p">.</span><span class="n">Pin</span><span class="p">;</span>
 
 <span class="kr">BEGIN</span>
-    <span class="n">TRACE</span><span class="p">(</span><span class="s2">&quot;START&quot;</span><span class="p">);</span>
+    <span class="kr">IF</span> <span class="n">Debug</span> <span class="kr">THEN</span> <span class="n">TRACE</span><span class="p">(</span><span class="s2">&quot;START&quot;</span><span class="p">)</span> <span class="kr">END</span><span class="p">;</span>
     <span class="n">BoardConfig</span><span class="p">.</span><span class="n">Init</span><span class="p">;</span>
     
     <span class="n">pin</span><span class="p">.</span><span class="n">Init</span><span class="p">(</span><span class="n">BoardConfig</span><span class="p">.</span><span class="n">USER_LED1_PORT</span><span class="p">,</span> <span class="n">BoardConfig</span><span class="p">.</span><span class="n">USER_LED1_PIN</span><span class="p">,</span> <span class="n">Pins</span><span class="p">.</span><span class="n">output</span><span class="p">,</span>
@@ -284,10 +292,10 @@ boards are tested:</p>
     
     <span class="kr">REPEAT</span>
         <span class="n">pin</span><span class="p">.</span><span class="n">On</span><span class="p">;</span>
-        <span class="n">TRACE</span><span class="p">(</span><span class="s2">&quot;ON0&quot;</span><span class="p">);</span>
+        <span class="kr">IF</span> <span class="n">Debug</span> <span class="kr">THEN</span> <span class="n">TRACE</span><span class="p">(</span><span class="s2">&quot;ON0&quot;</span><span class="p">)</span> <span class="kr">END</span><span class="p">;</span>
         <span class="n">Machine</span><span class="p">.</span><span class="n">DelayMS</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
         <span class="n">pin</span><span class="p">.</span><span class="n">Off</span><span class="p">;</span>
-        <span class="n">TRACE</span><span class="p">(</span><span class="s2">&quot;OFF0&quot;</span><span class="p">);</span>
+        <span class="kr">IF</span> <span class="n">Debug</span> <span class="kr">THEN</span> <span class="n">TRACE</span><span class="p">(</span><span class="s2">&quot;OFF0&quot;</span><span class="p">)</span> <span class="kr">END</span><span class="p">;</span>
         <span class="n">Machine</span><span class="p">.</span><span class="n">DelayMS</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
     <span class="kr">UNTIL</span> <span class="nb">FALSE</span>
 <span class="kr">END</span> <span class="n">Test</span><span class="p">.</span>

@@ -42,8 +42,8 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Generic:</span></p>
-<ul class="current">
+              <p class="caption" role="heading"><span class="caption-text">Common</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="Micro.Machine.mod.html">Machine</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Micro.Machine.mod.html#const">Const</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Micro.Machine.mod.html#vars">Vars</a></li>
@@ -77,7 +77,6 @@
 <li class="toctree-l1"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html">MachinePinExtInt</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html#types">Types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html#procedures">Procedures</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html#pinextint-on">PinExtInt.On</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html#pinextint-sethandle">PinExtInt.SetHandle</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html#pinextint-ontrigger">PinExtInt.OnTrigger</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html#pinextint-trigger">PinExtInt.Trigger</a></li>
@@ -111,6 +110,9 @@
 </li>
 </ul>
 </li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Bus Interfaces</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="Micro.BusI2C.mod.html">BusI2C</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Micro.BusI2C.mod.html#const">Const</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Micro.BusI2C.mod.html#types">Types</a></li>
@@ -170,6 +172,9 @@
 </li>
 </ul>
 </li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Device Drivers</span></p>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="Micro.DeviceDS18B20.mod.html">DeviceDS18B20</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Micro.DeviceDS18B20.mod.html#const">Const</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Micro.DeviceDS18B20.mod.html#types">Types</a></li>
@@ -200,20 +205,13 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html">DeviceSTMPE811</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#const">Const</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#types">Types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#procedures">Procedures</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#init">Init</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-writedata">Device.WriteData</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-writeregister">Device.WriteRegister</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-readdata">Device.ReadData</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-readregister">Device.ReadRegister</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-readdata16">Device.ReadData16</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-readdeviceid">Device.ReadDeviceId</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-reset">Device.Reset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-enabletouchinterrupt">Device.EnableTouchInterrupt</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-clearinterrupts">Device.ClearInterrupts</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-resetfifo">Device.ResetFIFO</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-config">Device.Config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-hastouchdata">Device.HasTouchData</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-readxy">Device.ReadXY</a></li>
@@ -249,10 +247,15 @@
              
   <section id="deviceili9341">
 <span id="index-0"></span><span id="id1"></span><h1>DeviceILI9341<a class="headerlink" href="#deviceili9341" title="Link to this heading"></a></h1>
-<p>ILI9341 LCD device driver</p>
-<p>Ref.: ILITECH ILI9341 datasheet
-Ref.: <a class="reference external" href="https://vivonomicon.com/2018/06/17/drawing-to-a-small-tft-display-the-ili9341-and-stm32/">https://vivonomicon.com/2018/06/17/drawing-to-a-small-tft-display-the-ili9341-and-stm32/</a>
-Ref.: <a class="reference external" href="https://blog.embeddedexpert.io/?p=2081">https://blog.embeddedexpert.io/?p=2081</a></p>
+<p>ILI9341 LCD device driver.</p>
+<dl class="simple">
+<dt>References:</dt><dd><ul class="simple">
+<li><p>ILITECH ILI9341 datasheet</p></li>
+<li><p><a class="reference external" href="https://vivonomicon.com/2018/06/17/drawing-to-a-small-tft-display-the-ili9341-and-stm32/">https://vivonomicon.com/2018/06/17/drawing-to-a-small-tft-display-the-ili9341-and-stm32/</a></p></li>
+<li><p><a class="reference external" href="https://blog.embeddedexpert.io/?p=2081">https://blog.embeddedexpert.io/?p=2081</a></p></li>
+</ul>
+</dd>
+</dl>
 <section id="types">
 <h2>Types<a class="headerlink" href="#types" title="Link to this heading"></a></h2>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="n">ILI9341</span><span class="o">*</span> <span class="o">=</span> <span class="kr">RECORD</span>
@@ -271,7 +274,7 @@ Ref.: <a class="reference external" href="https://blog.embeddedexpert.io/?p=2081
 <section id="init">
 <span id="deviceili9341-init"></span><h3>Init<a class="headerlink" href="#init" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Initialize driver</p>
+<div><p>Initialize driver.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="n">Init</span><span class="o">*</span> <span class="p">(</span><span class="kr">VAR</span> <span class="n">dev</span> <span class="p">:</span> <span class="n">ILI9341</span><span class="p">;</span> <span class="kr">VAR</span> <span class="n">bus</span><span class="p">:</span> <span class="n">BusSPI</span><span class="p">.</span><span class="n">Bus</span><span class="p">;</span> <span class="kr">VAR</span> <span class="n">rst</span><span class="p">,</span> <span class="n">cs</span><span class="p">,</span> <span class="n">dc</span> <span class="p">:</span> <span class="n">MachinePin</span><span class="p">.</span><span class="n">Pin</span><span class="p">);</span>
 </pre></div>
@@ -280,7 +283,7 @@ Ref.: <a class="reference external" href="https://blog.embeddedexpert.io/?p=2081
 <section id="ili9341-reset">
 <span id="deviceili9341-ili9341-reset"></span><h3>ILI9341.Reset<a class="headerlink" href="#ili9341-reset" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Reset display</p>
+<div><p>Reset display.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="p">(</span><span class="kr">VAR</span> <span class="n">this</span> <span class="p">:</span> <span class="n">ILI9341</span><span class="p">)</span> <span class="n">Reset</span><span class="o">*</span><span class="p">;</span>
 </pre></div>
@@ -301,7 +304,7 @@ Ref.: <a class="reference external" href="https://blog.embeddedexpert.io/?p=2081
 <section id="ili9341-colorrgb">
 <span id="deviceili9341-ili9341-colorrgb"></span><h3>ILI9341.ColorRGB<a class="headerlink" href="#ili9341-colorrgb" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Convert RGB format to RGB565 display format</p>
+<div><p>Convert RGB format to RGB565 display format.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="p">(</span><span class="kr">VAR</span> <span class="n">this</span> <span class="p">:</span> <span class="n">ILI9341</span><span class="p">)</span> <span class="n">ColorRGB</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">g</span> <span class="p">:</span> <span class="nb">INTEGER</span><span class="p">):</span> <span class="nb">INTEGER</span><span class="p">;</span>
 </pre></div>
@@ -319,7 +322,7 @@ Ref.: <a class="reference external" href="https://blog.embeddedexpert.io/?p=2081
 <section id="ili9341-fill">
 <span id="deviceili9341-ili9341-fill"></span><h3>ILI9341.Fill<a class="headerlink" href="#ili9341-fill" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Fill canvas with color</p>
+<div><p>Fill canvas with color.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="p">(</span><span class="kr">VAR</span> <span class="n">this</span> <span class="p">:</span> <span class="n">ILI9341</span><span class="p">)</span> <span class="n">Fill</span><span class="o">*</span><span class="p">(</span><span class="n">color</span> <span class="p">:</span> <span class="nb">INTEGER</span><span class="p">);</span>
 </pre></div>

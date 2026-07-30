@@ -42,7 +42,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Generic:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Common</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Machine</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#const">Const</a></li>
@@ -77,7 +77,6 @@
 <li class="toctree-l1"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html">MachinePinExtInt</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html#types">Types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html#procedures">Procedures</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html#pinextint-on">PinExtInt.On</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html#pinextint-sethandle">PinExtInt.SetHandle</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html#pinextint-ontrigger">PinExtInt.OnTrigger</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html#pinextint-trigger">PinExtInt.Trigger</a></li>
@@ -111,6 +110,9 @@
 </li>
 </ul>
 </li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Bus Interfaces</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="Micro.BusI2C.mod.html">BusI2C</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Micro.BusI2C.mod.html#const">Const</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Micro.BusI2C.mod.html#types">Types</a></li>
@@ -170,6 +172,9 @@
 </li>
 </ul>
 </li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Device Drivers</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="Micro.DeviceDS18B20.mod.html">DeviceDS18B20</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Micro.DeviceDS18B20.mod.html#const">Const</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Micro.DeviceDS18B20.mod.html#types">Types</a></li>
@@ -200,20 +205,13 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html">DeviceSTMPE811</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#const">Const</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#types">Types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#procedures">Procedures</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#init">Init</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-writedata">Device.WriteData</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-writeregister">Device.WriteRegister</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-readdata">Device.ReadData</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-readregister">Device.ReadRegister</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-readdata16">Device.ReadData16</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-readdeviceid">Device.ReadDeviceId</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-reset">Device.Reset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-enabletouchinterrupt">Device.EnableTouchInterrupt</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-clearinterrupts">Device.ClearInterrupts</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-resetfifo">Device.ResetFIFO</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-config">Device.Config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-hastouchdata">Device.HasTouchData</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-readxy">Device.ReadXY</a></li>
@@ -252,7 +250,7 @@
 <p>Machine module</p>
 <p>Procedures and variables here must be implemented in other
 MCU dependent module. This module exists to disconnect from
-MCU depenedent import in general drivers.</p>
+MCU dependent import in general drivers.</p>
 <section id="const">
 <h2>Const<a class="headerlink" href="#const" title="Link to this heading"></a></h2>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="n">RESET_UNKNOWN</span><span class="o">*</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
@@ -288,7 +286,7 @@ MCU depenedent import in general drivers.</p>
 <section id="irqenable">
 <span id="machine-irqenable"></span><h3>IRQEnable<a class="headerlink" href="#irqenable" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Enable interrupts</p>
+<div><p>Enable interrupts.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="o">^</span> <span class="n">IRQEnable</span><span class="o">*</span> <span class="p">[</span><span class="s2">&quot;irq_enable&quot;</span><span class="p">]();</span>
 </pre></div>
@@ -297,7 +295,7 @@ MCU depenedent import in general drivers.</p>
 <section id="irqdisable">
 <span id="machine-irqdisable"></span><h3>IRQDisable<a class="headerlink" href="#irqdisable" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Disable interrupts</p>
+<div><p>Disable interrupts.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="o">^</span> <span class="n">IRQDisable</span><span class="o">*</span><span class="p">[</span><span class="s2">&quot;irq_disable&quot;</span><span class="p">]</span> <span class="p">();</span>
 </pre></div>
@@ -315,7 +313,7 @@ MCU depenedent import in general drivers.</p>
 <section id="machine-idle">
 <span id="idle"></span><h3>Idle<a class="headerlink" href="#machine-idle" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Idle until interrupt is triggered</p>
+<div><p>Idle until interrupt is triggered.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="o">^</span> <span class="n">Idle</span><span class="o">*</span> <span class="p">[</span><span class="s2">&quot;idle&quot;</span><span class="p">]</span> <span class="p">();</span>
 </pre></div>
@@ -324,7 +322,7 @@ MCU depenedent import in general drivers.</p>
 <section id="sleeplight">
 <span id="machine-sleeplight"></span><h3>SleepLight<a class="headerlink" href="#sleeplight" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Enter light sleep</p>
+<div><p>Enter light sleep.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="o">^</span> <span class="n">SleepLight</span><span class="o">*</span> <span class="p">[</span><span class="s2">&quot;sleep_light&quot;</span><span class="p">]</span> <span class="p">();</span>
 </pre></div>
@@ -333,7 +331,7 @@ MCU depenedent import in general drivers.</p>
 <section id="sleepdeep">
 <span id="machine-sleepdeep"></span><h3>SleepDeep<a class="headerlink" href="#sleepdeep" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Enter deep sleep</p>
+<div><p>Enter deep sleep.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="o">^</span> <span class="n">SleepDeep</span><span class="o">*</span> <span class="p">[</span><span class="s2">&quot;sleep_deep&quot;</span><span class="p">]</span> <span class="p">();</span>
 </pre></div>
@@ -342,7 +340,7 @@ MCU depenedent import in general drivers.</p>
 <section id="delays">
 <span id="machine-delays"></span><h3>DelayS<a class="headerlink" href="#delays" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Delay delta seconds</p>
+<div><p>Delay delta seconds.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="o">^</span> <span class="n">DelayS</span><span class="o">*</span> <span class="p">[</span><span class="s2">&quot;delay_s&quot;</span><span class="p">]</span> <span class="p">(</span><span class="n">delta</span> <span class="p">:</span> <span class="n">UNSIGNED32</span><span class="p">);</span>
 </pre></div>
@@ -351,7 +349,7 @@ MCU depenedent import in general drivers.</p>
 <section id="delayms">
 <span id="machine-delayms"></span><h3>DelayMS<a class="headerlink" href="#delayms" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Delay delta milli seconds</p>
+<div><p>Delay delta milli seconds.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="o">^</span> <span class="n">DelayMS</span><span class="o">*</span> <span class="p">[</span><span class="s2">&quot;delay_ms&quot;</span><span class="p">]</span> <span class="p">(</span><span class="n">delta</span> <span class="p">:</span> <span class="n">UNSIGNED32</span><span class="p">);</span>
 </pre></div>
@@ -360,7 +358,7 @@ MCU depenedent import in general drivers.</p>
 <section id="delayus">
 <span id="machine-delayus"></span><h3>DelayUS<a class="headerlink" href="#delayus" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Delay delta micro seconds</p>
+<div><p>Delay delta micro seconds.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="o">^</span> <span class="n">DelayUS</span><span class="o">*</span> <span class="p">[</span><span class="s2">&quot;delay_us&quot;</span><span class="p">]</span> <span class="p">(</span><span class="n">delta</span> <span class="p">:</span> <span class="n">UNSIGNED32</span><span class="p">);</span>
 </pre></div>
@@ -369,7 +367,7 @@ MCU depenedent import in general drivers.</p>
 <section id="ticksms">
 <span id="machine-ticksms"></span><h3>TicksMS<a class="headerlink" href="#ticksms" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Milli seconds ticker value</p>
+<div><p>Milli seconds ticker value.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="o">^</span> <span class="n">TicksMS</span><span class="o">*</span> <span class="p">[</span><span class="s2">&quot;ticks_ms&quot;</span><span class="p">]</span> <span class="p">():</span> <span class="n">UNSIGNED32</span><span class="p">;</span>
 </pre></div>
@@ -378,7 +376,7 @@ MCU depenedent import in general drivers.</p>
 <section id="tickscpu">
 <span id="machine-tickscpu"></span><h3>TicksCPU<a class="headerlink" href="#tickscpu" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>CPU ticker value</p>
+<div><p>CPU ticker value.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="o">^</span> <span class="n">TicksCPU</span><span class="o">*</span> <span class="p">[</span><span class="s2">&quot;ticks_cpu&quot;</span><span class="p">]</span> <span class="p">():</span> <span class="n">UNSIGNED32</span><span class="p">;</span>
 </pre></div>

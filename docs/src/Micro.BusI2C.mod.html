@@ -42,8 +42,8 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Generic:</span></p>
-<ul class="current">
+              <p class="caption" role="heading"><span class="caption-text">Common</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="Micro.Machine.mod.html">Machine</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Micro.Machine.mod.html#const">Const</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Micro.Machine.mod.html#vars">Vars</a></li>
@@ -77,7 +77,6 @@
 <li class="toctree-l1"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html">MachinePinExtInt</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html#types">Types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html#procedures">Procedures</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html#pinextint-on">PinExtInt.On</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html#pinextint-sethandle">PinExtInt.SetHandle</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html#pinextint-ontrigger">PinExtInt.OnTrigger</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html#pinextint-trigger">PinExtInt.Trigger</a></li>
@@ -111,6 +110,9 @@
 </li>
 </ul>
 </li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Bus Interfaces</span></p>
+<ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">BusI2C</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#const">Const</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#types">Types</a></li>
@@ -170,6 +172,9 @@
 </li>
 </ul>
 </li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Device Drivers</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="Micro.DeviceDS18B20.mod.html">DeviceDS18B20</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Micro.DeviceDS18B20.mod.html#const">Const</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Micro.DeviceDS18B20.mod.html#types">Types</a></li>
@@ -200,20 +205,13 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html">DeviceSTMPE811</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#const">Const</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#types">Types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#procedures">Procedures</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#init">Init</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-writedata">Device.WriteData</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-writeregister">Device.WriteRegister</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-readdata">Device.ReadData</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-readregister">Device.ReadRegister</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-readdata16">Device.ReadData16</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-readdeviceid">Device.ReadDeviceId</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-reset">Device.Reset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-enabletouchinterrupt">Device.EnableTouchInterrupt</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-clearinterrupts">Device.ClearInterrupts</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-resetfifo">Device.ResetFIFO</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-config">Device.Config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-hastouchdata">Device.HasTouchData</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-readxy">Device.ReadXY</a></li>
@@ -249,8 +247,8 @@
              
   <section id="busi2c">
 <span id="index-0"></span><span id="id1"></span><h1>BusI2C<a class="headerlink" href="#busi2c" title="Link to this heading"></a></h1>
-<p>Base I2C bus interface to be used by devices.
-Concrete implementations in MCU drivers should be passed to drivers.</p>
+<p>Base I2C bus interface.
+Concrete implementations in MCU drivers should be passed to code.</p>
 <p>(c) Alexander Shiryaev, 2016.12
 Modified by Tenko for use with ECS</p>
 <section id="const">
@@ -282,7 +280,7 @@ Modified by Tenko for use with ECS</p>
 <section id="bus-transfer">
 <span id="busi2c-bus-transfer"></span><h3>Bus.Transfer<a class="headerlink" href="#bus-transfer" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Read or Write data</p>
+<div><p>Read or Write data.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="p">(</span><span class="kr">VAR</span> <span class="n">this</span><span class="p">:</span> <span class="n">Bus</span><span class="p">)</span> <span class="n">Transfer</span><span class="o">*</span><span class="p">(</span><span class="n">adr</span> <span class="p">:</span> <span class="nb">INTEGER</span><span class="p">;</span> <span class="n">rd</span> <span class="p">:</span> <span class="nb">BOOLEAN</span><span class="p">;</span> <span class="kr">VAR</span> <span class="n">buf</span> <span class="p">:</span> <span class="kr">ARRAY</span> <span class="kr">OF</span> <span class="bp">BYTE</span><span class="p">;</span> <span class="n">start</span><span class="p">,</span> <span class="n">len</span> <span class="p">:</span> <span class="nb">LENGTH</span><span class="p">;</span> <span class="n">stop</span> <span class="p">:</span> <span class="nb">BOOLEAN</span><span class="p">):</span> <span class="nb">LENGTH</span><span class="p">;</span>
 </pre></div>
@@ -290,7 +288,7 @@ Modified by Tenko for use with ECS</p>
 </section>
 <section id="bus-probe">
 <span id="busi2c-bus-probe"></span><h3>Bus.Probe<a class="headerlink" href="#bus-probe" title="Link to this heading"></a></h3>
-<p>Probe address adr for device respons.
+<p>Probe address <em>adr</em> for device respons.
 Return 0 if device responded.</p>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="p">(</span><span class="kr">VAR</span> <span class="n">this</span><span class="p">:</span> <span class="n">Bus</span><span class="p">)</span> <span class="n">Probe</span><span class="o">*</span><span class="p">(</span><span class="n">adr</span> <span class="p">:</span> <span class="nb">INTEGER</span><span class="p">):</span> <span class="nb">INTEGER</span><span class="p">;</span>
 </pre></div>
@@ -298,9 +296,9 @@ Return 0 if device responded.</p>
 </section>
 <section id="bus-read">
 <span id="busi2c-bus-read"></span><h3>Bus.Read<a class="headerlink" href="#bus-read" title="Link to this heading"></a></h3>
-<p>Read into buffer from the peripheral specified by addr.
-The number of bytes read is length and the data is written
-to the buffer starting from start index.
+<p>Read into buffer from the peripheral specified by <em>addr</em>.
+The number of bytes read is <em>length</em> and the data is written
+to the buffer starting from <em>start</em> index.
 The function returns the number of bytes that were received.</p>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="p">(</span><span class="kr">VAR</span> <span class="n">this</span><span class="p">:</span> <span class="n">Bus</span><span class="p">)</span> <span class="n">Read</span><span class="o">*</span><span class="p">(</span><span class="n">adr</span> <span class="p">:</span> <span class="nb">INTEGER</span><span class="p">;</span> <span class="kr">VAR</span> <span class="n">buffer</span> <span class="p">:</span> <span class="kr">ARRAY</span> <span class="kr">OF</span> <span class="bp">BYTE</span><span class="p">;</span> <span class="n">start</span><span class="p">,</span> <span class="n">length</span> <span class="p">:</span> <span class="nb">LENGTH</span><span class="p">):</span> <span class="nb">LENGTH</span><span class="p">;</span>
 </pre></div>
@@ -308,8 +306,8 @@ The function returns the number of bytes that were received.</p>
 </section>
 <section id="bus-write">
 <span id="busi2c-bus-write"></span><h3>Bus.Write<a class="headerlink" href="#bus-write" title="Link to this heading"></a></h3>
-<p>Write bytes from the buffer to the peripheral specified by addr.
-The number of bytes written is length and starting from start index.
+<p>Write bytes from the buffer to the peripheral specified by <em>addr</em>.
+The number of bytes written is <em>length</em> and starting from <em>start</em> index.
 The function returns the number of bytes that were sent.</p>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="p">(</span><span class="kr">VAR</span> <span class="n">this</span><span class="p">:</span> <span class="n">Bus</span><span class="p">)</span> <span class="n">Write</span><span class="o">*</span><span class="p">(</span><span class="n">adr</span> <span class="p">:</span> <span class="nb">INTEGER</span><span class="p">;</span> <span class="kr">VAR</span> <span class="n">buffer</span> <span class="p">:</span> <span class="kr">ARRAY</span> <span class="kr">OF</span> <span class="bp">BYTE</span><span class="p">;</span> <span class="n">start</span><span class="p">,</span> <span class="n">length</span> <span class="p">:</span> <span class="nb">LENGTH</span><span class="p">;</span> <span class="n">stop</span> <span class="p">:</span> <span class="nb">BOOLEAN</span><span class="p">):</span> <span class="nb">LENGTH</span><span class="p">;</span>
 </pre></div>

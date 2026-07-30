@@ -42,7 +42,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Generic:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Common</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="Micro.Machine.mod.html">Machine</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Micro.Machine.mod.html#const">Const</a></li>
@@ -77,7 +77,6 @@
 <li class="toctree-l1"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html">MachinePinExtInt</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html#types">Types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html#procedures">Procedures</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html#pinextint-on">PinExtInt.On</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html#pinextint-sethandle">PinExtInt.SetHandle</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html#pinextint-ontrigger">PinExtInt.OnTrigger</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.MachinePinExtInt.mod.html#pinextint-trigger">PinExtInt.Trigger</a></li>
@@ -111,6 +110,9 @@
 </li>
 </ul>
 </li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Bus Interfaces</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="Micro.BusI2C.mod.html">BusI2C</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Micro.BusI2C.mod.html#const">Const</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Micro.BusI2C.mod.html#types">Types</a></li>
@@ -170,6 +172,9 @@
 </li>
 </ul>
 </li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Device Drivers</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="Micro.DeviceDS18B20.mod.html">DeviceDS18B20</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Micro.DeviceDS18B20.mod.html#const">Const</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Micro.DeviceDS18B20.mod.html#types">Types</a></li>
@@ -200,20 +205,13 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html">DeviceSTMPE811</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#const">Const</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#types">Types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#procedures">Procedures</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#init">Init</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-writedata">Device.WriteData</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-writeregister">Device.WriteRegister</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-readdata">Device.ReadData</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-readregister">Device.ReadRegister</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-readdata16">Device.ReadData16</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-readdeviceid">Device.ReadDeviceId</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-reset">Device.Reset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-enabletouchinterrupt">Device.EnableTouchInterrupt</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-clearinterrupts">Device.ClearInterrupts</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-resetfifo">Device.ResetFIFO</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-config">Device.Config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-hastouchdata">Device.HasTouchData</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Micro.DeviceSTMPE811.mod.html#device-readxy">Device.ReadXY</a></li>
@@ -249,9 +247,9 @@
              
   <section id="debug">
 <span id="index-0"></span><span id="id1"></span><h1>Debug<a class="headerlink" href="#debug" title="Link to this heading"></a></h1>
-<p>Debug module.</p>
+<p>Debug CLI module.</p>
 <p>Main function is the CommandLine type which implements
-a simple command line for interactive seesion for the user.</p>
+a simple command line for interactive session for the user.</p>
 <dl class="simple">
 <dt>This supports the following operations:</dt><dd><ul class="simple">
 <li><p>Left and right key moves cursor</p></li>
@@ -261,6 +259,7 @@ a simple command line for interactive seesion for the user.</p>
 </ul>
 </dd>
 </dl>
+<p>Example of use is found the <em>uartcli</em> demo.</p>
 <section id="types">
 <h2>Types<a class="headerlink" href="#types" title="Link to this heading"></a></h2>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="n">CommandLine</span><span class="o">*</span> <span class="o">=</span> <span class="kr">RECORD</span>
@@ -278,7 +277,7 @@ a simple command line for interactive seesion for the user.</p>
 <section id="init">
 <span id="debug-init"></span><h3>Init<a class="headerlink" href="#init" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Initialize CommandLine</p>
+<div><p>Initialize CommandLine.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="n">Init</span><span class="o">*</span><span class="p">(</span><span class="kr">VAR</span> <span class="n">cmd</span> <span class="p">:</span> <span class="n">CommandLine</span><span class="p">);</span>
 </pre></div>
@@ -287,7 +286,7 @@ a simple command line for interactive seesion for the user.</p>
 <section id="commandline-writechar">
 <span id="debug-commandline-writechar"></span><h3>CommandLine.WriteChar<a class="headerlink" href="#commandline-writechar" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Write char to screen. Must be implemented</p>
+<div><p>Write char to screen. Must be implemented.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="p">(</span><span class="kr">VAR</span> <span class="n">this</span> <span class="p">:</span> <span class="n">CommandLine</span><span class="p">)</span> <span class="n">WriteChar</span><span class="o">*</span> <span class="p">(</span><span class="n">ch</span> <span class="p">:</span> <span class="nb">CHAR</span><span class="p">);</span>
 </pre></div>
@@ -305,7 +304,7 @@ a simple command line for interactive seesion for the user.</p>
 <section id="commandline-clear">
 <span id="debug-commandline-clear"></span><h3>CommandLine.Clear<a class="headerlink" href="#commandline-clear" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Clear screen</p>
+<div><p>Clear screen.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="p">(</span><span class="kr">VAR</span> <span class="n">this</span> <span class="p">:</span> <span class="n">CommandLine</span><span class="p">)</span> <span class="n">Clear</span><span class="o">*</span><span class="p">;</span>
 </pre></div>
@@ -314,7 +313,7 @@ a simple command line for interactive seesion for the user.</p>
 <section id="commandline-reset">
 <span id="debug-commandline-reset"></span><h3>CommandLine.Reset<a class="headerlink" href="#commandline-reset" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Reset ANSI attributes</p>
+<div><p>Reset ANSI attributes.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="p">(</span><span class="kr">VAR</span> <span class="n">this</span> <span class="p">:</span> <span class="n">CommandLine</span><span class="p">)</span> <span class="n">Reset</span><span class="o">*</span><span class="p">;</span>
 </pre></div>
@@ -323,7 +322,7 @@ a simple command line for interactive seesion for the user.</p>
 <section id="commandline-onwelcome">
 <span id="debug-commandline-onwelcome"></span><h3>CommandLine.OnWelcome<a class="headerlink" href="#commandline-onwelcome" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Write welcome message to screen</p>
+<div><p>Write welcome message to screen.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="p">(</span><span class="kr">VAR</span> <span class="n">this</span> <span class="p">:</span> <span class="n">CommandLine</span><span class="p">)</span> <span class="n">OnWelcome</span><span class="o">*</span><span class="p">;</span>
 </pre></div>
@@ -332,7 +331,7 @@ a simple command line for interactive seesion for the user.</p>
 <section id="commandline-onprompt">
 <span id="debug-commandline-onprompt"></span><h3>CommandLine.OnPrompt<a class="headerlink" href="#commandline-onprompt" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Write prompt to screen</p>
+<div><p>Write prompt to screen.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="p">(</span><span class="kr">VAR</span> <span class="n">this</span> <span class="p">:</span> <span class="n">CommandLine</span><span class="p">)</span> <span class="n">OnPrompt</span><span class="o">*</span><span class="p">;</span>
 </pre></div>
@@ -341,7 +340,7 @@ a simple command line for interactive seesion for the user.</p>
 <section id="commandline-oncommand">
 <span id="debug-commandline-oncommand"></span><h3>CommandLine.OnCommand<a class="headerlink" href="#commandline-oncommand" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Execute command. Return TRUE if a valid command</p>
+<div><p>Execute command. Return TRUE if a valid command.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="p">(</span><span class="kr">VAR</span> <span class="n">this</span> <span class="p">:</span> <span class="n">CommandLine</span><span class="p">)</span> <span class="n">OnCommand</span><span class="o">*</span> <span class="p">():</span> <span class="nb">BOOLEAN</span><span class="p">;</span>
 </pre></div>
@@ -350,7 +349,7 @@ a simple command line for interactive seesion for the user.</p>
 <section id="commandline-processchar">
 <span id="debug-commandline-processchar"></span><h3>CommandLine.ProcessChar<a class="headerlink" href="#commandline-processchar" title="Link to this heading"></a></h3>
 <blockquote>
-<div><p>Process single input char</p>
+<div><p>Process single input char.</p>
 </div></blockquote>
 <div class="highlight-modula2 notranslate"><div class="highlight"><pre><span></span><span class="kr">PROCEDURE</span> <span class="p">(</span><span class="kr">VAR</span> <span class="n">this</span> <span class="p">:</span> <span class="n">CommandLine</span><span class="p">)</span> <span class="n">ProcessChar</span><span class="o">*</span> <span class="p">(</span><span class="n">ch</span> <span class="p">:</span> <span class="nb">CHAR</span><span class="p">);</span>
 </pre></div>
