@@ -4,7 +4,7 @@
 MODULE BoardConfig;
 
 IN Micro IMPORT STM32C5;
-IN Micro IMPORT STM32C5System;
+IN Micro IMPORT STM32C5RCC;
 IN Micro IMPORT ArchArmSysTick;
 IN Micro IMPORT STM32C5Pins;
 IN Micro IMPORT STM32C5RTC;
@@ -58,8 +58,8 @@ END InitSysTick;
 PROCEDURE Init*;
 BEGIN
     (* Switch to HSE 24MHz crystal *)
-    STM32C5System.SetClock(STM32C5System.HSE, 24'000'000);
-    HCLK := STM32C5System.HCLK;
+    STM32C5RCC.SetClock(STM32C5RCC.HSE, 24'000'000);
+    HCLK := STM32C5RCC.HCLK;
     SYSCLK := HCLK;
     PCLK1 := HCLK;
 	PCLK2 := HCLK;
@@ -68,7 +68,7 @@ END Init;
 
 PROCEDURE InitRTC*;
 BEGIN
-    STM32C5System.SetRTCClock(STM32C5System.LSE, STM32C5System.DriveHighest);
+    STM32C5RCC.SetRTCClock(STM32C5RCC.LSE, STM32C5RCC.DriveHighest);
 END InitRTC;
 
 PROCEDURE InitDefault*;

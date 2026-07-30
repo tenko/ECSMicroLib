@@ -1,4 +1,4 @@
-MODULE STM32L4System IN Micro;
+MODULE STM32L4RCC IN Micro;
 (*
 	Alexander Shiryaev, 2021.08
     Modified by Tenko for use with ECS
@@ -156,4 +156,4 @@ BEGIN
 	HCLK := fMSI;
 END Init;
 
-END STM32L4System.
+END STM32L4RCC.

@@ -19,10 +19,10 @@ OLS += Machine MachinePin MachinePinExtInt MachineRTC
 OLS += DeviceDS18B20 DeviceILI9341 DeviceSTMPE811
 
 ifeq ($(ARCH), ARM)
-OLS += STM32F4 STM32F4Pins STM32F4PinsExtInt STM32F4I2C STM32F4System STM32F4IWDG
+OLS += STM32F4 STM32F4Pins STM32F4PinsExtInt STM32F4I2C STM32F4RCC STM32F4IWDG
 OLS += STM32F4SPI STM32F4Uart STM32F4OneWire
-OLS += STM32L4 STM32L4System STM32L4Pins STM32L4Uart STM32L4OneWire
-OLS += STM32C5 STM32C5System STM32C5Pins STM32C5PinsExtInt STM32C5Uart STM32C5RTC
+OLS += STM32L4 STM32L4RCC STM32L4Pins STM32L4Uart STM32L4OneWire
+OLS += STM32C5 STM32C5RCC STM32C5Pins STM32C5PinsExtInt STM32C5Uart STM32C5RTC
 else
 $(error Error: ARCH=$(ARCH) not supported)
 endif
@@ -62,7 +62,7 @@ build/Micro.STM32C5.obf : src/Micro.ArchArm.mod
 build/Micro.STM32C5Pins.obf : src/Micro.ArchArm.mod src/Micro.STM32C5.mod src/Micro.MachinePin.mod
 build/Micro.STM32C5PinsExtInt.obf : src/Micro.ArchArm.mod src/Micro.STM32C5.mod src/Micro.STM32C5Pins.mod src/Micro.MachinePinExtInt.mod
 build/Micro.STM32C5RTC.obf : src/Micro.ArchArm.mod src/Micro.STM32C5.mod src/Micro.MachineRTC.mod
-build/Micro.STM32C5System.obf : src/Micro.ArchArm.mod src/Micro.STM32C5.mod
+build/Micro.STM32C5RCC.obf : src/Micro.ArchArm.mod src/Micro.STM32C5.mod
 build/Micro.STM32C5Uart.obf : src/Micro.ArchArm.mod src/Micro.BusUart.mod src/Micro.STM32C5Pins.mod src/Micro.STM32C5.mod
 # STM32F4
 build/Micro.STM32F4I2C.obf : src/Micro.ArchArm.mod src/Micro.BusI2C.mod src/Micro.STM32F4Pins.mod src/Micro.STM32F4.mod
@@ -71,11 +71,11 @@ build/Micro.STM32F4OneWire.obf : src/Micro.BusOneWire.mod src/Micro.STM32F4Pins.
 build/Micro.STM32F4Pins.obf : src/Micro.ArchArm.mod src/Micro.STM32F4.mod src/Micro.MachinePin.mod
 build/Micro.STM32F4PinsExtInt.obf : src/Micro.ArchArm.mod src/Micro.STM32F4.mod src/Micro.STM32F4Pins.mod
 build/Micro.STM32F4SPI.obf : src/Micro.ArchArm.mod src/Micro.BusSPI.mod src/Micro.ArchArmSysTick.mod src/Micro.STM32F4Pins.mod src/Micro.STM32F4.mod
-build/Micro.STM32F4System.obf : src/Micro.ArchArm.mod src/Micro.STM32F4.mod
+build/Micro.STM32F4RCC.obf : src/Micro.ArchArm.mod src/Micro.STM32F4.mod
 build/Micro.STM32F4Uart.obf : src/Micro.ArchArm.mod src/Micro.BusUart.mod src/Micro.STM32F4Pins.mod src/Micro.STM32F4.mod
 # STM32L4
 build/Micro.STM32L4Pins.obf : src/Micro.ArchArm.mod src/Micro.STM32L4.mod src/Micro.MachinePin.mod
-build/Micro.STM32L4System.obf : src/Micro.ArchArm.mod src/Micro.STM32L4.mod
+build/Micro.STM32L4RCC.obf : src/Micro.ArchArm.mod src/Micro.STM32L4.mod
 build/Micro.STM32L4Uart.obf : src/Micro.ArchArm.mod src/Micro.BusUart.mod src/Micro.STM32L4Pins.mod src/Micro.STM32L4.mod
 build/Micro.STM32L4OneWire.obf : src/Micro.BusOneWire.mod src/Micro.STM32L4Pins.mod src/Micro.STM32L4.mod
 else

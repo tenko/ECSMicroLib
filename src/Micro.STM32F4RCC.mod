@@ -1,4 +1,4 @@
-MODULE STM32F4System IN Micro;
+MODULE STM32F4RCC IN Micro;
 
 (*
 	Alexander Shiryaev, 2021.08
@@ -273,4 +273,4 @@ BEGIN
 	HCLK := fHSI;
 END Init;
 
-END STM32F4System.   
+END STM32F4RCC.   
