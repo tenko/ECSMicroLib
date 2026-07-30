@@ -1,9 +1,10 @@
 (**
-ILI9341 LCD device driver
+ILI9341 LCD device driver.
 
-Ref.: ILITECH ILI9341 datasheet
-Ref.: https://vivonomicon.com/2018/06/17/drawing-to-a-small-tft-display-the-ili9341-and-stm32/
-Ref.: https://blog.embeddedexpert.io/?p=2081
+References:
+ - ILITECH ILI9341 datasheet
+ - https://vivonomicon.com/2018/06/17/drawing-to-a-small-tft-display-the-ili9341-and-stm32/
+ - https://blog.embeddedexpert.io/?p=2081
 *)
 MODULE DeviceILI9341 IN Micro;
 
@@ -90,7 +91,7 @@ VAR i : LENGTH;
 BEGIN FOR i := 0 TO 9 DO SYSTEM.ASM("nop") END
 END Delay;
 
-(** Initialize driver *)
+(** Initialize driver. *)
 PROCEDURE Init* (VAR dev : ILI9341; VAR bus: BusSPI.Bus; VAR rst, cs, dc : MachinePin.Pin);
 BEGIN
     dev.bus := PTR(bus);
@@ -103,7 +104,7 @@ BEGIN
     dev.depth := 16;
 END Init;
 
-(** Reset display *)
+(** Reset display. *)
 PROCEDURE (VAR this : ILI9341) Reset*;
 BEGIN
     this.rst.Off;
@@ -240,7 +241,7 @@ BEGIN
     END;
 END SetRotation;
 
-(** Convert RGB format to RGB565 display format *)
+(** Convert RGB format to RGB565 display format. *)
 PROCEDURE (VAR this : ILI9341) ColorRGB*(r, b, g : INTEGER): INTEGER;
 VAR s : SET16;
 BEGIN
@@ -264,7 +265,7 @@ BEGIN
 	Machine.DelayMS(1);
 END SetPixel;
 
-(** Fill canvas with color *)
+(** Fill canvas with color. *)
 PROCEDURE (VAR this : ILI9341) Fill*(color : INTEGER);
 VAR
     low, high : BYTE;

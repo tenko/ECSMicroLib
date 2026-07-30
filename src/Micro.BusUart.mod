@@ -1,6 +1,7 @@
 (**
-U[S]ART interface to be used by devices.
-Concrete implementations in MCU drivers should be passed to drivers.
+Base U[S]ART interface.
+
+Concrete implementations in MCU drivers should be passed to code.
 
 Alexander Shiryaev, 2016.09, 2017.04, 2019.10, 2020.12
 Modified by Tenko for use with ECS
@@ -13,10 +14,10 @@ TYPE
     BYTE = SYSTEM.BYTE;
     Bus* = RECORD* END;
 
-(** Return number of characters available in read buffer *)
+(** Return number of characters available in read buffer. *)
 PROCEDURE* (VAR this : Bus) Any*(): LENGTH;
 
-(** Return FALSE if we are currently transmitting data *)
+(** Return FALSE if we are currently transmitting data. *)
 PROCEDURE* (VAR this : Bus) TXDone*(): BOOLEAN;
 
 (** Read bytes into buffer with start and length. *)

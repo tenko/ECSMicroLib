@@ -1,5 +1,6 @@
 (**
-External pin interrupt base interface to be used by devices.
+External pin interrupt interface.
+
 Concrete implementations in MCU drivers should be passed to drivers.
 *)
 MODULE MachinePinExtInt IN Micro;
@@ -11,11 +12,7 @@ TYPE
         isrHandle- : PROCEDURE;
     END;
 
-(** Set pin value to 1 *)
-PROCEDURE (VAR p : PinExtInt) On*;
-BEGIN END On;
-
-(** Set interrupt callback handle *)
+(** Set interrupt callback handle. *)
 PROCEDURE (VAR ext : PinExtInt) SetHandle*(handle : PROCEDURE);
 BEGIN ext.isrHandle := handle
 END SetHandle;
@@ -28,15 +25,15 @@ BEGIN
     RETURN res
 END OnTrigger;
 
-(** Software trigger of interrupt *)
+(** Software trigger of interrupt. *)
 PROCEDURE (VAR ext : PinExtInt) Trigger*;
 BEGIN END Trigger;
 
-(** Disable interrupt *)
+(** Disable interrupt. *)
 PROCEDURE (VAR ext : PinExtInt) Disable*;
 BEGIN END Disable;
 
-(** Enable interrupt *)
+(** Enable interrupt. *)
 PROCEDURE (VAR ext : PinExtInt) Enable*;
 BEGIN END Enable;
 

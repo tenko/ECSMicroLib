@@ -1,6 +1,6 @@
 (**
-Base I2C bus interface to be used by devices.
-Concrete implementations in MCU drivers should be passed to drivers.
+Base I2C bus interface.
+Concrete implementations in MCU drivers should be passed to code.
 
 (c) Alexander Shiryaev, 2016.12
 Modified by Tenko for use with ECS
@@ -23,29 +23,29 @@ TYPE
         error*: INTEGER; (* last transfer error code or NoError if success *)
     END;
 
-(** Read or Write data *)
+(** Read or Write data. *)
 PROCEDURE (VAR this: Bus) Transfer*(adr : INTEGER; rd : BOOLEAN; VAR buf : ARRAY OF BYTE; start, len : LENGTH; stop : BOOLEAN): LENGTH;
 BEGIN RETURN ErrorArgs END Transfer;
 
 (**
-Probe address adr for device respons.
+Probe address *adr* for device respons.
 Return 0 if device responded.
 *)
 PROCEDURE (VAR this: Bus) Probe*(adr : INTEGER): INTEGER;
 BEGIN RETURN ErrorArgs END Probe;
 
 (**
-Read into buffer from the peripheral specified by addr.
-The number of bytes read is length and the data is written
-to the buffer starting from start index.
+Read into buffer from the peripheral specified by *addr*.
+The number of bytes read is *length* and the data is written
+to the buffer starting from *start* index.
 The function returns the number of bytes that were received.
 *)
 PROCEDURE (VAR this: Bus) Read*(adr : INTEGER; VAR buffer : ARRAY OF BYTE; start, length : LENGTH): LENGTH;
 BEGIN RETURN ErrorArgs END Read;
 
 (**
-Write bytes from the buffer to the peripheral specified by addr.
-The number of bytes written is length and starting from start index.
+Write bytes from the buffer to the peripheral specified by *addr*.
+The number of bytes written is *length* and starting from *start* index.
 The function returns the number of bytes that were sent.
 *)
 PROCEDURE (VAR this: Bus) Write*(adr : INTEGER; VAR buffer : ARRAY OF BYTE; start, length : LENGTH; stop : BOOLEAN): LENGTH;

@@ -1,7 +1,8 @@
 (**
-DS18B20 temperature sensor generic module
+DS18B20 temperature sensor generic module.
 
-Ref.: Dallas Semiconductor DS18B20 datasheet
+Reference:
+ -  Dallas Semiconductor DS18B20 datasheet
 *)
 MODULE DeviceDS18B20 IN Micro;
 

@@ -63,5 +63,4 @@ BEGIN
             END;
         END;
     END;
-    TRACE("Finish");
 END Test.

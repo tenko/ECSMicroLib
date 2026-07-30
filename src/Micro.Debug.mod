@@ -1,8 +1,8 @@
 (**
-Debug module.
+Debug CLI module.
 
 Main function is the CommandLine type which implements
-a simple command line for interactive seesion for the user.
+a simple command line for interactive session for the user.
 
 This supports the following operations:
  * Left and right key moves cursor
@@ -10,6 +10,7 @@ This supports the following operations:
  * Enter execute command
  * Up and down arrow navigates command history
 
+Example of use is found the *uartcli* demo.
 *)
 MODULE Debug IN Micro;
 
@@ -37,7 +38,7 @@ TYPE
         quit* : BOOLEAN;
     END;
 
-(** Initialize CommandLine *)
+(** Initialize CommandLine. *)
 PROCEDURE Init*(VAR cmd : CommandLine);
 BEGIN
     cmd.pos := 0; cmd.len := 0; cmd.hidx := -1;
@@ -46,7 +47,7 @@ BEGIN
     ArrayOfByte.Zero(cmd.history);
 END Init;
 
-(* Append to history *)
+(* Append to history. *)
 PROCEDURE (VAR this : CommandLine) AppendHistory();
 VAR
     i : LENGTH;
@@ -90,7 +91,7 @@ BEGIN
     END;
 END AppendHistory;
 
-(** Write char to screen. Must be implemented *)
+(** Write char to screen. Must be implemented. *)
 PROCEDURE (VAR this : CommandLine) WriteChar* (ch : CHAR);
 BEGIN END WriteChar;
 
@@ -104,30 +105,30 @@ BEGIN
     END;
 END WriteStr;
 
-(** Clear screen *)
+(** Clear screen. *)
 PROCEDURE (VAR this : CommandLine) Clear*;
 BEGIN
     this.WriteChar(ESC); this.WriteStr("[2J");
     this.WriteChar(ESC); this.WriteStr("[H")
 END Clear;
 
-(** Reset ANSI attributes *)
+(** Reset ANSI attributes. *)
 PROCEDURE (VAR this : CommandLine) Reset*;
 BEGIN this.WriteChar(ESC); this.WriteStr("[0m");
 END Reset;
 
-(** Write welcome message to screen *)
+(** Write welcome message to screen. *)
 PROCEDURE (VAR this : CommandLine) OnWelcome*;
 BEGIN END OnWelcome;
 
-(** Write prompt to screen *)
+(** Write prompt to screen. *)
 PROCEDURE (VAR this : CommandLine) OnPrompt*;
 BEGIN
     this.WriteChar(ESC); this.WriteStr("[1;34mSTM32: ");
     this.Reset;
 END OnPrompt;
 
-(* Redraw line content *)
+(* Redraw line content. *)
 PROCEDURE (VAR this : CommandLine) RedrawLine;
 VAR i : LENGTH;
 BEGIN
@@ -145,7 +146,7 @@ BEGIN
     END;
 END RedrawLine;
 
-(* Handle normal char *)
+(* Handle normal char. *)
 PROCEDURE (VAR this : CommandLine) OnChar(ch : CHAR);
 VAR i, chars : LENGTH;
 BEGIN
@@ -160,7 +161,7 @@ BEGIN
     INC(this.len); INC(this.pos);
 END OnChar;
 
-(* Handle backspace *)
+(* Handle backspace. *)
 PROCEDURE (VAR this : CommandLine) OnBackSpace;
 VAR i, chars : LENGTH;
 BEGIN
@@ -174,7 +175,7 @@ BEGIN
     FOR i := 0 TO chars - 1 DO this.WriteChar(BS) END;
 END OnBackSpace;
 
-(** Execute command. Return TRUE if a valid command *)
+(** Execute command. Return TRUE if a valid command. *)
 PROCEDURE (VAR this : CommandLine) OnCommand* (): BOOLEAN;
 VAR ret : BOOLEAN;
 BEGIN
@@ -189,7 +190,7 @@ BEGIN
     RETURN ret
 END OnCommand;
 
-(* Handle linefeed char *)
+(* Handle linefeed char. *)
 PROCEDURE (VAR this : CommandLine) OnLineFeed;
 VAR i : LENGTH;
 BEGIN
@@ -232,7 +233,7 @@ BEGIN
     END;
 END OnLineFeed;
 
-(* Handle up arrow key *)
+(* Handle up arrow key. *)
 PROCEDURE (VAR this : CommandLine) OnUp;
 VAR i : LENGTH;
 BEGIN
@@ -249,7 +250,7 @@ BEGIN
     this.RedrawLine;
 END OnUp;
 
-(* Handle down arrow key *)
+(* Handle down arrow key. *)
 PROCEDURE (VAR this : CommandLine) OnDown;
 VAR i : LENGTH;
 BEGIN
@@ -266,7 +267,7 @@ BEGIN
     this.RedrawLine;
 END OnDown;
 
-(* Handle left arrow key *)
+(* Handle left arrow key. *)
 PROCEDURE (VAR this : CommandLine) OnLeft;
 BEGIN
     IF this.pos > 0 THEN
@@ -275,7 +276,7 @@ BEGIN
     END;
 END OnLeft;
 
-(* Handle right arrow key *)
+(* Handle right arrow key. *)
 PROCEDURE (VAR this : CommandLine) OnRight;
 BEGIN
     IF this.pos < this.len THEN
@@ -284,7 +285,7 @@ BEGIN
     END;
 END OnRight;
 
-(** Process single input char *)
+(** Process single input char. *)
 PROCEDURE (VAR this : CommandLine) ProcessChar* (ch : CHAR);
 BEGIN
     IF this.quit OR (ch = 00X) THEN

@@ -1,6 +1,7 @@
 (**
-Base SPI bus interface to be used by devices.
-Concrete implementations in MCU drivers should be passed to drivers.
+Base SPI bus interface.
+
+Concrete implementations in MCU drivers should be passed to code.
 
 (c) Alexander Shiryaev, 2016.12
 Modified by Tenko for use with ECS
@@ -24,7 +25,7 @@ TYPE
         error*: INTEGER; (* last transfer error code or NoError if success *)
     END;
 
-(** Callback during transfer idle *)
+(** Callback during transfer idle. *)
 PROCEDURE (VAR this : Bus) Idle*;
 BEGIN
 END Idle;
@@ -40,20 +41,20 @@ General transfer routine.
 PROCEDURE (VAR this : Bus) Transfer* (rxAdr, txAdr : ADDRESS; txConst : BOOLEAN; dataSize, len : LENGTH);
 BEGIN END Transfer;
 
-(** Read length bytes to buffer begining at start index and send TXByte *)
+(** Read *length* bytes to buffer begining at *start* index and send *TXByte*. *)
 PROCEDURE (VAR this : Bus) Read*(VAR buffer : ARRAY OF BYTE; start, length : LENGTH; TXByte : BYTE);
 BEGIN
 END Read;
 
-(** Write length bytes from buffer begining at start index *)
+(** Write *length* bytes from buffer begining at *start* index. *)
 PROCEDURE (VAR this : Bus) Write*(VAR buffer : ARRAY OF BYTE; start, length : LENGTH);
 BEGIN
 END Write;
 
 (**
-Write length bytes from buffer begining at TXStart index
-and at the same time read length bytes to buffer begining
-at RXStart index.
+Write *length* bytes from buffer begining at *TXStart* index
+and at the same time read *length* bytes to buffer begining
+at *RXStart* index.
 *)
 PROCEDURE (VAR this : Bus) ReadWrite*(VAR RXBuffer : ARRAY OF BYTE;VAR TXBuffer : ARRAY OF BYTE; RXStart, TXStart, length : LENGTH);
 BEGIN

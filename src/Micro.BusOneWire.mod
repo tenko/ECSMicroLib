@@ -1,9 +1,11 @@
 (**
-Base OneWire bus interface to be used by devices.
-Concrete implementations in MCU drivers should be passed to drivers.
+Base OneWire bus interface.
 
-Ref.: Maxim's Application Note 187 1-Wire Seach Algorithm
-Ref.: Maxim's Appliaction Note 27 Understanding and using Cyclic Rendundancy Checks
+Concrete implementations in MCU drivers should be passed to code.
+
+References:
+ - Maxim's Application Note 187 1-Wire Seach Algorithm
+ - Maxim's Appliaction Note 27 Understanding and using Cyclic Rendundancy Checks
 *)
 MODULE BusOneWire IN Micro;
 
@@ -47,34 +49,34 @@ CONST
 VAR ^ Crc8Data ["CRC8ONEWIRE"]: ARRAY 256 OF CHAR;
 VAR ^ Crc16Data ["CRC16ONEWIRE"]: ARRAY 256 OF UNSIGNED16;
 
-(** Enable 1-wire bus *)
+(** Enable 1-wire bus. *)
 PROCEDURE (VAR bus- : Bus) Enable*;
 BEGIN END Enable;
 
-(** Disable 1-wire bus *)
+(** Disable 1-wire bus. *)
 PROCEDURE (VAR bus- : Bus) Disable*;
 BEGIN END Disable;
 
-(** Send reset slot and return true if devices is present on bus *)
+(** Send reset slot and return true if devices is present on bus. *)
 PROCEDURE (VAR bus : Bus) Reset*(): BOOLEAN;
 BEGIN RETURN FALSE END Reset;
 
-(** Write bit to 1-wire bus *)
+(** Write bit to 1-wire bus. *)
 PROCEDURE (VAR bus- : Bus) WriteBit*(bit : BOOLEAN);
 BEGIN END WriteBit;
 
-(** Read bit from 1-wire bus *)
+(** Read bit from 1-wire bus. *)
 PROCEDURE (VAR bus- : Bus) ReadBit*(): BOOLEAN;
 BEGIN RETURN FALSE END ReadBit;
 
 (**
 Send and optinal receive data on 1-wire bus
-* sendReset : Send reset signal at the start. SendReset or NoReset.
-* cmd : Address to array of bytes commands. Use ReadSlot to specify reading.
-* clen : Length of command array.
-* data : Address to optional array of read buffer.
-* dlen : Length of read buffer.
-* rStart : Index for reading to start (from 0). NoRead to disable reading.
+ - sendReset : Send reset signal at the start. SendReset or NoReset.
+ - cmd : Address to array of bytes commands. Use ReadSlot to specify reading.
+ - clen : Length of command array.
+ - data : Address to optional array of read buffer.
+ - dlen : Length of read buffer.
+ - rStart : Index for reading to start (from 0). NoRead to disable reading.
 
 Return TRUE if no error occured.
 *)
@@ -82,7 +84,7 @@ PROCEDURE (VAR bus : Bus) SendReceive*(sendReset : INTEGER; cmd : ADDRESS; clen 
 BEGIN RETURN FALSE
 END SendReceive;
 
-(** Reset ROM search *)
+(** Reset ROM search. *)
 PROCEDURE (VAR bus : Bus) ResetSearch*;
 BEGIN
     bus.LastDiscrepancy := 0;
@@ -92,7 +94,7 @@ END ResetSearch;
 
 (**
 Search ROM
-Ref. Maxim APPLICATION NOTE 187
+- Ref. Maxim APPLICATION NOTE 187
 *)
 PROCEDURE (VAR bus : Bus) Search*(cmd : BYTE): BOOLEAN;
 VAR
@@ -169,12 +171,12 @@ BEGIN
     RETURN searchResult
 END Search;
 
-(** Find next device on 1-wire bus *)
+(** Find next device on 1-wire bus. *)
 PROCEDURE (VAR bus : Bus) Next*(): BOOLEAN;
 BEGIN RETURN bus.Search(CMD_SEARCHROM)
 END Next;
 
-(** Write ROM to memory area *)
+(** Write ROM to memory area. *)
 PROCEDURE (VAR bus : Bus) ReadROM*(adr : ADDRESS);
 VAR i : INTEGER;
 BEGIN
@@ -184,12 +186,12 @@ BEGIN
     END;
 END ReadROM;
 
-(** Write ROM to array *)
+(** Write ROM to array. *)
 PROCEDURE (VAR bus : Bus) GetROM*(VAR x : ARRAY OF BYTE);
 BEGIN bus.ReadROM(SYSTEM.ADR(x[0]));
 END GetROM;
 
-(** Calculate (MAXIM-DOW) CRC8 of memory array *)
+(** Calculate (MAXIM-DOW) CRC8 of memory array. *)
 PROCEDURE Crc8*(adr : ADDRESS; len : LENGTH): CHAR;
 VAR
     i : INTEGER;
@@ -205,8 +207,7 @@ BEGIN
     RETURN crc
 END Crc8;
 
-(** Calculate MAXIM-DOW CRC16 of memory array *)
-(* TODO : Verify if working crrectly *)
+(** Calculate MAXIM-DOW CRC16 of memory array. *)
 PROCEDURE Crc16*(adr : ADDRESS; len : LENGTH): UNSIGNED16;
 VAR
     i, idx : INTEGER;
@@ -214,6 +215,7 @@ VAR
     data, crc : UNSIGNED16;
     adrcrc : ADDRESS;
 BEGIN
+    (* TODO : Verify if working crrectly *)
     ASSERT(len > 0);
     crc := 0;
     adrcrc := SYSTEM.ADR(Crc16Data);
