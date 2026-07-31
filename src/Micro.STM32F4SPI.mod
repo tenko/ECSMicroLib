@@ -201,13 +201,13 @@ BEGIN
     bus.DR  := base + 0CH;
     
 	(* disable interrupts *)
-    ArchArm.DisableIRQ(Int);
+    ArchArm.IRQDisable(Int);
 	
 	(* disable DMA RX interrupts *)
-    ArchArm.DisableIRQ(DMARXInt);
+    ArchArm.IRQDisable(DMARXInt);
 
     (* disable DMA TX interrupts *)
-    ArchArm.DisableIRQ(DMATXInt);
+    ArchArm.IRQDisable(DMATXInt);
 
     (* enable clock for SPI *)
     SYSTEM.GET(RCC_SPICLK, x);

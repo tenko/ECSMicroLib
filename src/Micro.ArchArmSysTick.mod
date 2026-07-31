@@ -12,7 +12,6 @@ IMPORT SYSTEM, ArchArm IN Micro;
 VAR
     tick-: UNSIGNED32;
 	flag: BOOLEAN;
-	freq: INTEGER;
 
 PROCEDURE ^ DelayIdle ["delay_idle"] ();
 
@@ -51,13 +50,13 @@ VAR
 	x: INTEGER;
 BEGIN
 	SYSTEM.PUT(ArchArm.SYST_CSR, SET32({})); (* disable SysTick *)
-	freq := hz;
+	IF hz <= 0 THEN RETURN END;
 	tick := 0;
 	flag := FALSE;
 	(* NOTE: timer is 24-bit! *)
 	(* http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0552a/Babieigh.html *)
-	x := HCLK DIV freq - 1;
-	ASSERT(x > 0);
+	x := HCLK DIV hz - 1;
+	ASSERT(x <= 0FFFFFFH);
 	SYSTEM.PUT(ArchArm.SYST_RVR, x);
 	SYSTEM.PUT(ArchArm.SYST_CVR, SIGNED32(0)); (* any write to current clears it *)
 	SYSTEM.PUT(ArchArm.SYST_CSR, SET32({ENABLE,TICKINT, CLKSOURCE})) (* enable timer with clock source of SYSCLOCK with interrupts *)

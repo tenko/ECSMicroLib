@@ -142,7 +142,7 @@ BEGIN
     OutBuffer.Init(bus.outBuffer);
     
 	(* disable interrupts *)
-	ArchArm.DisableIRQ(Int);
+	ArchArm.IRQDisable(Int);
 
 	(* enable clock for U[S]ART *)
     SYSTEM.GET(URCCENR, x);
@@ -192,7 +192,7 @@ BEGIN
     bus.enableTCI := bus.disableTCI + {TCIE};
     SYSTEM.PUT(bus.CR1, bus.disableTCI);
     
-    ArchArm.EnableIRQ(Int)
+    ArchArm.IRQEnable(Int)
 END Init;
 
 (** Return number of characters available in read buffer *)

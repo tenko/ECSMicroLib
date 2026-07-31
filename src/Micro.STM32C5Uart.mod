@@ -123,7 +123,7 @@ BEGIN
     OutBuffer.Init(bus.outBuffer);
     
 	(* disable interrupts *)
-    ArchArm.DisableIRQ(Int);
+    ArchArm.IRQDisable(Int);
 
     (* select clock source to PCLK1 *)
     SYSTEM.GET(MCU.RCC_CCIPR1, x);
@@ -174,7 +174,7 @@ BEGIN
     bus.enableTCI := bus.disableTCI + {TCIE};
     SYSTEM.PUT(bus.CR1, bus.disableTCI);
     
-    ArchArm.EnableIRQ(Int)
+    ArchArm.IRQEnable(Int)
 END Init;
 
 (** Return number of characters available in read buffer *)

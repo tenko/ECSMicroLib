@@ -53,12 +53,12 @@ END InterruptHandler;
 
 (* Disable interrupt *)
 PROCEDURE DisableIRQ;
-BEGIN ArchArm.DisableIRQ(Int)
+BEGIN ArchArm.IRQDisable(Int)
 END DisableIRQ;
 
 (* Enable interrupt *)
 PROCEDURE EnableIRQ;
-BEGIN ArchArm.EnableIRQ(Int)
+BEGIN ArchArm.IRQEnable(Int)
 END EnableIRQ;
 
 (** Set RTC Wakeup timer delay in seconds.

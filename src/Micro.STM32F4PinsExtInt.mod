@@ -49,12 +49,12 @@ END Trigger;
 
 (** Disable interrupt *)
 PROCEDURE (VAR ext : PinExtInt) Disable*;
-BEGIN ArchArm.DisableIRQ(Int)
+BEGIN ArchArm.IRQDisable(Int)
 END Disable;
 
 (** Enable interrupt *)
 PROCEDURE (VAR ext : PinExtInt) Enable*;
-BEGIN ArchArm.EnableIRQ(Int)
+BEGIN ArchArm.IRQEnable(Int)
 END Enable;
 
 (** Initialize interrupt on pin. Interrups is disabled. *)

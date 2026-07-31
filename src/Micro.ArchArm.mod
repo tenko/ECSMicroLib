@@ -349,18 +349,36 @@ BEGIN
     SYSTEM.PUT(CPACR, x - {FPU0 + 1, FPU0});
 END FPUDisable;
 
+(** Set interrupt priority *)
+PROCEDURE IRQSetPriority*(int : INTEGER; priority : UNSIGNED8);
+VAR
+    x: SET32;
+    reg, pos : INTEGER;
+BEGIN
+    reg := (int DIV 4) * 4;
+    pos := int MOD 4;
+    SYSTEM.GET(NVICIPR0 + reg, x);
+	SYSTEM.PUT(NVICIPR0 + reg, x - SET32({(pos + 0) .. (pos + 7)}) + SET32(SYSTEM.LSH(priority, pos * 8)));
+END IRQSetPriority;
+
+(** Clear pending interrupt *)
+PROCEDURE IRQClearPending*(int : INTEGER);
+BEGIN
+	SYSTEM.PUT(NVICICPR0 + (int DIV 32) * 4, SET32({int MOD 32}));
+END IRQClearPending;
+
 (** Disable interrupt *)
-PROCEDURE DisableIRQ*(int : INTEGER);
+PROCEDURE IRQDisable*(int : INTEGER);
 BEGIN
 	SYSTEM.PUT(NVICICER0 + (int DIV 32) * 4, SET32({int MOD 32}));
 	SYSTEM.ASM("isb");
-END DisableIRQ;
+END IRQDisable;
 
 (** Enable interrupt *)
-PROCEDURE EnableIRQ*(int : INTEGER);
+PROCEDURE IRQEnable*(int : INTEGER);
 BEGIN
 	SYSTEM.PUT(NVICISER0 + (int DIV 32) * 4, SET32({int MOD 32}));
-END EnableIRQ;
+END IRQEnable;
 
 (** System reset *)
 PROCEDURE Reset* ["reset"]();

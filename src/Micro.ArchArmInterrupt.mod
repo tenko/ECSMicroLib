@@ -17,14 +17,24 @@ PROCEDURE SetHandle*(handle : PROCEDURE);
 BEGIN isrHandle := handle
 END SetHandle;
 
+(** Set interrupt priority *)
+PROCEDURE SetPriority*(priority : UNSIGNED8);
+BEGIN ArchArm.IRQSetPriority(Int, priority)
+END SetPriority;
+
+(** Clear pending interrupt *)
+PROCEDURE ClearPending*;
+BEGIN ArchArm.IRQClearPending(Int)
+END ClearPending;
+
 (** Disable interrupt *)
 PROCEDURE Disable*;
-BEGIN ArchArm.DisableIRQ(Int)
+BEGIN ArchArm.IRQDisable(Int)
 END Disable;
 
 (** Enable interrupt *)
 PROCEDURE Enable*;
-BEGIN ArchArm.EnableIRQ(Int)
+BEGIN ArchArm.IRQEnable(Int)
 END Enable;
 
 END ArchArmInterrupt.
