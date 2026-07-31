@@ -350,11 +350,12 @@ BEGIN
 END FPUDisable;
 
 (** Set interrupt priority *)
-PROCEDURE IRQSetPriority*(int : INTEGER; priority : UNSIGNED8);
+PROCEDURE IRQSetPriority*(int, priority : INTEGER);
 VAR
     x: SET32;
     reg, pos : INTEGER;
 BEGIN
+    ASSERT(priority <= 255); (* 8-bits field *)
     reg := (int DIV 4) * 4;
     pos := int MOD 4;
     SYSTEM.GET(NVICIPR0 + reg, x);

@@ -299,7 +299,12 @@ CONST
         UART5Int*   = 55;
         USART6Int*  = 96;
         UART7Int*   = 97;
-
+    (* Interrupt priority *)
+    UartPriority*   = 010H; (*  1 *)
+    I2CPriority*    = 0C0H; (* 12 *)
+    EXTIPriority*   = 0E0H; (* 14 *)
+    RTCPriority*    = 0F0H; (* 15 *)
+    
 VAR ^ cpuFreq ["cpu_freq"]: INTEGER;
 VAR ^ resetCause ["_reset_cause"]: INTEGER;
 

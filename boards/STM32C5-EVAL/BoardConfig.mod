@@ -12,7 +12,7 @@ IN Micro IMPORT STM32C5ExtInt8 := STM32C5PinsExtInt(8);
 IN Micro IMPORT STM32C5Uart := STM32C5Uart(1);
 
 CONST
-    Board* = "NUCLEO-L432KC";
+    Board* = "STM32C5-EVAL";
     MCU* = "STM32C551CE";
 
     (* Board user led 1 *)

@@ -14,6 +14,7 @@ RM0390, Reference manual,
 MODULE STM32F4I2C IN Micro;
 
 IMPORT SYSTEM;
+IN Micro IMPORT ArchArm;
 IN Micro IMPORT Machine;
 IN Micro IMPORT BusI2C;
 IN Micro IMPORT Pins := STM32F4Pins;
@@ -56,6 +57,7 @@ VAR
     sclpin, sdapin : Pins.Pin;
     x : SET32;
     y, z, trise, ccr: INTEGER;
+    EVInt, ERInt: INTEGER;
     RCC_APB1I2CN : INTEGER;
     base, CR1, CR2, OAR1, OAR2: ADDRESS;
     SR1, SR2, CCR, TRISE, FLTR : ADDRESS;
@@ -75,12 +77,18 @@ BEGIN
     
     IF par.n = 1 THEN
         base := MCU.I2C1;
-        RCC_APB1I2CN := 21;
+        EVInt := MCU.I2C1EVInt;
+		ERInt := MCU.I2C1ERInt;
+		RCC_APB1I2CN := 21;
     ELSIF par.n = 2 THEN
         base := MCU.I2C2;
-        RCC_APB1I2CN := 22;
+        EVInt := MCU.I2C2EVInt;
+		ERInt := MCU.I2C2ERInt;
+		RCC_APB1I2CN := 22;
     ELSE
         base := MCU.I2C3;
+        EVInt := MCU.I2C3EVInt;
+		ERInt := MCU.I2C3ERInt;
         RCC_APB1I2CN := 23;
     END;
 
@@ -101,7 +109,9 @@ BEGIN
     b.timeout := par.timeout;
     b.error := NoError;
     
-    Machine.IRQDisable; (* disable interrupts *)
+    (* disable interrupts *)
+    ArchArm.IRQDisable(EVInt);
+    ArchArm.IRQDisable(ERInt);
     
 	(* prevent endless BUSY state *)
     sclpin.Init(par.SCLPinPort, par.SCLPinN, Pins.output, Pins.pushPull, Pins.medium, Pins.noPull, 0);
@@ -173,12 +183,16 @@ BEGIN
 	(* configure rise time register *)
 	SYSTEM.PUT(TRISE, trise);
 	SYSTEM.PUT(FLTR, 0); (* disable noise filters *)
-    
-	Machine.IRQEnable;  (* enable interrupts *)
 	
 	(* configure I2C pins *)
     sclpin.Init(par.SCLPinPort, par.SCLPinN, Pins.alt, Pins.openDrain, Pins.medium, Pins.noPull, par.SCLPinAF);
     sdapin.Init(par.SDAPinPort, par.SDAPinN, Pins.alt, Pins.openDrain, Pins.medium, Pins.noPull, par.SDAPinAF);
+    
+    (* enable interrupts and set priority *)
+    ArchArm.IRQSetPriority(EVInt, MCU.I2CPriority);
+    ArchArm.IRQEnable(EVInt);
+    ArchArm.IRQSetPriority(EVInt, MCU.I2CPriority);
+    ArchArm.IRQEnable(ERInt);
 END Init;
 
 (* Read or Write data *)

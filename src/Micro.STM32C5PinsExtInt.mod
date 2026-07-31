@@ -64,7 +64,9 @@ END Disable;
 
 (** Enable interrupt *)
 PROCEDURE (VAR ext : PinExtInt) Enable*;
-BEGIN ArchArm.IRQEnable(Int)
+BEGIN
+    ArchArm.IRQSetPriority(Int, MCU.EXTIPriority);
+    ArchArm.IRQEnable(Int)
 END Enable;
 
 (** Initialize interrupt on pin. Interrups is disabled. *)

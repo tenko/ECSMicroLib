@@ -186,12 +186,12 @@ BEGIN
         SYSTEM.PUT(CR1, x + {RE,TE})
     END;
 
-	(* enable interrupts *)
+	(* enable interrupts and set priority *)
     SYSTEM.GET(CR1, x);
     bus.disableTCI := x + {RXNEIE,PEIE};
     bus.enableTCI := bus.disableTCI + {TCIE};
     SYSTEM.PUT(bus.CR1, bus.disableTCI);
-    
+    ArchArm.IRQSetPriority(Int, MCU.UartPriority);
     ArchArm.IRQEnable(Int)
 END Init;
 

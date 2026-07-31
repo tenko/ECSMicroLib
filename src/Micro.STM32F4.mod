@@ -844,7 +844,11 @@ CONST
 		SPDIFRxInt* = 94;
 		FMPI2C1Int* = 95;
 		FMPI2C1ErrorInt* = 96;
-
+    (* Interrupt priority *)
+    UartPriority*   = 010H; (*  1 *)
+    I2CPriority*    = 0C0H; (* 12 *)
+    EXTIPriority*   = 0E0H; (* 14 *)
+    
 VAR ^ cpuFreq ["cpu_freq"]: INTEGER;
 VAR ^ resetCause ["_reset_cause"]: INTEGER;
 

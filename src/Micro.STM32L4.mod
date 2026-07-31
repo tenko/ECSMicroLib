@@ -534,7 +534,12 @@ CONST
             USART2Int* = 38;
             USART3Int* = 39;
             UART4Int* = 52;
-
+    
+    (* Interrupt priority *)
+    UartPriority*   = 010H; (*  1 *)
+    I2CPriority*    = 0C0H; (* 12 *)
+    EXTIPriority*   = 0E0H; (* 14 *)
+    
 VAR ^ cpuFreq ["cpu_freq"]: INTEGER;
 
 (* Initialize systick timer with default clock *)

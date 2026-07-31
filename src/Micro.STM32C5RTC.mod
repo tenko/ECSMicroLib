@@ -58,7 +58,9 @@ END DisableIRQ;
 
 (* Enable interrupt *)
 PROCEDURE EnableIRQ;
-BEGIN ArchArm.IRQEnable(Int)
+BEGIN
+    ArchArm.IRQSetPriority(Int, MCU.RTCPriority);
+    ArchArm.IRQEnable(Int)
 END EnableIRQ;
 
 (** Set RTC Wakeup timer delay in seconds.
