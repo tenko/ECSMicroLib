@@ -91,6 +91,24 @@ BEGIN
     END;
 END AppendHistory;
 
+(* Copy history to line *)
+PROCEDURE (VAR this : CommandLine) CheckEditHistory;
+VAR i : LENGTH;
+BEGIN
+    IF this.hidx # -1 THEN
+        this.len := 0; this.pos := 0;
+        this.line[0] := 00X;
+        i := this.hidx;
+        WHILE (i < HistoryLength) & (this.history[i] # LF) DO
+            ArrayOfChar.AppendChar(this.line, this.history[i]);
+            INC(this.len);
+            INC(i)
+        END;
+        this.pos := this.len;
+        this.hidx := -1;
+    END;
+END CheckEditHistory;
+
 (** Write char to screen. Must be implemented. *)
 PROCEDURE (VAR this : CommandLine) WriteChar* (ch : CHAR);
 BEGIN END WriteChar;
@@ -150,6 +168,7 @@ END RedrawLine;
 PROCEDURE (VAR this : CommandLine) OnChar(ch : CHAR);
 VAR i, chars : LENGTH;
 BEGIN
+    this.CheckEditHistory;
     ArrayOfChar.InsertChar(this.line, ch, this.pos);
     IF this.pos = this.len THEN
         this.WriteChar(ch)
@@ -165,6 +184,7 @@ END OnChar;
 PROCEDURE (VAR this : CommandLine) OnBackSpace;
 VAR i, chars : LENGTH;
 BEGIN
+    this.CheckEditHistory;
     IF this.pos = 0 THEN RETURN END;
     ArrayOfChar.Delete(this.line, this.pos - 1, 1);
     DEC(this.len); DEC(this.pos);
