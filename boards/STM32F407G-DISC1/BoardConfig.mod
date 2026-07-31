@@ -7,6 +7,7 @@
 MODULE BoardConfig;
 
 IN Micro IMPORT ArchArmSysTick;
+IN Micro IMPORT STM32F4;
 IN Micro IMPORT STM32F4Pins;
 IN Micro IMPORT STM32F4ExtInt0 := STM32F4PinsExtInt(0);
 IN Micro IMPORT STM32F4Uart := STM32F4Uart(2);
@@ -65,9 +66,9 @@ BEGIN
     Uart.Init(bus, par);
 END InitUart;
 
+(* Setup HSE clock *)
 PROCEDURE Init*;
 BEGIN
-    STM32F4RCC.Init;
     STM32F4RCC.SetPLLSysClock(STM32F4RCC.HSE, fHSE);
     HCLK := STM32F4RCC.HCLK;
 	PCLK1 := STM32F4RCC.PCLK1;
@@ -76,10 +77,11 @@ BEGIN
 	TIMCLK2 := STM32F4RCC.TIMCLK2;
 	QCLK := STM32F4RCC.QCLK;
 	RCLK := STM32F4RCC.RCLK;
-	ArchArmSysTick.Init(HCLK, 1000);
 END Init;
 
+(* Setup with default clock at reset *)
 BEGIN
+    STM32F4.Init;
     HCLK := STM32F4RCC.fHSI;
     PCLK1 := STM32F4RCC.fHSI;
 	TIMCLK1 := STM32F4RCC.fHSI;
@@ -87,5 +89,4 @@ BEGIN
 	TIMCLK2 := STM32F4RCC.fHSI;
 	QCLK := STM32F4RCC.fHSI;
 	RCLK := STM32F4RCC.fHSI;
-    ArchArmSysTick.Init(HCLK, 1000);
 END BoardConfig.

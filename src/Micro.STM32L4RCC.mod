@@ -6,7 +6,7 @@ MODULE STM32L4RCC IN Micro;
 	RM0394, Reference manual STM32L41xxx/42xxx/43xxx/44xxx/45xxx/46xxx
 *)
 IMPORT SYSTEM;
-IN Micro IMPORT MCU := STM32L4;
+IN Micro IMPORT ArchArmSysTick, MCU := STM32L4;
 
 CONST
     (* Clocks *)
@@ -24,6 +24,8 @@ CONST
 
 	(* RCCAPB1ENR bits: *)
 	PWREN = 28;
+
+VAR ^ cpuFreq ["cpu_freq"]: INTEGER;
 
 VAR
 	HCLK*,
@@ -133,13 +135,17 @@ BEGIN
 	SYSTEM.GET(MCU.RCC_CFGR, x);
 	SYSTEM.PUT(MCU.RCC_CFGR, x + {0,1});
 	REPEAT SYSTEM.GET(MCU.RCC_CFGR, x) UNTIL x * {2,3} = {2,3};
+	
+	(* Update CPU freq and set SysTick timner *)
+	cpuFreq := HCLK;
+	ArchArmSysTick.Init(1000);
 END SetPLLSysClock;
 
-PROCEDURE Init*;
+(* Reset clock configuration to the default reset state *)
+PROCEDURE Reset*;
 VAR x: SET32;
 BEGIN
     (* RCC *)
-    (* Reset clock configuration to the default reset state *)
     SYSTEM.GET(MCU.RCC_CR, x);
     SYSTEM.PUT(MCU.RCC_CR, x + {MSION});
     (* Reset CFGR register *)
@@ -154,6 +160,10 @@ BEGIN
 	SYSTEM.PUT(MCU.RCC_CIER, SET32({}));
     (* Default startup clock *)
 	HCLK := fMSI;
-END Init;
+	
+	(* Update CPU freq and set SysTick timner *)
+	cpuFreq := HCLK;
+	ArchArmSysTick.Init(1000);
+END Reset;
 
 END STM32L4RCC.

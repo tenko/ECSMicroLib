@@ -3,7 +3,7 @@ MODULE STM32C5 IN Micro;
     RM0522, Reference manual STM32C5xxxx
 *)
 IMPORT SYSTEM;
-IN Micro IMPORT ArchArm;
+IN Micro IMPORT ArchArm, ArchArmSysTick;
 
 TYPE ADDRESS = SYSTEM.ADDRESS;
 
@@ -300,7 +300,7 @@ CONST
         USART6Int*  = 96;
         UART7Int*   = 97;
 
-VAR ^ cpuFreq ["_cpu_freq"]: INTEGER;
+VAR ^ cpuFreq ["cpu_freq"]: INTEGER;
 VAR ^ resetCause ["_reset_cause"]: INTEGER;
 
 (** Enter light sleep *)
@@ -347,6 +347,7 @@ BEGIN
     SYSTEM.ASM("wfi");
 END SleepDeep;
 
+(* Initialize systick timer with default clock and set resetCause *)
 PROCEDURE Init*;
 CONST
     (* PWR_PMCR bits: *)
@@ -360,7 +361,10 @@ VAR x: SET32;
 BEGIN
     (* default cpu frequency HSIDIV3 *)
     cpuFreq := 48000000;
-
+    
+    (* start SysTick timer with ms ticks *)
+    ArchArmSysTick.Init(1000);
+    
     (* Set reset cause *)
     IF SYSTEM.BIT(PWR_PMSR, SBF) OR SYSTEM.BIT(PWR_PMSR, SBF) THEN
         resetCause := 4; (* RESET_DEEPSLEEP *)

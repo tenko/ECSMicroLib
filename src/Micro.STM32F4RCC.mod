@@ -18,7 +18,7 @@ MODULE STM32F4RCC IN Micro;
 		STM32F446xx
 *)
 IMPORT SYSTEM;
-IN Micro IMPORT MCU := STM32F4;
+IN Micro IMPORT ArchArmSysTick, MCU := STM32F4;
 
 CONST
 	fHSI* = 16000000; (* Hz *)
@@ -35,6 +35,8 @@ CONST
 
 	(* FLASHACR bits: *)
 		PRFTEN = 8; ICEN = 9; DCEN = 10; ICRST = 11; DCRST = 12;
+
+VAR ^ cpuFreq ["cpu_freq"]: INTEGER;
 
 VAR
 	HCLK*,
@@ -226,33 +228,20 @@ BEGIN
 	SYSTEM.PUT(MCU.RCC_CFGR, x - {0,1});
 	SYSTEM.GET(MCU.RCC_CFGR, x);
 	SYSTEM.PUT(MCU.RCC_CFGR, x - {0} + {1});
-	REPEAT SYSTEM.GET(MCU.RCC_CFGR, x) UNTIL x * {2,3} = {3}
+	REPEAT SYSTEM.GET(MCU.RCC_CFGR, x) UNTIL x * {2,3} = {3};
+	
+	(* Update CPU freq and set SysTick timner *)
+	cpuFreq := HCLK;
+	ArchArmSysTick.Init(1000);
 END SetPLLSysClock;
 
-PROCEDURE Init*;
+(* Set default clock *)
+PROCEDURE Reset*;
 CONST MT = 6; (* compiler-dependent *)
 	(* ARMv7M.FPCCR bits: *)
 		LSPEN = 30;
 VAR x: SET;
 BEGIN
-	(* system_stm32f4xx.c, SystemInit: *)
-	(*
-	(* FPU: set CP10 and CP11 Full Access *)
-		SYSTEM.GET(ARMv7M.CPACR, x);
-		SYSTEM.PUT(ARMv7M.CPACR, x + {2*10,2*10+1,2*11,2*11+1});
-	*)
-(*
-		(*
-			http://www.st.com/web/en/resource/technical/document/errata_sheet/DM00037591.pdf, section 1.2
-
-			http://www.st.com/content/ccc/resource/technical/document/errata_sheet/c3/6b/f8/32/fc/01/48/6e/DM00155929.pdf/files/DM00155929.pdf/jcr:content/translations/en.DM00155929.pdf, section 1.2
-		*)
-
-	(* Disable lazy context save of floating point state *)
-		SYSTEM.GET(ARMv7M.FPCCR, x);
-		SYSTEM.PUT(ARMv7M.FPCCR, x - {LSPEN});
-*)
-
     (* RCC *)
 	(* Reset clock configuration to the default reset state *)
 		SYSTEM.GET(MCU.RCC_CR, x);
@@ -271,6 +260,9 @@ BEGIN
 		SYSTEM.PUT(MCU.RCC_CIR, SET32({}));
 	(* Default startup clock *)
 	HCLK := fHSI;
-END Init;
+	(* Update CPU freq and set SysTick timner *)
+	cpuFreq := HCLK;
+	ArchArmSysTick.Init(1000);
+END Reset;
 
 END STM32F4RCC.   

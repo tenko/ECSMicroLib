@@ -9,6 +9,8 @@ MODULE ArchArmSysTick IN Micro;
 
 IMPORT SYSTEM, ArchArm IN Micro;
 
+VAR ^ cpuFreq- ["cpu_freq"]: INTEGER;
+
 VAR
     tick-: UNSIGNED32;
 	flag: BOOLEAN;
@@ -42,7 +44,7 @@ BEGIN
 	SYSTEM.PUT(ArchArm.SYST_CSR, x - {ENABLE})
 END Disable;
 
-PROCEDURE Init* (HCLK, hz: INTEGER);
+PROCEDURE Init* (hz: INTEGER);
 CONST
    (* SYSTCSR bits: *)
    ENABLE = 0; TICKINT = 1; CLKSOURCE = 2;
@@ -55,7 +57,7 @@ BEGIN
 	flag := FALSE;
 	(* NOTE: timer is 24-bit! *)
 	(* http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0552a/Babieigh.html *)
-	x := HCLK DIV hz - 1;
+	x := cpuFreq DIV hz - 1;
 	ASSERT(x <= 0FFFFFFH);
 	SYSTEM.PUT(ArchArm.SYST_RVR, x);
 	SYSTEM.PUT(ArchArm.SYST_CVR, SIGNED32(0)); (* any write to current clears it *)

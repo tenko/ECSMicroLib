@@ -4,6 +4,7 @@
 MODULE BoardConfig;
 
 IN Micro IMPORT ArchArmSysTick;
+IN Micro IMPORT STM32L4;
 IN Micro IMPORT STM32L4Pins;
 IN Micro IMPORT STM32L4Uart := STM32L4Uart(2);
 IN Micro IMPORT STM32L4OneWire;
@@ -61,7 +62,6 @@ END InitUart;
 
 PROCEDURE Init*;
 BEGIN
-    STM32L4RCC.Init;
 	STM32L4RCC.SetPLLSysClock(STM32L4RCC.HSI);
 	HCLK := STM32L4RCC.HCLK;
 	PCLK1 := STM32L4RCC.PCLK1;
@@ -69,16 +69,15 @@ BEGIN
 	PCLK := STM32L4RCC.PCLK;
 	QCLK := STM32L4RCC.QCLK;
 	RCLK := STM32L4RCC.RCLK;
-	ArchArmSysTick.Init(HCLK, 1000);
 END Init;
 
 BEGIN
     (* System startup defaults *)
+    STM32L4.Init;
     HCLK := fMSI;
     PCLK1 := fMSI;
 	PCLK2 := fMSI;
 	PCLK := fMSI;
 	QCLK := fMSI;
 	RCLK := fMSI;
-	ArchArmSysTick.Init(HCLK, 1000);
 END BoardConfig.

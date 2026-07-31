@@ -1,7 +1,7 @@
 MODULE STM32C5RCC IN Micro;
 
 IMPORT SYSTEM;
-IN Micro IMPORT MCU := STM32C5;
+IN Micro IMPORT ArchArmSysTick, MCU := STM32C5;
 
 CONST
 	(* CPU clock *)
@@ -14,7 +14,7 @@ CONST
 	DriveLow* = 0; DriveMedLow* = 1;
 	DriveMedHigh* = 2; DriveHighest* = 3;
 
-VAR ^ cpuFreq ["_cpu_freq"]: INTEGER;
+VAR ^ cpuFreq ["cpu_freq"]: INTEGER;
 
 (**
 	Set CPU clock to 144MHz with PSI clock.
@@ -107,8 +107,10 @@ BEGIN
 	SYSTEM.GET(MCU.RCC_CFGR1, x);
     SYSTEM.PUT(MCU.RCC_CFGR1, x - {0 .. 1} + SET32(PSI));
 	REPEAT SYSTEM.GET(MCU.RCC_CFGR1, x) UNTIL x * {3,4} = SET32(PSI * 8);
-
+    
+    (* Update CPU freq and set SysTick timner *)
 	cpuFreq := 144'000'000;
+	ArchArmSysTick.Init(1000);
 END SetClock;
 
 (**

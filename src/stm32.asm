@@ -93,7 +93,7 @@ loop:
     bx.n   lr
 
 ; cpu frequency
-.data _cpu_freq
+.data cpu_freq
   .alignment  4
   .reserve  4
 

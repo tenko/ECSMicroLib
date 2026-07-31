@@ -7,15 +7,14 @@ MODULE ArchArmCycleCount IN Micro;
 IMPORT SYSTEM, ArchArm IN Micro;
 
 VAR ^ cpuFreq- ["cpu_freq"]: INTEGER;
-    
-PROCEDURE Init* (CPUCLK : INTEGER);
+
+PROCEDURE Init*;
 CONST
     TRCENA = 24;
     CYCCNTENA = 0;
 VAR
 	x: SET32;
 BEGIN
-    cpuFreq := CPUCLK;
     SYSTEM.GET(ArchArm.SCB_DEMCR, x);
     SYSTEM.PUT(ArchArm.SCB_DEMCR, x + {TRCENA});
     SYSTEM.PUT(ArchArm.DWT_CYCCNT, UNSIGNED32(0));

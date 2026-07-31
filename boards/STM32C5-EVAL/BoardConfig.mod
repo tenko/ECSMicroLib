@@ -51,10 +51,6 @@ BEGIN
     Uart.Init(bus, par);
 END InitUart;
 
-PROCEDURE InitSysTick*;
-BEGIN ArchArmSysTick.Init(SYSCLK, 1000); (* ms timer *)
-END InitSysTick;
-
 PROCEDURE Init*;
 BEGIN
     (* Switch to HSE 24MHz crystal *)
@@ -63,7 +59,6 @@ BEGIN
     SYSCLK := HCLK;
     PCLK1 := HCLK;
 	PCLK2 := HCLK;
-    InitSysTick;
 END Init;
 
 PROCEDURE InitRTC*;
@@ -79,7 +74,6 @@ BEGIN
     HCLK := fHSIDIV3;
     PCLK1 := fHSIDIV3;
 	PCLK2 := fHSIDIV3;
-	InitSysTick;
 END InitDefault;
 
 BEGIN

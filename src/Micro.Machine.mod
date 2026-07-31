@@ -19,7 +19,7 @@ CONST
     RESET_SOFT* = 5;
 
 (** CPU frequency value. *)
-VAR ^ cpuFreq- ["_cpu_freq"]: INTEGER;
+VAR ^ cpuFreq- ["cpu_freq"]: INTEGER;
 
 (** Reset cause. *)
 VAR ^ resetCause- ["_reset_cause"]: INTEGER;

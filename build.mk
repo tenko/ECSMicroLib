@@ -28,9 +28,9 @@ $(error Error: ARCH=$(ARCH) not supported)
 endif
 
 MOD += $(addprefix src/, $(addprefix Micro., $(addsuffix .mod, $(OLS))))
+OBF = build/stm32.obf
 OBF += $(addprefix build/, $(addprefix Micro., $(addsuffix .obf, $(OLS))))
 OBF += build/Micro.StaticData.obf
-OBF += build/stm32.obf
 
 DOC = Debug BusI2C BusSPI BusUart BusOneWire
 DOC += Machine MachinePin MachinePinExtInt MachineRTC
