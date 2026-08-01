@@ -6,12 +6,12 @@ based on the Black Box compiler.
 
 **Features**
 
-- MCU independent module for underlying hardware : [Machine](https://tenko.github.io/ECSMicroLib/src/Micro.Machine.mod.html), [MachinePin](https://tenko.github.io/ECSMicroLib/src/Micro.MachinePin.mod.html), , [MachinePinExtInt](https://tenko.github.io/ECSMicroLib/src/Micro.MachinePinExtInt.mod.html) and [MachineRTC](https://tenko.github.io/ECSMicroLib/src/Micro.MachineRTC.mod.html).
-- MCU independent bus module for generic driver : [BusI2C](https://tenko.github.io/ECSMicroLib/src/Micro.BusI2C.mod.html), [BusOneWire](https://tenko.github.io/ECSMicroLib/src/Micro.BusOneWire.mod.html), [BusSPI](https://tenko.github.io/ECSMicroLib/src/Micro.BusSPI.mod.html) and [BusUart](https://tenko.github.io/ECSMicroLib/src/Micro.BusUart.mod.html).
+- MCU independent modules for hardware access : [Machine](https://tenko.github.io/ECSMicroLib/src/Micro.Machine.mod.html), [MachinePin](https://tenko.github.io/ECSMicroLib/src/Micro.MachinePin.mod.html), , [MachinePinExtInt](https://tenko.github.io/ECSMicroLib/src/Micro.MachinePinExtInt.mod.html) and [MachineRTC](https://tenko.github.io/ECSMicroLib/src/Micro.MachineRTC.mod.html).
+- MCU independent bus modules for drivers : [BusI2C](https://tenko.github.io/ECSMicroLib/src/Micro.BusI2C.mod.html), [BusOneWire](https://tenko.github.io/ECSMicroLib/src/Micro.BusOneWire.mod.html), [BusSPI](https://tenko.github.io/ECSMicroLib/src/Micro.BusSPI.mod.html) and [BusUart](https://tenko.github.io/ECSMicroLib/src/Micro.BusUart.mod.html).
 - Debug CLI interface module : [Debug](https://tenko.github.io/ECSMicroLib/src/Micro.Debug.mod.html).
-- MCU independent drivers for external hardware : [DeviceDS18B20](https://tenko.github.io/ECSMicroLib/src/Micro.DeviceDS18B20.mod.html), [DeviceILI9341](https://tenko.github.io/ECSMicroLib/src/Micro.DeviceILI9341.mod.html) and [DeviceSTMPE811](https://tenko.github.io/ECSMicroLib/src/Micro.DeviceSTMPE811.mod.html).
-- A fairly complete standard library [ECSStdLib](https://github.com/tenko/ECSStdLib) is available.
-- Coroutines is supported through the standard library. Ref. the example in demos/taks.mod.
+- MCU independent drivers for devices : [DeviceDS18B20](https://tenko.github.io/ECSMicroLib/src/Micro.DeviceDS18B20.mod.html), [DeviceILI9341](https://tenko.github.io/ECSMicroLib/src/Micro.DeviceILI9341.mod.html) and [DeviceSTMPE811](https://tenko.github.io/ECSMicroLib/src/Micro.DeviceSTMPE811.mod.html).
+- A fairly complete standard library in [ECSStdLib](https://github.com/tenko/ECSStdLib) is available.
+- Coroutines is supported through the standard library. Ref. the example in *demos/taks.mod*.
 
 **Why Oberon-2?**
 
@@ -26,7 +26,7 @@ based on the Black Box compiler.
 - The module and package concept keeps the code cleanly segregated and avoid the problem with colliding names in C.
 - The [documentation](https://ecs.openbrace.org/manual/) is excellent and reported bugs is fixed quickly.
 
-The drawback of ECSOberon:
+The drawbacks of ECSOberon:
 
 - Oberon-2 is a verbose language and require upper case keyword.
   However with an IDE and auto-completion this is a minor issue in my opinion.
@@ -50,9 +50,11 @@ Currently supported boards:
 These are the boards I have on hand and are able to test. Most **STM32F4**, **STM32L4**, **STM32C5**
 boards/MCU would work if the RAM is correctly adjusted for in the config.
 
-Note that the **STM32C5** MCU familiy us new and I could only get the STMicroelectronics original software
-and hardware to work with flashing the device. The STM32CubeProg and STM32CubeIde must be installed and
-the paths in boards/build.mk verified for your installation. The Makefile target is then mxflash, mxserver and mxgdb.
+Note that the **STM32C5** MCU familiy is new and I could only get the STMicroelectronics original software
+and hardware to work with flashing the device.
+The CLI version of the tools in [STM32CubeCLT](https://www.st.com/en/development-tools/stm32cubeclt.html) is recommended
+and the paths in boards/build.mk must be verified for your installation.
+The Makefile target is then mxflash, mxserver for **STM32C5** support.
 
 The **[ECS](https://ecs.openbrace.org/)** compiler support more targets like **AVR**, **AVR32**, **Xtensa** so
 it should be possible to support more architectures.

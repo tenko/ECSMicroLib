@@ -10,16 +10,16 @@ QEMU := qemu-system-gnuarmeclipse
 STFLASH := st-flash
 STUTIL := st-util
 
-# Paths for STMicroelectronics tools.
-# These needs to checked for your installation
+# Paths for STMicroelectronics STM32CubeCLT tools.
+# These paths needs to checked for your installation
 ifdef MSYSTEM
-	MXPROGDIR = ${USERPROFILE}/AppData/Local/stm32cube/bundles/programmer/2.22.0+st.1/bin
-	MXPROG = ${USERPROFILE}/AppData/Local/stm32cube/bundles/programmer/2.22.0+st.1/bin/STM32_Programmer_CLI.exe
-	MXSTLINK = ${USERPROFILE}/AppData/Local/stm32cube/bundles/stlink-gdbserver/7.13.0+st.3/bin/ST-LINK_gdbserver.exe
+	MXPROGDIR = /c/ST/STM32CubeCLT_1.22.0/STM32CubeProgrammer/bin/
+	MXPROG = ${MXPROGDIR}STM32_Programmer_CLI.exe
+	MXSTLINK = /c/ST/STM32CubeCLT_1.22.0/STLink-gdb-server/bin/ST-LINK_gdbserver.exe
 else
-	MXPROGDIR = /opt/stm32cubeprog/bin/
-	MXPROG = ${MXPROGDIR}/STM32_Programmer_CLI
-	MXSTLINK = /opt/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.externaltools.stlink-gdb-server.linux64_2.2.500.202604010938/tools/bin/ST-LINK_gdbserver
+	MXPROGDIR = /opt/stm32cubeclt/STM32CubeProgrammer/bin/
+	MXPROG = ${MXPROGDIR}STM32_Programmer_CLI
+	MXSTLINK = /opt/stm32cubeclt/STLink-gdb-server/bin/ST-LINK_gdbserver
 endif
 
 ifdef MSYSTEM
@@ -100,12 +100,8 @@ server:
 
 .PHONY: mxserver
 mxserver:
-	@$(MXSTLINK) --semihost-console-port 2333 --semihosting terminal -m 1 --swd -e -g -cp $(MXPROGDIR)
+	@$(MXSTLINK) -p 4242 --semihost-console-port 2333 --semihosting terminal -m 1 --swd -e -g -cp $(MXPROGDIR)
 
 .PHONY: gdb
 gdb:
 	@$(GDB) -ex "target extended localhost:4242" -ex "continue"
-
-.PHONY: mxgdb
-mxgdb:
-	@$(GDB) -ex "target extended-remote localhost:61234" -ex "continue"
