@@ -105,3 +105,8 @@ mxserver:
 .PHONY: gdb
 gdb:
 	@$(GDB) -ex "target extended localhost:4242" -ex "continue"
+
+.PHONY: gdbpy
+gdbpy:
+	@$(GDB) -ex "target extended localhost:4242" -ex "source tools/gdb.py" -ex "readmap build/test.map" -ex "continue"
+
