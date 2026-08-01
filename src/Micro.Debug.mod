@@ -92,7 +92,7 @@ BEGIN
 END AppendHistory;
 
 (* Copy history to line *)
-PROCEDURE (VAR this : CommandLine) CheckEditHistory;
+PROCEDURE (VAR this : CommandLine) SetLineFromHistory;
 VAR i : LENGTH;
 BEGIN
     IF this.hidx # -1 THEN
@@ -107,7 +107,7 @@ BEGIN
         this.pos := this.len;
         this.hidx := -1;
     END;
-END CheckEditHistory;
+END SetLineFromHistory;
 
 (** Write char to screen. Must be implemented. *)
 PROCEDURE (VAR this : CommandLine) WriteChar* (ch : CHAR);
@@ -168,7 +168,7 @@ END RedrawLine;
 PROCEDURE (VAR this : CommandLine) OnChar(ch : CHAR);
 VAR i, chars : LENGTH;
 BEGIN
-    this.CheckEditHistory;
+    this.SetLineFromHistory;
     ArrayOfChar.InsertChar(this.line, ch, this.pos);
     IF this.pos = this.len THEN
         this.WriteChar(ch)
@@ -184,7 +184,7 @@ END OnChar;
 PROCEDURE (VAR this : CommandLine) OnBackSpace;
 VAR i, chars : LENGTH;
 BEGIN
-    this.CheckEditHistory;
+    this.SetLineFromHistory;
     IF this.pos = 0 THEN RETURN END;
     ArrayOfChar.Delete(this.line, this.pos - 1, 1);
     DEC(this.len); DEC(this.pos);
@@ -214,15 +214,7 @@ END OnCommand;
 PROCEDURE (VAR this : CommandLine) OnLineFeed;
 VAR i : LENGTH;
 BEGIN
-    IF this.hidx # -1 THEN
-        i := this.hidx; this.len := 0;
-        WHILE (i < HistoryLength) & (this.history[i] # LF) DO
-            this.line[this.len] := this.history[i];
-            INC(this.len);
-            INC(i)
-        END;
-        this.hidx := -1;
-    END;
+    this.SetLineFromHistory;
     
     this.WriteChar(CR); this.WriteChar(LF);
     this.line[this.len] := 00X;
