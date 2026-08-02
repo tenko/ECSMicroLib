@@ -108,5 +108,5 @@ gdb:
 
 .PHONY: gdbpy
 gdbpy:
-	@$(GDB) -ex "target extended localhost:4242" -ex "source tools/gdb.py" -ex "readmap build/test.map" -ex "continue"
+	@$(GDB) -ex "target extended localhost:4242" -ex "source tools/gdb.py" -ex "mapload build/test.map"
 
