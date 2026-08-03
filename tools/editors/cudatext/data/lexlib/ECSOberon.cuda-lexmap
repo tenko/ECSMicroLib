@@ -1,0 +1,16 @@
+[comments]
+str1=(*
+str2=*)
+styles_cmt=Comment
+styles_str=String
+
+[map]
+SYSTEM=Id4
+Symbol=Symbol
+String=String
+Comment=Comment
+Id=Id
+Id keyword=IdKeyword
+Id types=Id2
+Id builtin=Id1
+Number=Number

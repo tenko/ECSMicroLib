@@ -1,0 +1,198 @@
+Keyword AND
+Keyword ARRAY
+Keyword BEGIN
+Keyword BY
+Keyword CASE
+Keyword CONST
+Keyword DIV
+Keyword DO
+Keyword ELSE
+Keyword ELSIF
+Keyword END
+Keyword EXIT
+Keyword FOR
+Keyword IF
+Keyword IMPORT
+Keyword IN
+Keyword IS
+Keyword LOOP
+Keyword MOD
+Keyword MODULE
+Keyword NOT
+Keyword OF
+Keyword OR
+Keyword POINTER
+Keyword PROCEDURE
+Keyword RECORD
+Keyword REPEAT
+Keyword RETURN
+Keyword THEN
+Keyword TO
+Keyword TYPE
+Keyword UNTIL
+Keyword VAR
+Keyword WHILE
+Keyword WITH
+Keyword FALSE
+Keyword INF
+Keyword NAN
+Keyword NIL
+Keyword TRUE
+Type BOOLEAN
+Type CARDINAL
+Type CHAR
+Type COMPLEX
+Type COMPLEX32
+Type COMPLEX64
+Type HUGECARD
+Type HUGEINT
+Type INTEGER
+Type LENGTH
+Type LONGCARD
+Type LONGCOMPLEX
+Type LONGINT
+Type LONGREAL
+Type LONGSET
+Type REAL
+Type REAL32
+Type REAL64
+Type SET
+Type SET16
+Type SET32
+Type SET64
+Type SET8
+Type SHORTCARD
+Type SHORTCOMPLEX
+Type SHORTINT
+Type SHORTREAL
+Type SIGNED16
+Type SIGNED32
+Type SIGNED64
+Type SIGNED8
+Type UNSIGNED16
+Type UNSIGNED32
+Type UNSIGNED64
+Type UNSIGNED8
+Type SYSTEM.BYTE
+Type SYSTEM.SET
+Type SYSTEM.LENGTH
+Type SYSTEM.ADDRESS
+Function ABS(x : ANYNUM): TYPEOF(x) |Absolute value of x
+Function ASH(x : ANYINT; n : INTEGER): TYPEOF(x) |Arithmetic shift left (x ∗ 2^n)
+Function CAP(x : CHAR): CHAR |Corresponding capital letter of x
+Function CHR(x : ANYINT): CHAR |Character with ordinal number x
+Function ENTIER(x : ANYREAL): ANYINT |Largest integer not greater than x
+Function LEN(v : ANYARRAY; [n : INTEGER]): LENGTH |Length of v in dimension n (first dimension = 0)
+Function LONG(x : ANYINT): ANYINT |Idenity
+Function MAX(t : TYPE): TYPE|INTEGER |Maximum value fo TYPE or maximum value of element in SET type
+Function MIN(t : TYPE): TYPE|INTEGER |Minimum value fo TYPE or minomum value of element in SET type (0)
+Function ODD(x : ANYINT): BOOLEAN |x MOD 2 = 1
+Function ORD(x : CHAR): INTEGER |Ordinal number of x
+Function SHORT(x : ANYINT): ANYINT |Idenity
+Function SIZE(x : ANYTYPE): INTEGER |Number of bytes needed to represent TYPEOF(x)
+Function IM(x : ANYCPLX): ANYINT |Imaginary part of complex number x
+Function PTR(x : ANYTYPE): POINTER TO TYPEOF(x) |Return pointer to x
+Function RE(x : ANYCPLX): ANYINT |Real part of complex number x
+Function SEL(expr1; expr2; expr3) |IF expr1 THEN expr2 ELSE expr3 END
+Function ASSERT(expr; [n : INTEGER]) |Terminate program execution if not x
+Function COPY(x- : ARRAY OF CHAR; VAR v : ARRAY OF CHAR) |v := x
+Function DEC(v : ANYINT; [n : INTEGER]) | v := v - 1|n
+Function EXCL(v : ANYSET; n : INTEGER) | v := v - n
+Function HALT(n : INTEGER) |Terminate program execution with error code n
+Function INC(v : ANYINT; [n : INTEGER]) | v := v + 1|n
+Function INCL(v : ANYSET; n : INTEGER) | v := v - n
+Function NEW(v : POINT TO ANYTYPE; [n1..nn : LENGTH]) | Allocate pointer to record/fixed array or pointer to open array
+Function DISPOSE(v : POINT TO ANYTYPE) | Deallocate pointer to record/array and set v to NIL
+Function IGNORE(expr) | Evalute expr and ignore result
+Function TRACE(expr) | Print output of result of expr evaluation
+Function SYSTEM.ADR(v : ANYTYPE): SYSTEM.ADDRESS |Address of variable v
+Function SYSTEM.BIT(a : SYSTEM.ADDRESS; n : LENGTH): BOOLEAN |Bit n of Mem[a]
+Function SYSTEM.LSH(x : ANYINT; n : INTEGER): TYPEOF(x) |Logical shift x +/-n bits
+Function SYSTEM.ROT(x : ANYINT; n : INTEGER): TYPEOF(x) |Rotate x +/-n bits
+Function SYSTEM.VAL(T : ANYTYPE; x : TYPEOF(T)): TYPEOF(T) |x interpreted as of type T
+Function SYSTEM.GET(a : SYSTEM.ADDRESS; v : ANYTYPE) |v := Mem[a]
+Function SYSTEM.PUT(a : SYSTEM.ADDRESS; v : ANYTYPE) |Mem[a] := v
+Function SYSTEM.MOVE(a0, a1 : SYSTEM.ADDRESS; n : LENGTH) | Mem[a1..a1+n-1] := Mem[a0..a0+n-1]
+Function SYSTEM.NEW(v : POINT TO ANYTYPE; [n1..nn : LENGTH]) | Allocate pointer to record/fixed array or pointer to open array
+Function SYSTEM.ASM(string) | Generate inline assebler
+Function SYSTEM.CODE(string) | Generate intermediate code
+Function SYSTEM.DISPOSE(v : POINT TO ANYTYPE) | Deallocate pointer to record/array and set v to NIL
+Keyword Const.SysNone | Platform
+Keyword Const.SysWindows | Platform
+Keyword Const.SysLinux | Platform
+Keyword Const.DEBUG | Log level
+Keyword Const.INFO | Log level
+Keyword Const.WARN | Log level
+Keyword Const.ERROR | Log level
+Keyword Const.FATAL | Log level
+Keyword Const.Left | Format flag
+Keyword Const.Right | Format flag
+Keyword Const.Center | Format flag
+Keyword Const.Sign | Format flag
+Keyword Const.Zero | Format flag
+Keyword Const.Spc | Format flag
+Keyword Const.Alt | Format flag
+Keyword Const.Upper | Format flag
+Keyword Const.Fix | Format flag
+Keyword Const.Exp | Format flag
+Keyword Const.FPZero | Real classification
+Keyword Const.FPNormal | Real classification
+Keyword Const.FPSubnormal | Real classification
+Keyword Const.FPInfinite | Real classification
+Keyword Const.FPNaN | Real classification
+Keyword Const.AccessRead | Stream open flag
+Keyword Const.AccessWrite | Stream open flag
+Keyword Const.ModeNew | Stream open flag
+Keyword Const.SeekSet | Stream seek flag
+Keyword Const.SeekCur | Stream seek flag
+Keyword Const.SeekEnd | Stream seek flag
+Keyword Const.OK | Stream error code
+Keyword Const.ErrorNotImplemented | Stream error code
+Keyword Const.ErrorAlreadyExists | Stream error code
+Keyword Const.ErrorPathNotFound | Stream error code
+Keyword Const.ErrorFileNotFound | Stream error code
+Keyword Const.ErrorDirNotEmpty | Stream error code
+Keyword Const.ErrorNoAccess | Stream error code
+Keyword Const.ErrorLocked | Stream error code
+Keyword Const.ErrorIncompleteRead | Stream error code
+Keyword Const.ErrorWriteFailed | Stream error code
+Keyword Const.ErrorNameToLong | Stream error code
+Keyword Const.ErrorAlreadyOpen | Stream error code
+Keyword Const.ErrorUnknown | Stream error code
+Function ArrayOfChar.Clear(VAR str : ARRAY OF CHAR) | Set length of string to 0
+Function ArrayOfChar.NulTerminate(VAR str : ARRAY OF CHAR) | Ensure string is `NUL` terminated
+Function ArrayOfChar.Length(str: ARRAY OF CHAR) : LENGTH |Find length of C style `NUL` terminated string or length of array if not `NUL` terminated
+Function ArrayOfChar.Capacity(str- : ARRAY OF CHAR): LENGTH | Return capacity of the array
+Function ArrayOfChar.Assign(VAR dst : ARRAY OF CHAR; src- : ARRAY OF CHAR) | Assign `src` to `dst`
+Function ArrayOfChar.FillChar(VAR dst : ARRAY OF CHAR; ch : CHAR) | Fill string `dst` with char `chr`
+Function ArrayOfChar.AppendChar(VAR dst : ARRAY OF CHAR; ch : CHAR) | Append `ch` to `dst`
+Function ArrayOfChar.Append(VAR dst : ARRAY OF CHAR; src- : ARRAY OF CHAR) | Append `src` to `dst`
+Function ArrayOfChar.Extract(VAR dst : ARRAY OF CHAR; src- : ARRAY OF CHAR; start, count: LENGTH) | Extract substring to `dst` from `src` from `start` position and `count` length.
+Function ArrayOfChar.Compare(left-, right- : ARRAY OF CHAR): INTEGER | Compare strings `left` and `right`
+Function ArrayOfChar.Equal(left-, right- : ARRAY OF CHAR): BOOLEAN | Test if `left` and `right` is equal
+Function ArrayOfChar.IndexChar(ch : CHAR; str- : ARRAY OF CHAR; start: LENGTH): LENGTH | Index of `char` in `str`. zero based index with -1 indicating `char` not found
+Function ArrayOfChar.Index(pattern-, str-: ARRAY OF CHAR; start : LENGTH): LENGTH | Index of `pattern` in `str`. -1 indicating pattern not found
+Function ArrayOfChar.Delete(VAR dst: ARRAY OF CHAR; start, count: LENGTH) | Delete `count` characters from `dst` starting from `start`
+Function ArrayOfChar.Insert(VAR dst : ARRAY OF CHAR; src- : ARRAY OF CHAR; start: LENGTH) | Insert `src` into `dst` at `start`
+Function ArrayOfChar.Replace(VAR dst: ARRAY OF CHAR; old-, new-: ARRAY OF CHAR; start : LENGTH) | Replace `old` string with `new` string starting at index `start`
+Function ArrayOfChar.LeftTrim(VAR dst: ARRAY OF CHAR) | Remove white space & control characters from left side of string
+Function ArrayOfChar.RightTrim(VAR dst: ARRAY OF CHAR) | Remove white space & special characters from right side of string
+Function ArrayOfChar.LeftPad(VAR dst: ARRAY OF CHAR; width : LENGTH; ch : CHAR) | Left justified of length `width` with `ch`
+Function ArrayOfChar.RightPad(VAR dst: ARRAY OF CHAR; width : LENGTH; ch : CHAR) | Right justified of length `width` with `ch`
+Function ArrayOfChar.Trim(VAR dst: ARRAY OF CHAR) | Remove white space & special characters from right & left side of string
+Function ArrayOfChar.LowerCase(VAR dst: ARRAY OF CHAR) | Transform string inplace to lower case (Only takes into account the ASCII characters)
+Function ArrayOfChar.UpperCase(VAR dst: ARRAY OF CHAR) | Transform string inplace to upper case (Only takes into account the ASCII characters)
+Function ArrayOfChar.Capitalize(VAR dst: ARRAY OF CHAR) | Capitalize string inplace
+Function ArrayOfChar.StartsWith(str-, prefix- : ARRAY OF CHAR): BOOLEAN | Check if string `str` starts with `prefix`
+Function ArrayOfChar.EndsWith(str-, postfix- : ARRAY OF CHAR): BOOLEAN | Check if string `str` ends with `postfix`
+Function ArrayOfChar.Match(str- : ARRAY OF CHAR; pattern- : ARRAY OF CHAR; IgnoreCase : BOOLEAN): BOOLEAN | Return `TRUE` if `patter` matches `str`
+Function ArrayOfChar.Format(VAR Writer : Type.Stream; str- : ARRAY OF CHAR; width, prec: INTEGER; flags: SET) | Format `ARRAY OF CHAR`. 
+Function ArrayOfChar.Hash(src- : ARRAY OF CHAR): LENGTH | Hash value of string (64/32bit FNV-1a)
+Function Char.IsControl(ch: CHAR) : BOOLEAN | Returns true of ch is a control character
+Function Char.IsDigit(ch: CHAR) : BOOLEAN | Returns true of ch is a digit
+Function Char.IsLetter(ch: CHAR) : BOOLEAN | Returns true of ch is a letter
+Function Char.IsSpace(ch: CHAR) : BOOLEAN | Returns true of ch is a white space character
+Function Char.IsLower(ch: CHAR) : BOOLEAN | Returns true of ch is a lower case letter
+Function Char.IsUpper(ch: CHAR) : BOOLEAN | Returns true of ch is a upper case letter
+Function Char.Lower(ch: CHAR) : CHAR | Returns lower case letter or unmodified char
+Function Char.Upper(ch: CHAR) : CHAR | Returns upper case letter or unmodified char

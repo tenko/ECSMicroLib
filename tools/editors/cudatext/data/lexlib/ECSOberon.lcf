@@ -1,0 +1,485 @@
+object SyntAnal8: TLibSyntAnalyzer
+  Formats = <
+    item
+      DisplayName = 'SYSTEM'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clRed
+      Font.Height = -13
+      Font.Name = 'Courier New'
+      Font.Style = []
+    end
+    item
+      DisplayName = 'Symbol'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clMaroon
+      Font.Height = -13
+      Font.Name = 'Courier New'
+      Font.Style = [fsBold]
+    end
+    item
+      DisplayName = 'String'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clTeal
+      Font.Height = -13
+      Font.Name = 'Courier New'
+      Font.Style = []
+    end
+    item
+      DisplayName = 'Comment'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clGray
+      Font.Height = -13
+      Font.Name = 'Courier New'
+      Font.Style = [fsItalic]
+    end
+    item
+      DisplayName = 'Id'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -13
+      Font.Name = 'Courier New'
+      Font.Style = []
+    end
+    item
+      DisplayName = 'Id keyword'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -13
+      Font.Name = 'Courier New'
+      Font.Style = [fsBold]
+    end
+    item
+      DisplayName = 'Id types'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clPurple
+      Font.Height = -13
+      Font.Name = 'Courier New'
+      Font.Style = []
+    end
+    item
+      DisplayName = 'Id builtin'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clOlive
+      Font.Height = -13
+      Font.Name = 'Courier New'
+      Font.Style = []
+    end
+    item
+      DisplayName = 'Number'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clNavy
+      Font.Height = -13
+      Font.Name = 'Courier New'
+      Font.Style = [fsBold]
+    end>
+  TokenRules = <
+    item
+      DisplayName = 'Comment'
+      StyleName = 'Comment'
+      TokenType = 1
+      Expression = 
+        '#nested comment allowed: (* (*..*) *)'#13#10'(?s)\(\* ( \(\*.*?\*\) |.' +
+        ')*? (\*\)|\Z)'
+      ColumnFrom = 0
+      ColumnTo = 0
+    end
+    item
+      DisplayName = 'Id'
+      StyleName = 'Id'
+      TokenType = 2
+      Expression = '[a-zA-Z][a-zA-Z0-9_]*'
+      ColumnFrom = 0
+      ColumnTo = 0
+    end
+    item
+      DisplayName = 'Float'
+      StyleName = 'Number'
+      TokenType = 5
+      Expression = '(\d+\.)? \d*[ED][\+\-]?\d+\b|\d+\.\d*\b'
+      ColumnFrom = 0
+      ColumnTo = 0
+    end
+    item
+      DisplayName = 'Char'
+      StyleName = 'String'
+      TokenType = 4
+      Expression = '(?-i)\d[\dA-F]*X\b'
+      ColumnFrom = 0
+      ColumnTo = 0
+    end
+    item
+      DisplayName = 'Bin'
+      StyleName = 'Number'
+      TokenType = 5
+      Expression = '[0-1][0-1]*B\b'
+      ColumnFrom = 0
+      ColumnTo = 0
+    end
+    item
+      DisplayName = 'Oct'
+      StyleName = 'Number'
+      TokenType = 5
+      Expression = '[0-7][0-7]*O\b'
+      ColumnFrom = 0
+      ColumnTo = 0
+    end
+    item
+      DisplayName = 'Hex'
+      StyleName = 'Number'
+      TokenType = 5
+      Expression = '(?-i)\d[\dA-F]*H\b'
+      ColumnFrom = 0
+      ColumnTo = 0
+    end
+    item
+      DisplayName = 'Decimal'
+      StyleName = 'Number'
+      TokenType = 5
+      Expression = '\d+(\d+'#39'\d+)*\d+\b'
+      ColumnFrom = 0
+      ColumnTo = 0
+    end
+    item
+      DisplayName = 'Symbol'
+      StyleName = 'Symbol'
+      TokenType = 3
+      Expression = '[/\*,\.;:\(\)=<>\+\-\[\]\^\#&~\{\}\|!]'
+      ColumnFrom = 0
+      ColumnTo = 0
+    end
+    item
+      DisplayName = 'String'
+      StyleName = 'String'
+      TokenType = 4
+      Expression = '("|'#39')(\s|.)*?\1'
+      ColumnFrom = 0
+      ColumnTo = 0
+    end>
+  BlockRules = <
+    item
+      DisplayName = 'SYSTEM'
+      StyleName = 'SYSTEM'
+      BlockType = btTagDetect
+      ConditionList = <
+        item
+          TagList.Strings = (
+            'SYSTEM')
+        end>
+      HighlightPos = cpAny
+      IgnoreAsParent = False
+    end
+    item
+      DisplayName = 'Id keywords'
+      StyleName = 'Id keyword'
+      BlockType = btTagDetect
+      ConditionList = <
+        item
+          TagList.Strings = (
+            'AND'
+            'ARRAY'
+            'BEGIN'
+            'BY'
+            'CASE'
+            'CONST'
+            'DIV'
+            'DO'
+            'ELSE'
+            'ELSIF'
+            'END'
+            'EXIT'
+            'FOR'
+            'IF'
+            'IMPORT'
+            'IN'
+            'IS'
+            'LOOP'
+            'MOD'
+            'MODULE'
+            'NOT'
+            'OF'
+            'OR'
+            'POINTER'
+            'PROCEDURE'
+            'RECORD'
+            'REPEAT'
+            'RETURN'
+            'THEN'
+            'TO'
+            'TYPE'
+            'UNTIL'
+            'VAR'
+            'WHILE'
+            'WITH')
+          TokenTypes = 4
+        end>
+      HighlightPos = cpBound
+      IgnoreAsParent = False
+    end
+    item
+      DisplayName = 'Id types'
+      StyleName = 'Id types'
+      BlockType = btTagDetect
+      ConditionList = <
+        item
+          TagList.Strings = (
+            'BOOLEAN'
+            'CARDINAL'
+            'CHAR'
+            'COMPLEX'
+            'COMPLEX32'
+            'COMPLEX64'
+            'FALSE'
+            'HUGECARD'
+            'HUGEINT'
+            'INF'
+            'INTEGER'
+            'LENGTH'
+            'LONGCARD'
+            'LONGCOMPLEX'
+            'LONGINT'
+            'LONGREAL'
+            'LONGSET'
+            'NAN'
+            'NIL'
+            'REAL'
+            'REAL32'
+            'REAL64'
+            'SET'
+            'SET16'
+            'SET32'
+            'SET64'
+            'SET8'
+            'SHORTCARD'
+            'SHORTCOMPLEX'
+            'SHORTINT'
+            'SHORTREAL'
+            'SIGNED16'
+            'SIGNED32'
+            'SIGNED64'
+            'SIGNED8'
+            'TRUE'
+            'UNSIGNED16'
+            'UNSIGNED32'
+            'UNSIGNED64'
+            'UNSIGNED8')
+          TokenTypes = 4
+        end>
+      HighlightPos = cpAny
+      IgnoreAsParent = False
+    end
+    item
+      DisplayName = 'Id builtins'
+      StyleName = 'Id builtin'
+      BlockType = btTagDetect
+      ConditionList = <
+        item
+          TagList.Strings = (
+            'ABS'
+            'ASH'
+            'ASSERT'
+            'CAP'
+            'CHR'
+            'COPY'
+            'DEC'
+            'DISPOSE'
+            'ENTIER'
+            'EXCL'
+            'HALT'
+            'IGNORE'
+            'IM'
+            'INC'
+            'INCL'
+            'LEN'
+            'LONG'
+            'MAX'
+            'MIN'
+            'NEW'
+            'ODD'
+            'ORD'
+            'PTR'
+            'RE'
+            'SEL'
+            'SHORT'
+            'SIZE'
+            'TRAC')
+          TokenTypes = 4
+        end>
+      HighlightPos = cpAny
+      IgnoreAsParent = False
+    end
+    item
+      DisplayName = 'proc'
+      ConditionList = <
+        item
+          TokenTypes = 4
+        end
+        item
+          TagList.Strings = (
+            'PROCEDURE')
+          TokenTypes = 4
+        end>
+      BlockEnd = 'proc end'
+      NameFmt = 'PROCEDURE %s-1'
+      RefToCondEnd = True
+      HighlightPos = cpAny
+      CollapseFmt = 'PROCEDURE %s-1'
+      IgnoreAsParent = False
+    end
+    item
+      DisplayName = 'proc with (..)'
+      ConditionList = <
+        item
+          TokenTypes = 4
+        end
+        item
+          TagList.Strings = (
+            ')')
+          TokenTypes = 8
+        end
+        item
+          TokenTypes = 4
+        end
+        item
+          TagList.Strings = (
+            ':')
+          TokenTypes = 8
+        end
+        item
+          CondType = tcSkip
+        end
+        item
+          TagList.Strings = (
+            '(')
+          TokenTypes = 8
+        end
+        item
+          TagList.Strings = (
+            'PROCEDURE')
+          TokenTypes = 4
+        end>
+      BlockEnd = 'proc end'
+      NameFmt = 'PROCEDURE  %s[)]-1'
+      GroupFmt = '%s[)]+1'
+      RefToCondEnd = True
+      HighlightPos = cpBound
+      CollapseFmt = '%s[)]+1'
+      IgnoreAsParent = False
+    end
+    item
+      DisplayName = 'proc end'
+      BlockType = btRangeEnd
+      ConditionList = <
+        item
+          TagList.Strings = (
+            ';')
+          TokenTypes = 8
+        end
+        item
+          TokenTypes = 4
+        end
+        item
+          TagList.Strings = (
+            'END')
+          TokenTypes = 4
+        end>
+      HighlightPos = cpAny
+      IgnoreAsParent = False
+    end
+    item
+      DisplayName = 'begin'
+      ConditionList = <
+        item
+          TagList.Strings = (
+            'BEGIN'
+            'CASE'
+            'FOR'
+            'IF'
+            'LOOP'
+            'WHILE')
+          TokenTypes = 4
+        end>
+      BlockEnd = 'end'
+      DisplayInTree = False
+      HighlightPos = cpBound
+      DrawStaple = True
+      IgnoreAsParent = False
+    end
+    item
+      DisplayName = 'end'
+      BlockType = btRangeEnd
+      ConditionList = <
+        item
+          TagList.Strings = (
+            'END')
+          TokenTypes = 4
+        end>
+      HighlightPos = cpBound
+      IgnoreAsParent = False
+    end>
+  CodeTemplates = <>
+  SubAnalyzers = <>
+  SampleText.Strings = (
+    'MODULE OberonSample;'
+    ''
+    '(* comment'
+    '   comment end *)'
+    '(*(**) this is still a comment *)'
+    ''
+    'CONST'
+    '  sqString* = '#39'this is a string within "a string" ...'#39';'
+    '  dqString* = "this is a string within '#39'a string'#39' ...";'
+    '  a = 01B;'
+    '  a = 07O;'
+    '  a = 0DH;'
+    '  a = 0DX;'
+    '  r = 1. + 1.E2 + 1.2 + 4.567E8 + 0.577D-6;'
+    '  '
+    '  const div case (* lower: not reserved *)   '
+    '   '
+    'PROCEDURE getFuncsArray (VAR nFuncs: LONGINT): LONGINT;'
+    'BEGIN'
+    '   RETURN SYSTEM.ADR (MI^)'
+    'END getFuncsArray;'
+    '  '
+    
+      '   PROCEDURE (VAR self: Shape)rMoveTo*(deltax: INTEGER; deltay: ' +
+      'INTEGER);'
+    '   BEGIN'
+    
+      '      self^.moveTo(self^.getX() + deltax, self^.getY() + deltay)' +
+      ';'
+    '   END rMoveTo;'
+    ''
+    '   (* abstract draw method *)'
+    '   PROCEDURE (self: Shape)draw*();'
+    '   VAR'
+    '   '#9'i, test123 : INTEGER;'
+    '   BEGIN'
+    '   END draw;'
+    ''
+    '   (* allocate and initialize a new object instance *)'
+    
+      '   PROCEDURE Make*(x: INTEGER; y: INTEGER; radius: INTEGER): Cir' +
+      'cle;'
+    '   VAR self: Circle;'
+    '   BEGIN'
+    '      NEW(self);'
+    '      self^.moveTo(x, y);'
+    '      self^.setRadius(radius);'
+    '      RETURN self;'
+    '   END Make;'
+    ''
+    'END OberonSample.')
+  TokenTypeNames.Strings = (
+    'Unknown'
+    'Comment'
+    'Id'
+    'Symbol'
+    'String'
+    'Number')
+  Extentions = 'ob2 mod'
+  LexerName = 'ECSOberon'
+  Notes.Strings = (
+    'Based on work by Alexey Torgashin (CudaText)')
+  Charset = DEFAULT_CHARSET
+end

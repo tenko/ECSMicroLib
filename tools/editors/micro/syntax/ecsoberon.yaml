@@ -1,0 +1,37 @@
+filetype: ecsoberon
+
+detect:
+    filename: "(\\.mod$|\\.ob2$)"
+
+rules:
+    - identifier: "\\b[A-Za-z][A-Za-z_0-9]+\\b"
+    - symbol.brackets: "(\\(|\\))"
+    - symbol.brackets: "(\\[|\\])"
+    - symbol.brackets: "((BEGIN)|(END))"
+    - type: "\\b(SET|INTEGER|LONGINT|SHORTINT|BOOLEAN|REAL|LONGREAL|SHORTREAL|CHAR)\\b"
+    - type: "\\b(CARDINAL|COMPLEX|COMPLEX32|COMPLEX64|HUGECARD|HUGEINT|LENGTH|LONGCARD|LONGCOMPLEX|LONGSET)\\b"
+    - type: "\\b(REAL32|REAL64|SET8|SET16|SET32|SET64|SHORTCARD|SHORTCOMPLEX|SHORTREAL)\\b"
+    - type: "\\b(SIGNED8|SIGNED16|SIGNED32|SIGNED64|UNSIGNED8|UNSIGNED16|UNSIGNED32|UNSIGNED64)\\b"
+    - statement: "\\b(AND|ARRAY|BEGIN|BY|CASE|CONST|DIV|DO|ELSE|ELSIF|END|EXIT|FOR|IF|IMPORT|IS|IN)\\b"
+    - statement: "\\b(LOOP|MOD|MODULE|NOT|OF|OR|POINTER|PROCEDURE|RECORD|REPEAT|RETURN|THEN|TO|TYPE|UNTIL|VAR|WITH|WHILE)\\b"
+    - statement: "\\b(IN|IS|DIV|MOD|AND|OR)\\b"
+    - identifier: "\\b(ABS|ASSERT|ASH|CAP|CHR|COPY|DEC|DISPOSE|ENTIER|EXCL|HALT|INC|INCL|LEN|LENGTH|LONG|MAX|MIN|NEW|ODD|ORD|SHORT|SIZE)\\b"
+    - identifier: "\\b(DISPOSE|IGNORE|IM|PTR|RE|SEL|TRACE)\\b"
+    - special: "\\b(SYSTEM)\\b"
+    - constant: "\\b(FALSE|TRUE|NIL|INF|NAN)\\b"
+    - constant.number: "\\b([0-9]+[0-9A-F]*(H|X))\\b" # hex
+    - constant.number: "\\b([0-7]+O)\\b" # octal
+    - constant.number: "\\b([0-1]+B)\\b" # binary
+    - constant.number: "\\b[0-9]('?[0-9])*(\\.([0-9]('?[0-9])*)?)?(E[0-9]('?[0-9])*)?\\b" # decimal
+    - constant.string:
+        start: "\""
+        end: "\""
+        rules: []
+    - constant.string:
+        start: "'"
+        end: "'"
+        rules: []
+    - comment:
+        start: "\\(\\*"
+        end: "\\*\\)"
+        rules: []
