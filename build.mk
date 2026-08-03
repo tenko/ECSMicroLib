@@ -9,7 +9,7 @@ PREFIX = /usr/local
 ARCH = ARM
 
 ifeq ($(ARCH), ARM)
-OLS += ArchArm ArchArmTraps ArchArmSysTick ArchArmInterrupt ArchArmCycleCount
+OLS += ArchArm ArchArmInterrupt ArchArmException ArchArmTraps ArchArmSysTick ArchArmCycleCount
 else
 $(error Error: ARCH=$(ARCH) not supported)
 endif
@@ -46,7 +46,7 @@ ifeq ($(ARCH), ARM)
 build/Micro.ArchArmInterrupt.obf : src/Micro.ArchArm.mod
 build/Micro.ArchArmCycleCount.obf : src/Micro.ArchArm.mod
 build/Micro.ArchArmSysTick.obf : src/Micro.ArchArm.mod
-build/Micro.ArchArmTraps.obf : src/Micro.ArchArm.mod
+build/Micro.ArchArmTraps.obf : src/Micro.ArchArm.mod src/Micro.ArchArmException.mod
 else
 $(error Error: ARCH=$(ARCH) not supported)
 endif

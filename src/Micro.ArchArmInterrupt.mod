@@ -1,5 +1,5 @@
 (**
-Templated interrupt module to redirect ISR to handle.
+Templated interrupt module to redirect ISR to handle or just ignore the interrupt.
 *)
 MODULE ArchArmInterrupt (Name, Int) IN Micro;
 

@@ -110,8 +110,7 @@
   .code #0
     .replaceable
         .alignment    4
-        bkpt    0x00        ; try to go to debugger
-loop:   b.n    loop         ; loop forever if return from bkpt
+loop:   b.n    loop         ; loop forever
 #enddef
     exception_code  isr_nmi
     exception_code  isr_hardfault
