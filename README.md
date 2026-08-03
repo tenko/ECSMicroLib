@@ -67,9 +67,6 @@ be possible to adapt to other *Linux* distributions.
 *Windows MSYS2 (CLANG64)* also can follow these instructions and
 is known to work well, but is much slower than on *Linux*.
 
-Note that your *Windows* systems anti-virus software might identify the resulting *.exe* file as a threat
-and in that case this check automatic must exempt these files. 
-
 ```shell
 # Build and install patched version of ECS
 pacman -S git make clang sdl2-compat
@@ -88,11 +85,6 @@ cd ..
 pacman -S dos2unix
 git clone https://github.com/tenko/ECSStdLib.git
 cd ECSStdLib
-# Build native library
-make 
-make PREFIX=~/.local install # install to ~/.local/lib
-make TestMain # run library tests
-make clean
 # Build arm32 library
 make -f Makefile.arm32t
 make -f Makefile.arm32t PREFIX=~/.local install  # install to ~/.local/lib
@@ -184,6 +176,10 @@ Dump of assembler code from 0xbac to 0xbb0:
 => 0x00000bae:  4770            bx      lr
 End of assembler dump.
 ```
+## Editors
+
+There is setup for [cudatext](https://cudatext.github.io/) and [micro](https://cudatext.github.io/) editors
+in the *tools/editors* folder.
 
 ## TODO
 
