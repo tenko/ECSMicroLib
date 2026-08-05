@@ -178,7 +178,7 @@ End of assembler dump.
 ```
 ## Editors
 
-There is setup for [cudatext](https://cudatext.github.io/) and [micro](https://cudatext.github.io/) editors
+There is setup for [cudatext](https://cudatext.github.io/) and [micro](https://micro-editor.github.io/) editors
 in the *tools/editors* folder.
 
 ## TODO
