@@ -98,7 +98,7 @@ micro.lib : $(OBF)
 	@echo linking $@
 	@-rm $@
 	@touch $@
-	@linklib $@ $^
+	@linklib $^ $@
 
 doc/src/%.mod.rst: src/%.mod
 	@echo compiling $<

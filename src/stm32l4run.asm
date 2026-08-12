@@ -112,7 +112,7 @@
 
 #define exception_code
   .code #0
-    .replaceable
+    .default
         .alignment    4
 loop:   b.n    loop         ; loop forever
 #enddef
@@ -125,7 +125,7 @@ loop:   b.n    loop         ; loop forever
 
 #define isr_code
   .code #0
-    .replaceable
+    .default
         .alignment    4
         bx.n   lr   ; ignore interrupt
 #enddef

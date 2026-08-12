@@ -49,11 +49,11 @@ build/%.obf: demos/%.asm
 	@cd build && cp -f $(addprefix ../, $<) .
 	@cd build && $(AS) $(notdir $<)
 	
-build/test.rom: build/test.obf build/BoardConfig.obf build/runtime.obf $(EXTRAOBJ)
+build/test.rom: build/BoardConfig.obf build/runtime.obf $(EXTRAOBJ) build/test.obf
 	@echo linking $@
 	@mkdir -p build
-	@cd build && $(LKM) $(notdir $^) $(RTS) $(EXTRALIB)
-	@cd build && $(LKH) $(notdir $^) $(RTS) $(EXTRALIB)
+	@cd build && $(LKM) $(RTS) $(EXTRALIB) $(notdir $^)
+	@cd build && $(LKH) $(RTS) $(EXTRALIB) $(notdir $^)
 
 build/BoardConfig.obf: boards/$(BOARD)/BoardConfig.mod boards/$(BOARD)/config.mk
 	@echo building BoardConfig.mod

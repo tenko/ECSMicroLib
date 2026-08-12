@@ -3,13 +3,13 @@
 
 ; standard free function, defaults to nop
 .code free
-    .replaceable
+    .default
     .alignment    4
     bx.n  lr
 
 ; standard malloc function (bump allocator)
 .code malloc
-    .replaceable
+    .default
     .alignment    4
 
     ldr.n   r2, offset (heap) + offset (heap) % 4
@@ -31,7 +31,7 @@ heap: .qbyte  @_heap_start
 
 ; standard abort function (infinite loop)
 .code abort
-    .replaceable
+    .default
     .alignment    4
 loop:
     b.n    loop
@@ -43,51 +43,51 @@ loop:
 
 ; standard getchar function, defaults to nop
 .code getchar
-    .replaceable
+    .default
     .alignment    4
     bx.n   lr
 
 ; standard putchar function, defaults to nop
 .code putchar
-    .replaceable
+    .default
     .alignment    4
     bx.n   lr
 
 ; delay idle function, defaults to wfi
 .code delay_idle
-    .replaceable
+    .default
     .alignment    4
     wfi
     bx.n   lr
     
 ; delay seconds function, defaults to nop
 .code delay_s
-    .replaceable
+    .default
     .alignment    4
     bx.n   lr
     
 ; delay ms function, defaults to nop
 .code delay_ms
-    .replaceable
+    .default
     .alignment    4
     bx.n   lr
     
 ; delay us function, defaults to nop
 .code delay_us
-    .replaceable
+    .default
     .alignment    4
     bx.n   lr
     
 ; ms ticks function, defaults to nop
 .code ticks_ms
-    .replaceable
+    .default
     .alignment    4
     mov r0, 0
     bx.n   lr
     
 ; cpu ticks function, defaults to nop
 .code ticks_cpu
-    .replaceable
+    .default
     .alignment    4
     mov r0, 0
     bx.n   lr
@@ -99,14 +99,14 @@ loop:
 
 ; enable interrupts
 .code irq_enable
-    .replaceable
+    .default
     .alignment    4
     cpsie i
     bx.n   lr
 
 ; disable interrupts
 .code irq_disable
-    .replaceable
+    .default
     .alignment    4
     cpsid i
     bx.n   lr
@@ -118,25 +118,25 @@ loop:
 
 ; reset, defaults to nop
 .code reset
-    .replaceable
+    .default
     .alignment    4
     bx.n   lr
 
 ; idle function, defaults to wfi
 .code idle
-    .replaceable
+    .default
     .alignment    4
     wfi
     bx.n   lr
 
 ; light sleep, defaults to nop
 .code sleep_light
-    .replaceable
+    .default
     .alignment    4
     bx.n   lr
 
 ; deep sleep, defaults to nop
 .code sleep_deep
-    .replaceable
+    .default
     .alignment    4
     bx.n   lr
