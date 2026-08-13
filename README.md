@@ -50,14 +50,14 @@ Currently supported boards:
 These are the boards I have on hand and are able to test. Most *STM32F4*, *STM32L4*, *STM32C5*
 boards/*MCU* would work if the *RAM* is correctly adjusted for in the config.
 
-Note that the *STM32C5 MCU* familiy is new and I could only get the *STMicroelectronics* original software
-and hardware to work with flashing the device.
-The *CLI* version of the tools in [STM32CubeCLT](https://www.st.com/en/development-tools/stm32cubeclt.html) is recommended
-and the paths in *boards/build.mk* must be verified for your installation.
+As *STM32C5* is a new *MCU* family the latest *GIT* version of [stlink](https://github.com/stlink-org/stlink) is needed to flash this *MCU*.
+If this is not available the *STMicroelectronics* original software can be used. The *CLI* version of the tools
+in [STM32CubeCLT](https://www.st.com/en/development-tools/stm32cubeclt.html) is recommended and the paths in 
+*boards/build.mk* must be verified for your installation.
 The *Makefile* target is then *mxflash*, *mxserver* for *STM32C5* support.
 
 The [ECS](https://ecs.openbrace.org/) compiler support more targets like *AVR*, *AVR32*, *Xtensa* so
-it should be possible to support more architectures.
+it should be possible to support more architectures and boards.
 
 ## Installation
 
