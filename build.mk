@@ -85,14 +85,12 @@ endif
 build/%.obf: src/%.mod
 	@echo compiling $<
 	@mkdir -p build
-	@cd build && cp -f $(addprefix ../, $<) .
-	@cd build && $(OB) -t armt32 -c $(notdir $<)
+	@cd build && $(OB) -t armt32 -c $(addprefix ../, $<)
 
 build/%.obf: src/%.asm
 	@echo compiling $<
 	@mkdir -p build
-	@cd build && cp -f $(addprefix ../, $<) .
-	@cd build && $(AS) $(notdir $<)
+	@cd build && $(AS) $(addprefix ../, $<)
 
 micro.lib : $(OBF)
 	@echo linking $@
@@ -110,7 +108,13 @@ doc: $(DRST)
 	@echo Building doc
 	@make -C doc html
 	@start "" build/doc/html/index.html &
-	
+
+.PHONY: update
+update:
+	@git stash
+	git pull
+	@git stash pop
+		
 .PHONY: install
 install: micro.lib
 	@echo Install

@@ -40,14 +40,12 @@ all : build/test.rom
 build/%.obf: demos/%.mod
 	@echo compiling $<
 	@mkdir -p build
-	@cd build && cp -f $(addprefix ../, $<) .
-	@cd build && $(OB) -t armt32 -c $(notdir $<)
+	@cd build && $(OB) -t armt32 -c $(addprefix ../, $<)
 
 build/%.obf: demos/%.asm
 	@echo compiling $<
 	@mkdir -p build
-	@cd build && cp -f $(addprefix ../, $<) .
-	@cd build && $(AS) $(notdir $<)
+	@cd build && $(AS) $(addprefix ../, $<)
 	
 build/test.rom: build/BoardConfig.obf build/runtime.obf $(EXTRAOBJ) build/test.obf
 	@echo linking $@
