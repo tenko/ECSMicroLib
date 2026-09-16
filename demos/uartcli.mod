@@ -68,6 +68,41 @@ BEGIN
     W("'quit'                       - Quit"); End;
 END OnHelpCommand;
 
+PROCEDURE (VAR this : UartCLI) OnComplete(): BOOLEAN;
+VAR
+	len : LENGTH;
+	
+	PROCEDURE Check(prefix-, cmd- : ARRAY OF CHAR): BOOLEAN;
+	BEGIN
+		IF ArrayOfChar.Compare(prefix, this.line) = 0 THEN
+			this.SetLine(cmd);
+			this.RedrawLine;
+			RETURN TRUE
+		END;
+		RETURN FALSE
+	END Check;
+BEGIN
+	len := ArrayOfChar.Length(this.line);
+	IF len = 1 THEN
+		IF Check("q", "quit") THEN RETURN TRUE END;
+		IF Check("c", "clear") THEN RETURN TRUE END;
+		IF Check("h", "help") THEN RETURN TRUE END;
+		IF Check("l", "led ") THEN RETURN TRUE END;
+	ELSIF len = 2 THEN
+		IF Check("qu", "quit") THEN RETURN TRUE END;
+		IF Check("cl", "clear") THEN RETURN TRUE END;
+		IF Check("he", "help") THEN RETURN TRUE END;
+		IF Check("le", "led ") THEN RETURN TRUE END;
+	ELSIF len = 3 THEN
+		IF Check("qui", "quit") THEN RETURN TRUE END;
+		IF Check("cle", "clear") THEN RETURN TRUE END;
+		IF Check("hel", "help") THEN RETURN TRUE END;
+	ELSIF len = 4 THEN
+		IF Check("clea", "clear") THEN RETURN TRUE END;
+	END;
+	RETURN FALSE;
+END OnComplete;
+
 PROCEDURE (VAR this : UartCLI) OnCommand(): BOOLEAN;
 VAR ret : BOOLEAN;
 BEGIN

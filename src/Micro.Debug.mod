@@ -9,6 +9,7 @@ This supports the following operations:
  * Delete or backspace delete left character
  * Enter execute command
  * Up and down arrow navigates command history
+ * Tab key perform command completion (if implemented)
 
 Example of use is found the *uartcli* demo.
 *)
@@ -18,10 +19,10 @@ IN Std IMPORT Char, ArrayOfChar, ArrayOfByte;
 
 CONST
     (* special chars *)
-    BEL = 07X; BS = 08X;
-    LF = 0AX; CR = 0DX;
+    BEL = 07X; BS = 08X; HTAB = 09X;
+    LF = 0AX; CR = 0DX; SPC = 020X;
     ESC = 01BX; DEL = 07FX;
-
+	
     UnInit = 0;
     Input = 1;
     Escape = 2;
@@ -34,6 +35,7 @@ TYPE
         line- : ARRAY MaxLineLength OF CHAR;
         history : ARRAY HistoryLength OF CHAR;
         pos-, len-, hidx : LENGTH;
+        lastChar : CHAR;
         state : INTEGER;
         quit* : BOOLEAN;
     END;
@@ -42,6 +44,7 @@ TYPE
 PROCEDURE Init*(VAR cmd : CommandLine);
 BEGIN
     cmd.pos := 0; cmd.len := 0; cmd.hidx := -1;
+    cmd.lastChar := 00X;
     cmd.state := UnInit; cmd.quit := FALSE;
     ArrayOfByte.Zero(cmd.line);
     ArrayOfByte.Zero(cmd.history);
@@ -109,6 +112,15 @@ BEGIN
     END;
 END SetLineFromHistory;
 
+(** Set line content *)
+PROCEDURE (VAR this : CommandLine) SetLine*(str- : ARRAY OF CHAR);
+BEGIN
+	this.line[0] := 00X;
+  	ArrayOfChar.Assign(this.line, str);
+  	this.len := ArrayOfChar.Length(this.line);
+  	this.pos := this.len;
+END SetLine;
+
 (** Write char to screen. Must be implemented. *)
 PROCEDURE (VAR this : CommandLine) WriteChar* (ch : CHAR);
 BEGIN END WriteChar;
@@ -146,8 +158,8 @@ BEGIN
     this.Reset;
 END OnPrompt;
 
-(* Redraw line content. *)
-PROCEDURE (VAR this : CommandLine) RedrawLine;
+(** Redraw line content. *)
+PROCEDURE (VAR this : CommandLine) RedrawLine*;
 VAR i : LENGTH;
 BEGIN
     this.WriteChar(ESC); this.WriteStr("[0G");
@@ -194,6 +206,11 @@ BEGIN
     this.WriteChar(" "); this.WriteChar(BS);
     FOR i := 0 TO chars - 1 DO this.WriteChar(BS) END;
 END OnBackSpace;
+
+(** Handle completion. *)
+PROCEDURE (VAR this : CommandLine) OnComplete* (): BOOLEAN;
+BEGIN RETURN FALSE
+END OnComplete;
 
 (** Execute command. Return TRUE if a valid command. *)
 PROCEDURE (VAR this : CommandLine) OnCommand* (): BOOLEAN;
@@ -282,6 +299,7 @@ END OnDown;
 (* Handle left arrow key. *)
 PROCEDURE (VAR this : CommandLine) OnLeft;
 BEGIN
+	this.SetLineFromHistory;
     IF this.pos > 0 THEN
         this.WriteChar(BS);
         DEC(this.pos)
@@ -317,10 +335,16 @@ BEGIN
         IF this.state = Input THEN
             IF ch = ESC THEN
                  this.state := Escape;
-            ELSIF (ch  = LF) OR (ch  = CR) THEN
+            ELSIF (ch  = CR) OR ((ch = LF) & (this.lastChar # CR)) THEN
+            	(* avoid double linefeed with check if lastChar *)
                 this.OnLineFeed;
             ELSIF (ch = BS) OR (ch = DEL) THEN
                 this.OnBackSpace;
+            ELSIF ch = HTAB THEN
+            	IF (this.hidx = -1) & (this.len > 0) & (this.pos = this.len) THEN
+            		(* Only performe completion if not editing and not navigating history *)
+            		IGNORE(this.OnComplete());
+            	END;
             ELSIF (ORD(ch) >= 32) & (ORD(ch) <= 126) THEN (* printable range *)
                 this.OnChar(ch);
             END;
@@ -328,14 +352,15 @@ BEGIN
             IF ch = "[" THEN this.state := ControlSequence
             ELSE this.state := Input END;
         ELSE (* ControlSequence *)
-            IF ch = "A" THEN this.OnUp
+            IF    ch = "A" THEN this.OnUp
             ELSIF ch = "B" THEN this.OnDown
             ELSIF ch = "C" THEN this.OnRight
             ELSIF ch = "D" THEN this.OnLeft
             END;
             this.state := Input
         END;
+        this.lastChar := ch;
     END;
-END ProcessChar;  
+END ProcessChar;
 
 END Debug.
