@@ -60,8 +60,8 @@ BEGIN
     W("Up Arrow         - Go back in command history"); End;
     W("Down Arrow       - Go forward in command history"); End;
     W("Backspace/Delete - Delete character to the left of cursor"); End;
-    W("Return           - Try to execute input line"); End;
     W("Tab              - Try to complete partial input"); End;
+    W("Return           - Try to execute input line"); End;
     this.WriteChar(ESC); W("[1;34mCommands:"); this.Reset; End;
     W("'clear'                      - Clear screen"); End;
     W("'help'                       - Help message"); End;

@@ -11,7 +11,6 @@ CONST
     LF = 0AX; CR = 0DX;
     ESC = 01BX; DEL = 07FX;
     
-    SysTick = BoardConfig.SysTick;
     Uart = BoardConfig.Uart;
     
 TYPE
@@ -93,6 +92,7 @@ BEGIN
     W("Up Arrow         - Go back in command history"); End;
     W("Down Arrow       - Go forward in command history"); End;
     W("Backspace/Delete - Delete character to the left of cursor"); End;
+    W("Tab              - Try to complete partial input"); End;
     W("Return           - Try to execute input line"); End;
     this.WriteChar(ESC); W("[1;34mCommands:"); this.Reset; End;
     W("'clear'          - Clear screen"); End;
@@ -103,6 +103,52 @@ BEGIN
     W("'quit'           - Quit"); End;
     End;
 END OnHelpCommand;
+
+PROCEDURE (VAR this : UartCLI) OnComplete(): BOOLEAN;
+VAR
+	len : LENGTH;
+	
+	PROCEDURE Check(prefix-, cmd- : ARRAY OF CHAR): BOOLEAN;
+	BEGIN
+		IF ArrayOfChar.Compare(prefix, this.line) = 0 THEN
+			this.SetLine(cmd);
+			this.RedrawLine;
+			RETURN TRUE
+		END;
+		RETURN FALSE
+	END Check;
+BEGIN
+	len := ArrayOfChar.Length(this.line);
+	IF len = 1 THEN
+		IF Check("q", "quit") THEN RETURN TRUE END;
+		IF Check("c", "clear") THEN RETURN TRUE END;
+		IF Check("h", "help") THEN RETURN TRUE END;
+		IF Check("r", "reset") THEN RETURN TRUE END;
+		IF Check("o", "obtrap ") THEN RETURN TRUE END;
+		IF Check("t", "trap ") THEN RETURN TRUE END;
+	ELSIF len = 2 THEN
+		IF Check("qu", "quit") THEN RETURN TRUE END;
+		IF Check("cl", "clear") THEN RETURN TRUE END;
+		IF Check("he", "help") THEN RETURN TRUE END;
+		IF Check("re", "reset") THEN RETURN TRUE END;
+		IF Check("ob", "obtrap ") THEN RETURN TRUE END;
+		IF Check("tr", "trap ") THEN RETURN TRUE END;
+	ELSIF len = 3 THEN
+		IF Check("qui", "quit") THEN RETURN TRUE END;
+		IF Check("cle", "clear") THEN RETURN TRUE END;
+		IF Check("hel", "help") THEN RETURN TRUE END;
+		IF Check("res", "reset") THEN RETURN TRUE END;
+		IF Check("obt", "obtrap ") THEN RETURN TRUE END;
+		IF Check("tra", "trap ") THEN RETURN TRUE END;
+	ELSIF len = 4 THEN
+		IF Check("clea", "clear") THEN RETURN TRUE END;
+		IF Check("rese", "reset") THEN RETURN TRUE END;
+		IF Check("obtr", "obtrap ") THEN RETURN TRUE END;
+	ELSIF len = 5 THEN
+		IF Check("obtra", "obtrap ") THEN RETURN TRUE END;
+	END;
+	RETURN FALSE;
+END OnComplete;
 
 PROCEDURE (VAR this : UartCLI) OnCommand(): BOOLEAN;
 VAR
