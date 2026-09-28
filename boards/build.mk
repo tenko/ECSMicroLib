@@ -29,7 +29,7 @@ else
 endif
 
 ifeq ($(ARCH), ARM)
-RTS = ../micro.lib $(ECSBASE)/runtime/stdarmt32.lib $(ECSBASE)/runtime/armt32run.obf $(ECSBASE)/runtime/obarmt32run.lib
+RTS = ../micro.lib $(ECSBASE)/runtime/stdarmt32.lib  $(ECSBASE)/runtime/obarmt32run.lib
 else
 $(error Error: ARCH=$(ARCH) not supported)
 endif

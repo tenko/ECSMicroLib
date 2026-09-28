@@ -9,7 +9,7 @@ PREFIX = /usr/local
 ARCH = ARM
 
 ifeq ($(ARCH), ARM)
-OLS += ArchArm ArchArmInterrupt ArchArmException ArchArmTraps ArchArmSysTick ArchArmCycleCount
+OLS += ArchArm ArchArmInterrupt ArchArmException ArchArmTraps ArchArmSysTick ArchArmCycleCount ArchArmSemihost
 else
 $(error Error: ARCH=$(ARCH) not supported)
 endif

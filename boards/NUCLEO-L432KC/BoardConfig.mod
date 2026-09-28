@@ -3,7 +3,7 @@
 *)
 MODULE BoardConfig;
 
-IN Micro IMPORT ArchArmSysTick;
+IN Micro IMPORT ArchArmSysTick, ArchArmSemihost;
 IN Micro IMPORT STM32L4;
 IN Micro IMPORT STM32L4Pins;
 IN Micro IMPORT STM32L4Uart := STM32L4Uart(2);
@@ -32,6 +32,18 @@ VAR
 	PCLK*,
 	QCLK*,
 	RCLK* : INTEGER; (* Hz *)
+
+(* Replace runtime putchar function with semihost PutChar for TRACE support *)
+PROCEDURE PutChar ["putchar"] (character: INTEGER): INTEGER;
+BEGIN RETURN ArchArmSemihost.PutChar(character)
+END PutChar;
+
+(* Replace runtime abort function *)
+PROCEDURE Abort ["abort"] ();
+BEGIN
+	ArchArmSemihost.FlushBuffer;
+	ArchArmSemihost.Abort(0);
+END Abort;
 
 (* OWire on USART1. Note it needs external pull-up resistor, typical 10K *)
 PROCEDURE InitOWire*(VAR bus : OWire.Bus);

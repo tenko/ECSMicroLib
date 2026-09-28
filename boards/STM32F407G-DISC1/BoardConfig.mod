@@ -6,7 +6,8 @@
 *)
 MODULE BoardConfig;
 
-IN Micro IMPORT ArchArmSysTick;
+IMPORT SYSTEM;
+IN Micro IMPORT ArchArmSysTick, ArchArmSemihost;
 IN Micro IMPORT STM32F4;
 IN Micro IMPORT STM32F4Pins;
 IN Micro IMPORT STM32F4ExtInt0 := STM32F4PinsExtInt(0);
@@ -38,6 +39,18 @@ VAR
 	PCLK2*, TIMCLK2*,
 	QCLK*, (* QCLK <= 48 MHz, best is 48 MHz *)
 	RCLK*: INTEGER; (* Hz *)
+
+(* Replace runtime putchar function with semihost PutChar for TRACE support *)
+PROCEDURE PutChar ["putchar"] (character: INTEGER): INTEGER;
+BEGIN RETURN ArchArmSemihost.PutChar(character)
+END PutChar;
+
+(* Replace runtime abort function *)
+PROCEDURE Abort ["abort"] ();
+BEGIN
+	ArchArmSemihost.FlushBuffer;
+	ArchArmSemihost.Abort(0);
+END Abort;
 
 (* No pullup needed here *)
 PROCEDURE InitOWire*(VAR bus : OWire.Bus);

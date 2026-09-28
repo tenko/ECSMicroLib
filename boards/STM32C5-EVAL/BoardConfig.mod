@@ -3,9 +3,9 @@
 *)
 MODULE BoardConfig;
 
+IN Micro IMPORT ArchArmSysTick, ArchArmSemihost;
 IN Micro IMPORT STM32C5;
 IN Micro IMPORT STM32C5RCC;
-IN Micro IMPORT ArchArmSysTick;
 IN Micro IMPORT STM32C5Pins;
 IN Micro IMPORT STM32C5RTC;
 IN Micro IMPORT STM32C5ExtInt8 := STM32C5PinsExtInt(8);
@@ -37,6 +37,18 @@ VAR
     HCLK*,
 	PCLK1*,
 	PCLK2*: INTEGER; (* Hz *)
+
+(* Replace runtime putchar function with semihost PutChar for TRACE support *)
+PROCEDURE PutChar ["putchar"] (character: INTEGER): INTEGER;
+BEGIN RETURN ArchArmSemihost.PutChar(character)
+END PutChar;
+
+(* Replace runtime abort function *)
+PROCEDURE Abort ["abort"] ();
+BEGIN
+	ArchArmSemihost.FlushBuffer;
+	ArchArmSemihost.Abort(0);
+END Abort;
 
 PROCEDURE InitUart*(VAR bus : Uart.Bus; baud, parity, stopBits : INTEGER);
 VAR par : Uart.InitPar;

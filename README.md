@@ -100,7 +100,8 @@ cd ECSStdLib
 make -f Makefile.arm32t
 make -f Makefile.arm32t PREFIX=~/.local install  # install to ~/.local/lib
 # Run arm32 emulated tests. Needs xpack-qemu-arm 7.2.5
-make -f Makefile.arm32t TestMain
+make -f Makefile.arm32t SYS=Semihost # build semihost varient
+make -f Makefile.arm32t SYS=Semihost TestMain
 cd ..
 
 # Build and install ECSMicroLib
