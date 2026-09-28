@@ -11,7 +11,9 @@ VAR isrHandle : PROCEDURE;
 PROCEDURE ISR [Name];
 BEGIN
     IF isrHandle # NIL THEN isrHandle() END;
-    REPEAT UNTIL FALSE;
+    IF SYSTEM.BIT(SYSTEM.ADDRESS(ArchArm.SCB_DHCSR), 0) THEN
+        SYSTEM.ASM("bkpt 0x01") (* bkpt if under debugger control *)
+    ELSE REPEAT UNTIL FALSE END;
 END ISR;
 
 (** Set ISR handle *)
