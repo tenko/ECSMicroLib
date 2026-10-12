@@ -1,4 +1,5 @@
 MODULE STM32C5RTC IN Micro;
+
 IMPORT SYSTEM;
 IN Micro IMPORT ArchArm, MCU := STM32C5, MachineRTC;
 
@@ -63,8 +64,8 @@ BEGIN
     ArchArm.IRQEnable(Int)
 END EnableIRQ;
 
-(** Set RTC Wakeup timer delay in seconds.
-Setting delay to 0 disable the wakeup timer.
+(** Set RTC Wakeup timer delay in seconds upto 36 [h] / 129600 [s]
+Setting delay to <= 0 disable the wakeup timer.
 *)
 PROCEDURE (VAR rtc : RTC) WakeupS*(delay : INTEGER);
 CONST
@@ -126,5 +127,101 @@ BEGIN
 	SYSTEM.GET(MCU.RTC_SCR, x);
     SYSTEM.PUT(MCU.RTC_SCR, x + {CWUTF});
 END WakeupS;
+
+(** Get current date and time *)
+PROCEDURE (VAR rtc : RTC) Now*(VAR year, month, day, hour, min, sec : INTEGER);
+CONST
+	(* RTC_TR bits *)
+	SU = 0; ST = 4; MNU = 8; MNT = 12;
+	HU = 16; HT = 20; PM = 22;
+	(* RTC_DR bits *)
+	DU = 0; DT = 4; MU = 8; MT = 12;
+	WDU = 13; YU = 16; YT = 20;
+VAR
+	x: SET32;
+BEGIN
+	(* Fetch time in BCD format *)
+	SYSTEM.GET(MCU.RTC_TR, x);
+	sec := INTEGER(x * {SU .. SU + 3});
+	sec := sec + 10 * SYSTEM.LSH(INTEGER(x * {ST .. ST + 2}), -ST);
+	min := SYSTEM.LSH(INTEGER(x * {MNU .. MNU + 3}), -MNU);
+	min := min + 10 * SYSTEM.LSH(INTEGER(x * {MNT .. MNT + 2}), -MNT);
+	hour := SYSTEM.LSH(INTEGER(x * {HU .. HU + 3}), -HU);
+	hour := hour + 10 * SYSTEM.LSH(INTEGER(x * {HT .. HT + 1}), -HT);
+	(* IF PM IN x THEN hour := hour + 12 END; *)
+	
+	(* Fetch date in BCD format *)
+	SYSTEM.GET(MCU.RTC_DR, x);
+	day := INTEGER(x * {DU .. DU + 3});
+	day := day + 10 * SYSTEM.LSH(INTEGER(x * {DT .. DT + 1}), -DT);
+	month := SYSTEM.LSH(INTEGER(x * {MU .. MU + 3}), -MU);
+	month := month + 10 * SYSTEM.LSH(INTEGER(x * {MT}), -MT);
+	year := SYSTEM.LSH(INTEGER(x * {YU .. YU + 3}), -YU);
+	year := year + 10 * SYSTEM.LSH(INTEGER(x * {YT .. YT + 3}), -YT);
+END Now;
+
+
+(** Set current date and time *)
+PROCEDURE (VAR rtc : RTC) SetDateTime*(year, month, day, hour, min, sec : INTEGER);
+CONST
+	(* RTC_ICSR bits* *)
+	RSF = 5; INITF = 6; INIT = 7;
+	(* RTC_TR bits *)
+	SU = 0; ST = 4; MNU = 8; MNT = 12;
+	HU = 16; HT = 20;
+	(* RTC_DR bits *)
+	DU = 0; DT = 4; MU = 8; MT = 12;
+	WDU = 13; YU = 16; YT = 20; PM = 22;
+VAR
+	u : UNSIGNED32;
+	x : SET32;
+BEGIN
+	(* Unlock RTC write protection *)
+    SYSTEM.GET(MCU.RTC_WPR, x);
+    SYSTEM.PUT(MCU.RTC_WPR, x + SET8(0CAH));
+    SYSTEM.GET(MCU.RTC_WPR, x);
+    SYSTEM.PUT(MCU.RTC_WPR, x + SET8(053H));
+    
+    (* Enter initialization mode *)
+    SYSTEM.GET(MCU.RTC_ICSR, x);
+    SYSTEM.PUT(MCU.RTC_ICSR, x + {INIT});
+    REPEAT UNTIL SYSTEM.BIT(MCU.RTC_ICSR, INITF);
+	
+	(* Set time bits *)
+	SYSTEM.GET(MCU.RTC_TR, u);
+	(* x := x * SET32(0FFC00080H); *)
+	u := UNSIGNED32(SET32(u) - SET32({SU .. SU + 3} + {ST .. ST + 2} + {MNU .. MNU + 3} + {MNT .. MNT + 2} + {HU .. HU + 3} + {HT .. HT + 1}));
+	u := u + UNSIGNED32(sec MOD 10);
+	u := u + SYSTEM.LSH(UNSIGNED32(sec DIV 10), ST);
+	u := u + SYSTEM.LSH(UNSIGNED32(min MOD 10), MNU);
+	u := u + SYSTEM.LSH(UNSIGNED32(min DIV 10), MNT);
+	u := u + SYSTEM.LSH(UNSIGNED32(hour MOD 10), HU);
+	u := u + SYSTEM.LSH(UNSIGNED32(hour DIV 10), HT);
+	SYSTEM.PUT(MCU.RTC_TR, u);
+	
+	(* Set date bits *)
+	SYSTEM.GET(MCU.RTC_DR, u);
+	u := UNSIGNED32(SET32(u) - SET32({DU .. DU + 3} + {DT .. DT + 1} + {MU .. MU + 3} + {MT} + {YU .. YU + 3} + {YT .. YT + 3} + {PM}));
+	u := u + UNSIGNED32(day MOD 10);
+	u := u + SYSTEM.LSH(UNSIGNED32(day DIV 10), DT);
+	u := u + SYSTEM.LSH(UNSIGNED32(month MOD 10), MU);
+	u := u + SYSTEM.LSH(UNSIGNED32(month DIV 10), MT);
+	u := u + SYSTEM.LSH(UNSIGNED32(year MOD 10), YU);
+	u := u + SYSTEM.LSH(UNSIGNED32(year DIV 10), YT);
+	SYSTEM.PUT(MCU.RTC_DR, u);
+	
+	(* Exit initialization mode *)
+    SYSTEM.GET(MCU.RTC_ICSR, x);
+    SYSTEM.PUT(MCU.RTC_ICSR, x - {INIT});
+    
+    (* Trigger syncronization and wait for bit *)
+    SYSTEM.GET(MCU.RTC_ICSR, x);
+    SYSTEM.PUT(MCU.RTC_ICSR, x - {RSF});
+    REPEAT UNTIL SYSTEM.BIT(MCU.RTC_ICSR, RSF);
+    
+	(* Turn on RTC write protection *)
+    SYSTEM.GET(MCU.RTC_WPR, x);
+    SYSTEM.PUT(MCU.RTC_WPR, x + SET8(0FFH));
+END SetDateTime;
 
 END STM32C5RTC.

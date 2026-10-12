@@ -3,6 +3,7 @@
 *)
 MODULE BoardConfig;
 
+IMPORT SYSTEM;
 IN Micro IMPORT ArchArmSysTick, ArchArmSemihost;
 IN Micro IMPORT STM32L4;
 IN Micro IMPORT STM32L4Pins;

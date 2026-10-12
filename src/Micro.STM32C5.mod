@@ -376,12 +376,12 @@ BEGIN
         SYSTEM.GET(PWR_PMCR, x);
         SYSTEM.PUT(PWR_PMCR, x + {CSSF});
     ELSE
+    	resetCause := 0; (* RESET_UNKNOWN *)
         SYSTEM.GET(RCC_RSR, x);
-        IF PINRSTF IN x THEN resetCause := 2 (* RESET_HARD *)
+        IF PINRSTF IN x THEN resetCause := 2 (* RESET_HARD *)
         ELSIF SFTRSTF IN x THEN resetCause := 5 (* RESET_SOFT *)
         ELSIF BORRSTF IN x THEN resetCause := 1 (* RESET_PWRON *)
-        ELSIF (IWDGRSTF IN x) OR (IWDGRSTF IN x) THEN resetCause := 3 (* RESET_WDT *)
-        ELSE resetCause := 0 (* RESET_UNKNOWN *) END;
+        ELSIF (IWDGRSTF IN x) OR (IWDGRSTF IN x) THEN resetCause := 3 END; (* RESET_WDT *)
         SYSTEM.PUT(RCC_RSR, x + {RMVF});
     END;
 END Init;

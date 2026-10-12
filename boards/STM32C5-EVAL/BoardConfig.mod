@@ -3,6 +3,7 @@
 *)
 MODULE BoardConfig;
 
+IMPORT SYSTEM;
 IN Micro IMPORT ArchArmSysTick, ArchArmSemihost;
 IN Micro IMPORT STM32C5;
 IN Micro IMPORT STM32C5RCC;
@@ -37,6 +38,26 @@ VAR
     HCLK*,
 	PCLK1*,
 	PCLK2*: INTEGER; (* Hz *)
+
+(* Support write to OSStream.StdOut *)
+PROCEDURE StdHandle ["HostStdHandle"](VAR handle : INTEGER; type : INTEGER): BOOLEAN;
+BEGIN RETURN TRUE END StdHandle;
+
+PROCEDURE FileRead ["HostFileRead"](handle : INTEGER; buffer : SYSTEM.ADDRESS; len : LENGTH): LENGTH;
+BEGIN RETURN 0
+END FileRead;
+
+PROCEDURE FileStdWrite ["HostFileStdWrite"](handle : INTEGER; buffer : SYSTEM.ADDRESS; len : LENGTH): LENGTH;
+VAR
+    i : INTEGER;
+    ch : CHAR;
+BEGIN
+    FOR i := 0 TO len - 1 DO
+        SYSTEM.GET(buffer + i, ch);
+        IGNORE(ArchArmSemihost.PutChar(ORD(ch)))
+    END;
+    RETURN len
+END FileStdWrite;
 
 (* Replace runtime putchar function with semihost PutChar for TRACE support *)
 PROCEDURE PutChar ["putchar"] (character: INTEGER): INTEGER;

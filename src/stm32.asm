@@ -41,18 +41,6 @@ loop:
     .alignment    4
     bl       @abort
 
-; standard getchar function, defaults to nop
-.code getchar
-    .default
-    .alignment    4
-    bx.n   lr
-
-; standard putchar function, defaults to nop
-.code putchar
-    .default
-    .alignment    4
-    bx.n   lr
-
 ; delay idle function, defaults to wfi
 .code delay_idle
     .default
